@@ -1,0 +1,30 @@
+<% content_for :title, "CUHK Marketplace – Buy & Sell on Campus" %>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <h1 class="page-title">Campus Marketplace</h1>
+      <p class="page-subtitle"><%= pluralize(@products.size, "item") %> listed</p>
+    </div>
+    <% if logged_in? %>
+      <%= link_to "+ Sell Item", new_product_path, class: "btn-primary" %>
+    <% end %>
+  </div>
+</div>
+
+<% if @products.any? %>
+  <div class="products-grid">
+    <%= render @products %>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <div class="empty-state-icon">🛍️</div>
+    <h2>No listings yet</h2>
+    <p>Be the first to sell something on CUHK Marketplace!</p>
+    <% if logged_in? %>
+      <%= link_to "Post a listing", new_product_path, class: "btn-primary" %>
+    <% else %>
+      <%= link_to "Sign in to post", sign_in_path, class: "btn-primary" %>
+    <% end %>
+  </div>
+<% end %>

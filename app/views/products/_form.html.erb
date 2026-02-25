@@ -1,0 +1,82 @@
+<% if product.errors.any? %>
+  <div class="error-messages">
+    <p><strong><%= pluralize(product.errors.count, "error") %> prevented this listing from being saved:</strong></p>
+    <ul>
+      <% product.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: product, class: "product-form" do |f| %>
+  <div class="form-group">
+    <%= f.label :title, "Title" %>
+    <%= f.text_field :title, placeholder: "What are you selling?", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :listing_type, "Listing type" %>
+    <div class="radio-group">
+      <label class="radio-label">
+        <%= f.radio_button :listing_type, :sale, id: "listing_type_sale" %>
+        For Sale
+      </label>
+      <label class="radio-label">
+        <%= f.radio_button :listing_type, :gift, id: "listing_type_gift" %>
+        Free / Gift
+      </label>
+    </div>
+  </div>
+
+  <div class="form-group" id="price-field">
+    <%= f.label :price, "Price (HKD)" %>
+    <%= f.number_field :price, min: 0, step: 1, placeholder: "0" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, "Description" %>
+    <%= f.text_area :description, rows: 5, placeholder: "Describe the item's condition, age, included accessories, etc.", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :thumbnail, "Photo" %>
+    <%= f.file_field :thumbnail, accept: "image/*" %>
+    <% if product.thumbnail.attached? %>
+      <div class="current-thumbnail">
+        <%= image_tag product.thumbnail.variant(resize_to_fill: [120, 80]), alt: "Current image" %>
+        <span>Current photo</span>
+      </div>
+    <% end %>
+  </div>
+
+  <% if product.persisted? %>
+    <div class="form-group">
+      <%= f.label :status, "Status" %>
+      <%= f.select :status,
+            options_for_select(Product.statuses.keys.map { |s| [s.capitalize, s] }, product.status),
+            {},
+            { required: true } %>
+    </div>
+  <% end %>
+
+  <%= f.submit product.persisted? ? "Update Listing" : "Publish Listing", class: "btn-primary btn-submit" %>
+<% end %>
+
+<script>
+  document.addEventListener("turbo:load", togglePriceField);
+  document.addEventListener("DOMContentLoaded", togglePriceField);
+
+  function togglePriceField() {
+    const radios = document.querySelectorAll('input[name="product[listing_type]"]');
+    const priceField = document.getElementById("price-field");
+    if (!priceField) return;
+
+    radios.forEach(r => r.addEventListener("change", () => {
+      priceField.style.display = r.value === "gift" && r.checked ? "none" : "block";
+    }));
+
+    const selected = document.querySelector('input[name="product[listing_type]"]:checked');
+    if (selected && selected.value === "gift") priceField.style.display = "none";
+  }
+</script>

@@ -1,0 +1,60 @@
+<% content_for :title, "#{@product.title} – CUHK Marketplace" %>
+
+<div class="product-show">
+  <div class="product-show-image">
+    <% if @product.thumbnail.attached? %>
+      <%= image_tag @product.thumbnail.variant(resize_to_limit: [800, 600]), class: "show-thumbnail", alt: @product.title %>
+    <% else %>
+      <div class="show-thumbnail-placeholder">
+        <span>No Image</span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="product-show-details">
+    <div class="show-header">
+      <span class="status-badge status-<%= @product.status %>"><%= @product.status.capitalize %></span>
+      <% if @product.gift? %>
+        <span class="listing-type-badge">Gift</span>
+      <% end %>
+    </div>
+
+    <h1 class="show-title"><%= @product.title %></h1>
+
+    <div class="show-price">
+      <% if @product.gift? %>
+        <span class="price-free">Free</span>
+      <% else %>
+        <span class="price-amount">HK$<%= number_with_precision(@product.price, precision: 2) %></span>
+      <% end %>
+    </div>
+
+    <div class="show-section">
+      <h2 class="show-section-title">Description</h2>
+      <p class="show-description"><%= simple_format(@product.description) %></p>
+    </div>
+
+    <div class="show-section">
+      <h2 class="show-section-title">Seller</h2>
+      <p class="show-seller"><%= @product.user.username %> &middot; <%= @product.user.college_affiliation %></p>
+    </div>
+
+    <div class="show-actions">
+      <% if logged_in? && current_user != @product.user %>
+        <button class="btn-primary btn-chat" disabled title="Chat coming soon">
+          💬 Chat with Seller
+        </button>
+      <% end %>
+
+      <% if logged_in? && current_user == @product.user %>
+        <%= link_to "Edit Listing", edit_product_path(@product), class: "btn-secondary btn-edit" %>
+      <% end %>
+    </div>
+
+    <p class="show-meta">Listed <%= time_ago_in_words(@product.created_at) %> ago</p>
+  </div>
+</div>
+
+<div class="show-back">
+  <%= link_to "← Back to listings", root_path %>
+</div>

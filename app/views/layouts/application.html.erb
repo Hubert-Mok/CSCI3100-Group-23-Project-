@@ -24,6 +24,33 @@
   </head>
 
   <body>
-    <%= yield %>
+    <header class="site-header">
+      <nav class="nav-container">
+        <div class="nav-brand">
+          <%= link_to "CUHK Marketplace", root_path %>
+        </div>
+        <div class="nav-links">
+          <% if logged_in? %>
+            <%= link_to "+ Sell Item", new_product_path, class: "btn-primary nav-btn" %>
+            <span class="nav-username">Hi, <%= current_user.username %></span>
+            <%= button_to "Sign Out", sign_out_path, method: :delete, class: "btn-secondary", form: { data: { turbo: false } } %>
+          <% else %>
+            <%= link_to "Sign In", sign_in_path, class: "nav-link" %>
+            <%= link_to "Sign Up", sign_up_path, class: "btn-primary nav-btn" %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <% if flash[:notice].present? %>
+      <div class="flash flash-notice"><%= flash[:notice] %></div>
+    <% end %>
+    <% if flash[:alert].present? %>
+      <div class="flash flash-alert"><%= flash[:alert] %></div>
+    <% end %>
+
+    <main class="main-content">
+      <%= yield %>
+    </main>
   </body>
 </html>

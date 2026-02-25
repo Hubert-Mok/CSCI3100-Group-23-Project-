@@ -1,0 +1,26 @@
+<%= link_to product_path(product), class: "product-card" do %>
+  <div class="product-thumbnail-wrapper">
+    <% if product.thumbnail.attached? %>
+      <%= image_tag product.thumbnail.variant(resize_to_fill: [400, 280]), class: "product-thumbnail", alt: product.title %>
+    <% else %>
+      <div class="product-thumbnail-placeholder">
+        <span>No Image</span>
+      </div>
+    <% end %>
+    <span class="status-badge status-<%= product.status %>"><%= product.status.capitalize %></span>
+  </div>
+
+  <div class="product-card-body">
+    <h3 class="product-title"><%= product.title %></h3>
+    <div class="product-meta">
+      <span class="product-price">
+        <% if product.gift? %>
+          <span class="price-free">Free</span>
+        <% else %>
+          HK$<%= number_with_precision(product.price, precision: 0) %>
+        <% end %>
+      </span>
+      <span class="product-seller">by <%= product.user.username %></span>
+    </div>
+  </div>
+<% end %>

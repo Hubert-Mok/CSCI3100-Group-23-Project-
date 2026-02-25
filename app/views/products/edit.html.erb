@@ -1,0 +1,12 @@
+<% content_for :title, "Edit Listing – CUHK Marketplace" %>
+
+<div class="form-page">
+  <div class="form-page-header">
+    <h1>Edit Listing</h1>
+    <p>Update the details for <strong><%= @product.title %></strong>.</p>
+  </div>
+
+  <%= render "form", product: @product %>
+
+  <p class="form-page-back"><%= link_to "← Back to listing", product_path(@product) %></p>
+</div>

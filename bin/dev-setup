@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Use Homebrew Ruby (required for Rails 8 / Bundler 4). Run from project root:
+#   source bin/dev-setup   # then: bundle install, bin/rails db:prepare, bin/rails server
+# Or: ./bin/dev-setup && bin/rails server
+
+export PATH="/opt/homebrew/opt/ruby/bin:/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
+echo "Using Ruby: $(ruby -v)"
+echo "Bundler: $(bundle -v 2>/dev/null || echo 'run: gem install bundler:4.0.3')"
