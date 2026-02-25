@@ -1,15 +1,17 @@
 # Second-Hand Marketplace
 
 ### Current status (brief)
-- Basic Rails project structure created.
-- Initial models, controllers, and views scaffolded for the marketplace.
-- Core CRUD flows for listings are under development.
+- Rails app set up with products (listings), users, and likes.
+- Email/password authentication with sign up / sign in / sign out flows.
+- User profile and password management pages in place.
+- Product listing pages (index/show) and basic create/edit forms implemented.
+- Basic PWA manifest and service worker views stubbed.
 
 ### TODO (brief)
-- Set up user authentication and profiles.
-- Design listing creation/editing UI and validations.
-- Implement search and filtering for listings.
-- Add image upload for items.
-- Configure database seeds and sample data.
-- Write basic request/model tests.
-- Prepare deployment configuration and environment variables.
+- Polish product creation/editing UI and add stronger validations.
+- Implement search, sorting, and filtering for product listings.
+- Add image upload for products and display in views.
+- Add flash messages and better error handling on auth and forms.
+- Configure database seeds with realistic sample data.
+- Write model, controller, and request specs/tests.
+- Prepare production deployment configuration and environment variables.
