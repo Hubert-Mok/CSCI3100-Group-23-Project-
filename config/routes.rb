@@ -9,6 +9,10 @@ Rails.application.routes.draw do
   post   "sign_in",  to: "sessions#create"
   delete "sign_out", to: "sessions#destroy",    as: :sign_out
 
+  # Profile & security
+  resource :profile,  only: %i[show edit update]
+  resource :password, only: %i[edit update]
+
   # Products
   resources :products, only: %i[index show new create edit update]
 

@@ -1,0 +1,79 @@
+<% content_for :title, "My Profile – CUHK Marketplace" %>
+
+<div class="profile-page">
+  <div class="profile-card">
+    <div class="profile-avatar-col">
+      <div class="profile-avatar">
+        <%= current_user.username.first(2).upcase %>
+      </div>
+      <p class="profile-college"><%= current_user.college_affiliation %></p>
+      <p class="profile-since">Member since <%= current_user.created_at.strftime("%b %Y") %></p>
+    </div>
+
+    <div class="profile-info-col">
+      <h1 class="profile-name"><%= current_user.username %></h1>
+
+      <div class="profile-fields">
+        <div class="profile-field">
+          <span class="profile-field-label">Email</span>
+          <span class="profile-field-value"><%= current_user.email %></span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field-label">CUHK Student ID</span>
+          <span class="profile-field-value"><%= current_user.cuhk_id %></span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field-label">College</span>
+          <span class="profile-field-value"><%= current_user.college_affiliation %></span>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <%= link_to "Edit Profile", edit_profile_path, class: "btn-primary" %>
+        <%= link_to "Change Password", edit_password_path, class: "btn-secondary btn-security" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-listings-section">
+    <div class="profile-listings-header">
+      <h2>My Listings</h2>
+      <%= link_to "+ Sell Item", new_product_path, class: "btn-primary btn-sm" %>
+    </div>
+
+    <% if @products.any? %>
+      <div class="profile-listings-list">
+        <% @products.each do |product| %>
+          <div class="profile-listing-row">
+            <div class="profile-listing-thumb">
+              <% if product.thumbnail.attached? %>
+                <%= image_tag product.thumbnail.variant(resize_to_fill: [60, 60]), alt: product.title %>
+              <% else %>
+                <div class="listing-thumb-placeholder"></div>
+              <% end %>
+            </div>
+            <div class="profile-listing-info">
+              <%= link_to product.title, product_path(product), class: "profile-listing-title" %>
+              <span class="status-badge status-<%= product.status %> status-inline"><%= product.status.capitalize %></span>
+            </div>
+            <div class="profile-listing-price">
+              <% if product.gift? %>
+                <span class="price-free">Free</span>
+              <% else %>
+                HK$<%= number_with_precision(product.price, precision: 0) %>
+              <% end %>
+            </div>
+            <div class="profile-listing-actions">
+              <%= link_to "Edit", edit_product_path(product), class: "link-edit" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="profile-empty">
+        <p>You haven't listed anything yet.</p>
+        <%= link_to "Post your first listing", new_product_path, class: "btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
