@@ -3,6 +3,7 @@ class ProfilesController < ApplicationController
 
   def show
     @products = current_user.products.latest
+    @liked_products = current_user.liked_products.includes(:user).latest
   end
 
   def edit

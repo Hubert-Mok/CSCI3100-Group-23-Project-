@@ -16,6 +16,14 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :category, "Category" %>
+    <%= f.select :category,
+          options_for_select(Product::CATEGORIES, product.category),
+          { include_blank: "Select a category" },
+          { required: true } %>
+  </div>
+
+  <div class="form-group">
     <%= f.label :listing_type, "Listing type" %>
     <div class="radio-group">
       <label class="radio-label">

@@ -76,4 +76,46 @@
       </div>
     <% end %>
   </div>
+
+  <div class="profile-listings-section">
+    <div class="profile-listings-header">
+      <h2>My Likes</h2>
+      <span class="liked-count-badge"><%= @liked_products.size %> saved</span>
+    </div>
+
+    <% if @liked_products.any? %>
+      <div class="profile-listings-list">
+        <% @liked_products.each do |product| %>
+          <div class="profile-listing-row">
+            <div class="profile-listing-thumb">
+              <% if product.thumbnail.attached? %>
+                <%= image_tag product.thumbnail.variant(resize_to_fill: [60, 60]), alt: product.title %>
+              <% else %>
+                <div class="listing-thumb-placeholder"></div>
+              <% end %>
+            </div>
+            <div class="profile-listing-info">
+              <%= link_to product.title, product_path(product), class: "profile-listing-title" %>
+              <span class="status-badge status-<%= product.status %> status-inline"><%= product.status.capitalize %></span>
+            </div>
+            <div class="profile-listing-price">
+              <% if product.gift? %>
+                <span class="price-free">Free</span>
+              <% else %>
+                HK$<%= number_with_precision(product.price, precision: 0) %>
+              <% end %>
+            </div>
+            <div class="profile-listing-actions">
+              <%= button_to "♥ Unlike", product_like_path(product), method: :delete, class: "link-unlike", form: { data: { turbo: false } } %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="profile-empty">
+        <p>You haven't liked any products yet.</p>
+        <%= link_to "Browse listings", root_path, class: "btn-primary" %>
+      </div>
+    <% end %>
+  </div>
 </div>

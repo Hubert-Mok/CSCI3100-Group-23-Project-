@@ -11,6 +11,9 @@
   </div>
 
   <div class="product-card-body">
+    <% if product.category.present? %>
+      <span class="category-tag"><%= product.category %></span>
+    <% end %>
     <h3 class="product-title"><%= product.title %></h3>
     <div class="product-meta">
       <span class="product-price">
@@ -22,5 +25,8 @@
       </span>
       <span class="product-seller">by <%= product.user.username %></span>
     </div>
+  </div>
+  <div class="product-card-footer">
+    <span class="like-count"><% if @liked_ids&.include?(product.id) %>♥<% else %>♡<% end %> <%= product.likes_count %></span>
   </div>
 <% end %>

@@ -17,6 +17,9 @@
       <% if @product.gift? %>
         <span class="listing-type-badge">Gift</span>
       <% end %>
+      <% if @product.category.present? %>
+        <span class="category-tag"><%= @product.category %></span>
+      <% end %>
     </div>
 
     <h1 class="show-title"><%= @product.title %></h1>
@@ -44,10 +47,24 @@
         <button class="btn-primary btn-chat" disabled title="Chat coming soon">
           💬 Chat with Seller
         </button>
+        <% if @liked %>
+          <%= button_to product_like_path(@product), method: :delete, class: "btn-like btn-liked", form: { data: { turbo: false } } do %>
+            ♥ Unlike (<%= @product.likes_count %>)
+          <% end %>
+        <% else %>
+          <%= button_to product_like_path(@product), method: :post, class: "btn-like", form: { data: { turbo: false } } do %>
+            ♡ Like (<%= @product.likes_count %>)
+          <% end %>
+        <% end %>
       <% end %>
 
       <% if logged_in? && current_user == @product.user %>
+        <span class="like-count-static">♡ <%= @product.likes_count %> <%= @product.likes_count == 1 ? "like" : "likes" %></span>
         <%= link_to "Edit Listing", edit_product_path(@product), class: "btn-secondary btn-edit" %>
+      <% end %>
+
+      <% unless logged_in? %>
+        <span class="like-count-static">♡ <%= @product.likes_count %> <%= @product.likes_count == 1 ? "like" : "likes" %></span>
       <% end %>
     </div>
 

@@ -4,10 +4,13 @@ class ProductsController < ApplicationController
   before_action :require_owner, only: %i[edit update]
 
   def index
-    @products = Product.includes(:user, thumbnail_attachment: :blob).latest
+    scope = logged_in? ? Product.where.not(user: current_user) : Product.all
+    @products = scope.includes(:user, thumbnail_attachment: :blob).latest
+    @liked_ids = logged_in? ? current_user.likes.pluck(:product_id) : []
   end
 
   def show
+    @liked = logged_in? && current_user.likes.exists?(product: @product)
   end
 
   def new
@@ -48,6 +51,6 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.expect(product: [ :title, :description, :price, :listing_type, :status, :thumbnail ])
+    params.expect(product: [ :title, :description, :price, :listing_type, :status, :category, :thumbnail ])
   end
 end
