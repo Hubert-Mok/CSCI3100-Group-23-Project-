@@ -3,6 +3,7 @@ class Product < ApplicationRecord
   has_one_attached :thumbnail
   has_many :likes, dependent: :destroy
   has_many :likers, through: :likes, source: :user
+  has_many :conversations, dependent: :destroy
 
   CATEGORIES = [
     "Books & Notes",

@@ -35,10 +35,10 @@ docker compose up
 - Basic PWA manifest and service worker views stubbed.
 
 ### TODO (brief)
-- Polish product creation/editing UI and add stronger validations.
-- Implement search, sorting, and filtering for product listings.
-- Add image upload for products and display in views.
-- Add flash messages and better error handling on auth and forms.
-- Configure database seeds with realistic sample data.
-- Write model, controller, and request specs/tests.
-- Prepare production deployment configuration and environment variables.
+- Refine product creation/editing UI and validations (e.g. price rules, description length).
+- Add more robust flash messages and edge-case handling (e.g. expired sessions, unauthorized access).
+- Configure database seeds with realistic sample users, products, and likes.
+- Expand automated tests (models, controllers, and key flows via system tests).
+- Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
+- Implement buyer–seller chat on top of the existing placeholder button.
+- Enable and polish PWA support (manifest route, service worker, basic offline behaviour).

@@ -1,0 +1,53 @@
+<% content_for :title, "Messages – CUHK Marketplace" %>
+
+<div class="conversations-page">
+  <div class="conversations-header">
+    <h1>Messages</h1>
+    <p>Chats between you and other CUHK students about specific listings.</p>
+  </div>
+
+  <% if @conversations.any? %>
+    <div class="conversations-list">
+      <% @conversations.each do |conversation| %>
+        <% product = conversation.product %>
+        <% other_user =
+             conversation.buyer_id == current_user.id ? conversation.seller : conversation.buyer %>
+        <%= link_to conversation_path(conversation), class: "conversation-row" do %>
+          <div class="conversation-main">
+            <div class="conversation-title">
+              <span class="conversation-product-title"><%= product.title %></span>
+              <span class="conversation-status-badge status-<%= product.status %>">
+                <%= product.status.capitalize %>
+              </span>
+            </div>
+            <div class="conversation-meta">
+              <span class="conversation-partner">
+                With <strong><%= other_user.username %></strong>
+                &middot;
+                <%= other_user.college_affiliation %>
+              </span>
+              <% if (last_message = conversation.messages.order(created_at: :desc).first) %>
+                <span class="conversation-snippet">
+                  <%= (last_message.user_id == current_user.id ? "You: " : "") +
+                      truncate(strip_tags(last_message.body.to_s), length: 80) %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+          <div class="conversation-time">
+            <% timestamp = conversation.last_message_at || conversation.created_at %>
+            <span><%= time_ago_in_words(timestamp) %> ago</span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-state-icon">💬</div>
+      <h2>No messages yet</h2>
+      <p>Start a conversation from any listing by tapping “Chat with Seller”.</p>
+      <%= link_to "Browse listings", root_path, class: "btn-primary" %>
+    </div>
+  <% end %>
+</div>
+

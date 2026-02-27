@@ -32,6 +32,7 @@
         <div class="nav-links">
           <% if logged_in? %>
             <%= link_to "+ Sell Item", new_product_path, class: "btn-primary nav-btn" %>
+            <%= link_to "Messages", conversations_path, class: "btn-secondary nav-btn" %>
             <%= link_to "Profile", profile_path, class: "btn-secondary nav-btn" %>
             <%= button_to "Sign Out", sign_out_path, method: :delete, class: "btn-secondary", form: { data: { turbo: false } } %>
           <% else %>

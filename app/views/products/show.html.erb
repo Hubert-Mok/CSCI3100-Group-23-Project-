@@ -44,9 +44,11 @@
 
     <div class="show-actions">
       <% if logged_in? && current_user != @product.user %>
-        <button class="btn-primary btn-chat" disabled title="Chat coming soon">
+        <%= button_to conversations_path(product_id: @product.id),
+                      method: :post,
+                      class: "btn-primary btn-chat" do %>
           💬 Chat with Seller
-        </button>
+        <% end %>
         <% if @liked %>
           <%= button_to product_like_path(@product), method: :delete, class: "btn-like btn-liked", form: { data: { turbo: false } } do %>
             ♥ Unlike (<%= @product.likes_count %>)

@@ -1,0 +1,18 @@
+<%= turbo_stream.append dom_id(@conversation, :messages) do %>
+  <%= render "messages/message", message: @message %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@conversation, :new_message) do %>
+  <%= form_with model: [@conversation, @conversation.messages.build], class: "message-form" do |f| %>
+    <div class="message-form-field">
+      <%= f.text_area :body,
+                      rows: 2,
+                      placeholder: "Type your message...",
+                      class: "message-input" %>
+    </div>
+    <div class="message-form-actions">
+      <%= f.submit "Send", class: "btn-primary" %>
+    </div>
+  <% end %>
+<% end %>
+

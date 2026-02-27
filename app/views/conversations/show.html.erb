@@ -1,0 +1,52 @@
+<% content_for :title, "Chat – #{@conversation.product.title} – CUHK Marketplace" %>
+
+<%= turbo_stream_from @conversation %>
+
+<div class="conversation-show">
+  <div class="conversation-show-header">
+    <div>
+      <h1>Chat about "<%= @conversation.product.title %>"</h1>
+      <p>
+        <% other_user =
+             @conversation.buyer_id == current_user.id ? @conversation.seller : @conversation.buyer %>
+        Talking with <strong><%= other_user.username %></strong>
+        &middot;
+        <%= other_user.college_affiliation %>
+      </p>
+    </div>
+    <div class="conversation-header-actions">
+      <%= link_to "View listing", product_path(@conversation.product), class: "btn-secondary btn-sm" %>
+    </div>
+  </div>
+
+  <div class="conversation-layout">
+    <div id="<%= dom_id(@conversation, :messages) %>"
+         class="conversation-messages"
+         data-controller="auto-scroll">
+      <% if @messages.any? %>
+        <% @messages.each do |message| %>
+          <%= render "messages/message", message: message %>
+        <% end %>
+      <% else %>
+        <div class="conversation-empty-hint">
+          Start the conversation by saying hi 👋
+        </div>
+      <% end %>
+    </div>
+
+    <div id="<%= dom_id(@conversation, :new_message) %>" class="conversation-form">
+      <%= form_with model: [@conversation, @message], class: "message-form" do |f| %>
+        <div class="message-form-field">
+          <%= f.text_area :body,
+                          rows: 2,
+                          placeholder: "Type your message...",
+                          class: "message-input" %>
+        </div>
+        <div class="message-form-actions">
+          <%= f.submit "Send", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+

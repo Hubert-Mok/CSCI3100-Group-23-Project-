@@ -21,5 +21,10 @@ Rails.application.routes.draw do
     resource :like, only: %i[create destroy]
   end
 
+  # Conversations & messages
+  resources :conversations, only: %i[index show create] do
+    resources :messages, only: :create
+  end
+
   root "products#index"
 end
