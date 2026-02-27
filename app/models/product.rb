@@ -25,6 +25,17 @@ class Product < ApplicationRecord
   validates :price, numericality: { greater_than_or_equal_to: 0 }
   validates :category, presence: true, inclusion: { in: CATEGORIES }
 
-  scope :latest, -> { order(created_at: :desc) }
-  scope :active, -> { where.not(status: :sold) }
+  scope :latest,      -> { order(created_at: :desc) }
+  scope :active,      -> { where.not(status: :sold) }
+  scope :search,      ->(q)   { where("title ILIKE :q OR description ILIKE :q", q: "%#{q}%") if q.present? }
+  scope :by_category, ->(cat) { where(category: cat) if cat.present? }
+  scope :by_status,   ->(st)  { where(status: st) if st.present? }
+  scope :sorted_by,   ->(s) {
+    case s
+    when "price_asc"  then order(price: :asc)
+    when "price_desc" then order(price: :desc)
+    when "most_liked" then order(likes_count: :desc)
+    else order(created_at: :desc)
+    end
+  }
 end

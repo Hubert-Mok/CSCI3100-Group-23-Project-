@@ -1,0 +1,19 @@
+current directory: /Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/vendor/bundle/ruby/3.4.0+1/gems/stringio-3.2.0/ext/stringio
+/Users/chankokpan/.rbenv/versions/3.4.0/bin/ruby extconf.rb
+checking for rb_io_mode_t in ruby/io.h... no
+creating Makefile
+
+current directory: /Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/vendor/bundle/ruby/3.4.0+1/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260227-4553-p04msc sitelibdir\=./.gem.20260227-4553-p04msc clean
+
+current directory: /Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/vendor/bundle/ruby/3.4.0+1/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260227-4553-p04msc sitelibdir\=./.gem.20260227-4553-p04msc
+compiling stringio.c
+linking shared-object stringio.bundle
+
+current directory: /Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/vendor/bundle/ruby/3.4.0+1/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260227-4553-p04msc sitelibdir\=./.gem.20260227-4553-p04msc install
+/usr/bin/install -c -m 0755 stringio.bundle ./.gem.20260227-4553-p04msc
+
+current directory: /Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/vendor/bundle/ruby/3.4.0+1/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260227-4553-p04msc sitelibdir\=./.gem.20260227-4553-p04msc clean

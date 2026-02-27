@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Home
+  get "home/index", to: "home#index", as: :home_index
+
   # Authentication
   get    "sign_up",  to: "registrations#new",  as: :sign_up
   post   "sign_up",  to: "registrations#create"

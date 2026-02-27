@@ -5,7 +5,11 @@ class ProductsController < ApplicationController
 
   def index
     scope = logged_in? ? Product.where.not(user: current_user) : Product.all
-    @products = scope.includes(:user, thumbnail_attachment: :blob).latest
+    scope = scope.search(params[:q])
+                 .by_category(params[:category])
+                 .by_status(params[:status])
+    @products = scope.includes(:user, thumbnail_attachment: :blob)
+                     .sorted_by(params[:sort])
     @liked_ids = logged_in? ? current_user.likes.pluck(:product_id) : []
   end
 

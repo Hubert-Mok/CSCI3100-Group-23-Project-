@@ -4,13 +4,45 @@
   <div class="page-header-inner">
     <div>
       <h1 class="page-title">Campus Marketplace</h1>
-      <p class="page-subtitle"><%= pluralize(@products.size, "item") %> listed</p>
+      <p class="page-subtitle">
+        <%= pluralize(@products.size, "item") %> listed
+        <% if params[:q].present? %> for &ldquo;<%= params[:q] %>&rdquo;<% end %>
+      </p>
     </div>
     <% if logged_in? %>
       <%= link_to "+ Sell Item", new_product_path, class: "btn-primary" %>
     <% end %>
   </div>
 </div>
+
+<%= form_with url: products_path, method: :get, local: true, class: "filter-bar" do |f| %>
+  <%= f.text_field :q, value: params[:q], placeholder: "Search listings…", class: "filter-input" %>
+
+  <%= f.select :category,
+    options_for_select([["All Categories", ""]] + Product::CATEGORIES.map { |c| [c, c] }, params[:category]),
+    {}, class: "filter-select" %>
+
+  <%= f.select :status,
+    options_for_select([
+      ["All Statuses", ""],
+      ["Available",    "available"],
+      ["Reserved",     "reserved"],
+      ["Sold",         "sold"]
+    ], params[:status]),
+    {}, class: "filter-select" %>
+
+  <%= f.select :sort,
+    options_for_select([
+      ["Newest",            ""],
+      ["Price: Low → High", "price_asc"],
+      ["Price: High → Low", "price_desc"],
+      ["Most Liked",        "most_liked"]
+    ], params[:sort]),
+    {}, class: "filter-select" %>
+
+  <%= f.submit "Search", class: "filter-submit" %>
+  <%= link_to "Clear", products_path, class: "filter-clear" %>
+<% end %>
 
 <% if @products.any? %>
   <div class="products-grid">
@@ -19,12 +51,18 @@
 <% else %>
   <div class="empty-state">
     <div class="empty-state-icon">🛍️</div>
-    <h2>No listings yet</h2>
-    <p>Be the first to sell something on CUHK Marketplace!</p>
-    <% if logged_in? %>
-      <%= link_to "Post a listing", new_product_path, class: "btn-primary" %>
+    <% if params[:q].present? || params[:category].present? || params[:status].present? %>
+      <h2>No listings found</h2>
+      <p>Try adjusting your search or filters.</p>
+      <%= link_to "Clear filters", products_path, class: "btn-primary" %>
     <% else %>
-      <%= link_to "Sign in to post", sign_in_path, class: "btn-primary" %>
+      <h2>No listings yet</h2>
+      <p>Be the first to sell something on CUHK Marketplace!</p>
+      <% if logged_in? %>
+        <%= link_to "Post a listing", new_product_path, class: "btn-primary" %>
+      <% else %>
+        <%= link_to "Sign in to post", sign_in_path, class: "btn-primary" %>
+      <% end %>
     <% end %>
   </div>
 <% end %>
