@@ -61,6 +61,9 @@
       <% if logged_in? && current_user == @product.user %>
         <span class="like-count-static">♡ <%= @product.likes_count %> <%= @product.likes_count == 1 ? "like" : "likes" %></span>
         <%= link_to "Edit Listing", edit_product_path(@product), class: "btn-secondary btn-edit" %>
+        <%= button_to "Remove listing", product_path(@product), method: :delete,
+                      class: "btn-secondary btn-delete",
+                      data: { turbo_confirm: "Are you sure you want to remove this listing?" } %>
       <% end %>
 
       <% unless logged_in? %>

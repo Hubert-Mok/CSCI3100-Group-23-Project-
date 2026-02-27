@@ -754,6 +754,17 @@ body {
 
 .btn-security:hover { background: #f9fafb; color: #111827; }
 
+/* Destructive button (secondary-style) */
+.btn-delete {
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.btn-delete:hover {
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+
 /* ── Profile listings section ── */
 .profile-listings-section {
   background: #fff;
@@ -843,6 +854,22 @@ body {
 }
 
 .profile-listing-actions .link-edit:hover { text-decoration: underline; }
+
+.profile-listing-actions .link-delete {
+  font-size: 0.825rem;
+  color: #ef4444;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.profile-listing-actions .link-delete:hover {
+  text-decoration: underline;
+}
 
 .profile-empty {
   text-align: center;

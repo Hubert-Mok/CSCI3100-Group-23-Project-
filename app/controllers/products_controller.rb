@@ -1,7 +1,7 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[show edit update]
-  before_action :require_login, only: %i[new create edit update]
-  before_action :require_owner, only: %i[edit update]
+  before_action :set_product, only: %i[show edit update destroy]
+  before_action :require_login, only: %i[new create edit update destroy]
+  before_action :require_owner, only: %i[edit update destroy]
 
   def index
     scope = logged_in? ? Product.where.not(user: current_user) : Product.all
@@ -42,6 +42,14 @@ class ProductsController < ApplicationController
     end
   end
 
+  def destroy
+    if @product.destroy
+      redirect_to profile_path, notice: "Listing removed successfully."
+    else
+      redirect_to @product, alert: "Listing could not be removed. Please try again."
+    end
+  end
+
   private
 
   def set_product
@@ -50,7 +58,7 @@ class ProductsController < ApplicationController
 
   def require_owner
     unless current_user == @product.user
-      redirect_to @product, alert: "You are not authorised to edit this listing."
+      redirect_to @product, alert: "You are not authorised to manage this listing."
     end
   end
 

@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   resource :password, only: %i[edit update]
 
   # Products
-  resources :products, only: %i[index show new create edit update] do
+  resources :products, only: %i[index show new create edit update destroy] do
     resource :like, only: %i[create destroy]
   end
 
