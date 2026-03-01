@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :products, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :liked_products, through: :likes, source: :product
+  has_many :notifications, dependent: :destroy
   has_many :conversations_as_buyer, class_name: "Conversation", foreign_key: :buyer_id, dependent: :nullify
   has_many :conversations_as_seller, class_name: "Conversation", foreign_key: :seller_id, dependent: :nullify
   has_many :messages, dependent: :destroy

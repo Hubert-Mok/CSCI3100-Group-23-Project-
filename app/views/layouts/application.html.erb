@@ -31,6 +31,26 @@
         </div>
         <div class="nav-links">
           <% if logged_in? %>
+            <%= turbo_stream_from "notifications:#{current_user.id}" %>
+            <div class="nav-notifications" data-controller="notifications">
+              <button type="button" data-action="click->notifications#toggle" class="nav-notification-trigger" aria-label="Notifications">
+                <span class="nav-notification-icon" aria-hidden="true">🔔</span>
+                <% unread_count = current_user.notifications.unread.count %>
+                <span id="notification_badge" class="notification-badge" style="<%= 'display: none;' if unread_count.zero? %>"><%= unread_count %></span>
+              </button>
+              <div data-notifications-target="panel" class="notifications-dropdown" id="notifications_dropdown_panel">
+                <div class="notifications-dropdown-header">Notifications</div>
+                <div id="notifications_list" class="notifications-list">
+                  <% if current_user.notifications.recent.limit(10).none? %>
+                    <div class="notifications-empty">No notifications yet.</div>
+                  <% else %>
+                    <% current_user.notifications.recent.limit(10).each do |notification| %>
+                      <%= render "notifications/notification", notification: notification %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
             <%= link_to "+ Sell Item", new_product_path, class: "btn-primary nav-btn" %>
             <%= link_to "Messages", conversations_path, class: "btn-secondary nav-btn" %>
             <%= link_to "Profile", profile_path, class: "btn-secondary nav-btn" %>

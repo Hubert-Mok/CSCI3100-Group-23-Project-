@@ -1,0 +1,7 @@
+<%= link_to product_path(notification.product), id: dom_id(notification), class: "notification #{notification.read? ? 'notification--read' : 'notification--unread'}" do %>
+  <div class="notification-body">
+    <p class="notification-message"><%= notification.message %></p>
+    <p class="notification-meta"><%= time_ago_in_words(notification.created_at) %> ago</p>
+  </div>
+<% end %>
+

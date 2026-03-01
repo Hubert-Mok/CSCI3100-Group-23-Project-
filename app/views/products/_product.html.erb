@@ -7,7 +7,7 @@
         <span>No Image</span>
       </div>
     <% end %>
-    <span class="status-badge status-<%= product.status %>"><%= product.status.capitalize %></span>
+    <%= render "products/status_badge", product: product %>
   </div>
 
   <div class="product-card-body">

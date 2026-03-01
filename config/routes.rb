@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   resource :profile,  only: %i[show edit update]
   resource :password, only: %i[edit update]
 
+  # Notifications
+  resources :notifications, only: %i[index update]
+
   # Products
   resources :products, only: %i[index show new create edit update destroy] do
     resource :like, only: %i[create destroy]

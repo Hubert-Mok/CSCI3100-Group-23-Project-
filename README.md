@@ -40,5 +40,6 @@ docker compose up
 - Configure database seeds with realistic sample users, products, and likes.
 - Expand automated tests (models, controllers, and key flows via system tests).
 - Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
-- Implement buyer–seller chat on top of the existing placeholder button.
+- Implement a secure payment flow (e.g. Stripe/PayPal integration) to support online transactions between buyers and sellers.
+- Add real-time item status updates and notifications (e.g. reserved/sold) using Action Cable so buyers and sellers see changes instantly.
 - Enable and polish PWA support (manifest route, service worker, basic offline behaviour).

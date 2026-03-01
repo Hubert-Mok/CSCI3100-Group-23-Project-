@@ -9,6 +9,28 @@ class MessagesController < ApplicationController
     if @message.save
       @conversation.update!(last_message_at: Time.current)
 
+      recipient =
+        if @conversation.buyer_id == current_user.id
+          @conversation.seller
+        else
+          @conversation.buyer
+        end
+
+      notification = Notification.create!(
+        user: recipient,
+        product: @conversation.product,
+        message: "New message from #{current_user.username} about \"#{@conversation.product.title}\""
+      )
+
+      Turbo::StreamsChannel.broadcast_prepend_to(
+        "notifications:#{recipient.id}",
+        target: "notifications_list",
+        partial: "notifications/notification",
+        locals: { notification: }
+      )
+
+      broadcast_notification_badge_to(recipient)
+
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to conversation_path(@conversation) }

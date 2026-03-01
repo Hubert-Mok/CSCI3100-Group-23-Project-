@@ -35,7 +35,31 @@ class ProductsController < ApplicationController
   end
 
   def update
+    old_status = @product.status
     if @product.update(product_params)
+      if @product.status != old_status
+        @product.broadcast_replace_to(
+          @product,
+          target: "product_status_#{@product.id}",
+          partial: "products/status_badge",
+          locals: { product: @product }
+        )
+        interested = (@product.likers + @product.conversations.map(&:buyer)).uniq - [@product.user]
+        interested.each do |recipient|
+          notif = Notification.create!(
+            user: recipient,
+            product: @product,
+            message: "\"#{@product.title}\" is now #{@product.status.capitalize}"
+          )
+          Turbo::StreamsChannel.broadcast_prepend_to(
+            "notifications:#{recipient.id}",
+            target: "notifications_list",
+            partial: "notifications/notification",
+            locals: { notification: notif }
+          )
+          broadcast_notification_badge_to(recipient)
+        end
+      end
       redirect_to @product, notice: "Listing updated successfully!"
     else
       render :edit, status: :unprocessable_entity

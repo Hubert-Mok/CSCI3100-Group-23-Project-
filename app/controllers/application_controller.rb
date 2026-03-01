@@ -23,4 +23,18 @@ class ApplicationController < ActionController::Base
       redirect_to sign_in_path
     end
   end
+
+  def broadcast_notification_badge_to(user)
+    count = user.notifications.unread.count
+    badge_html = if count.zero?
+      '<span id="notification_badge" class="notification-badge" style="display: none;">0</span>'
+    else
+      "<span id=\"notification_badge\" class=\"notification-badge\">#{ERB::Util.html_escape(count)}</span>"
+    end
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "notifications:#{user.id}",
+      target: "notification_badge",
+      html: badge_html
+    )
+  end
 end

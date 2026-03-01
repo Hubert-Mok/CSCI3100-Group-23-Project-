@@ -1,5 +1,7 @@
 <% content_for :title, "#{@product.title} – CUHK Marketplace" %>
 
+<%= turbo_stream_from @product %>
+
 <div class="product-show">
   <div class="product-show-image">
     <% if @product.thumbnail.attached? %>
@@ -13,7 +15,7 @@
 
   <div class="product-show-details">
     <div class="show-header">
-      <span class="status-badge status-<%= @product.status %>"><%= @product.status.capitalize %></span>
+      <%= render "products/status_badge", product: @product %>
       <% if @product.gift? %>
         <span class="listing-type-badge">Gift</span>
       <% end %>
