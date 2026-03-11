@@ -37,9 +37,8 @@ class ConversationsController < ApplicationController
   end
 
   def authorize_participation!
-    return if [@conversation.buyer_id, @conversation.seller_id].include?(current_user.id)
+    return if [ @conversation.buyer_id, @conversation.seller_id ].include?(current_user.id)
 
     redirect_to root_path, alert: "You are not authorized to view that conversation."
   end
 end
-

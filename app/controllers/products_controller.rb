@@ -48,7 +48,7 @@ class ProductsController < ApplicationController
           partial: "products/status_badge",
           locals: { product: @product }
         )
-        interested = (@product.likers + @product.conversations.map(&:buyer)).uniq - [@product.user]
+        interested = (@product.likers + @product.conversations.map(&:buyer)).uniq - [ @product.user ]
         interested.each do |recipient|
           notif = Notification.create!(
             user: recipient,

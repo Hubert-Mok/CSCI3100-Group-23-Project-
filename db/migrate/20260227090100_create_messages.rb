@@ -9,4 +9,3 @@ class CreateMessages < ActiveRecord::Migration[8.1]
     end
   end
 end
-

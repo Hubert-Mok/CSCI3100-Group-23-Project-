@@ -9,4 +9,3 @@ class Conversation < ApplicationRecord
   validates :buyer_id, comparison: { other_than: :seller_id }
   validates :buyer_id, uniqueness: { scope: :product_id }
 end
-

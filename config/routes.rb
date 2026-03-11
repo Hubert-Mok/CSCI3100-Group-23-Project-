@@ -44,7 +44,7 @@ Rails.application.routes.draw do
     get :callback
   end
 
-  match "/webhooks/stripe", to: proc { [405, { "Content-Type" => "text/plain" }, ["Method Not Allowed"]] }, via: :get
+  match "/webhooks/stripe", to: proc { [ 405, { "Content-Type" => "text/plain" }, [ "Method Not Allowed" ] ] }, via: :get
   post "/webhooks/stripe", to: "stripe_webhooks#create"
 
   root "products#index"

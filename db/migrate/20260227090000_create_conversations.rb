@@ -9,9 +9,8 @@ class CreateConversations < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :conversations, [:product_id, :buyer_id], unique: true
+    add_index :conversations, [ :product_id, :buyer_id ], unique: true
     add_foreign_key :conversations, :users, column: :buyer_id
     add_foreign_key :conversations, :users, column: :seller_id
   end
 end
-
