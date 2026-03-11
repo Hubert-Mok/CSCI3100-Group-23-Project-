@@ -1,0 +1,12 @@
+<% content_for :title, "Connect Stripe – CUHK Marketplace" %>
+
+<div class="form-page">
+  <div class="form-page-header">
+    <h1>Connect Your Stripe Account</h1>
+    <p>To receive payments when buyers purchase your items, connect your Stripe account. You&rsquo;ll be redirected to Stripe to complete a short onboarding.</p>
+  </div>
+
+  <%= link_to "Connect with Stripe", stripe_account_path, class: "btn-primary btn-large" %>
+
+  <p class="form-page-back"><%= link_to "← Back to profile", profile_path %></p>
+</div>

@@ -27,6 +27,13 @@ http://localhost:3000
 docker compose up
 ```
 
+**4. Stripe (payments):** Create a `.env.development` file in the project root with:
+- `STRIPE_SECRET_PUBLIC_KEY` — your Stripe publishable key (e.g. `pk_test_...`)
+- `STRIPE_SECRET_PRIVATE_KEY` — your Stripe secret key (e.g. `sk_test_...`)
+- `STRIPE_WEBHOOK_SECRET` — from `stripe listen --forward-to localhost:3000/webhooks/stripe` (development) or the Stripe Dashboard (production)
+
+Docker Compose loads `.env.development` into the web service. For local dev without Docker, the app uses the `dotenv-rails` gem to load `.env.development`.
+
 ### Current status (brief)
 - Rails app set up with products (listings), users, and likes.
 - Email/password authentication with sign up / sign in / sign out flows.
@@ -40,6 +47,6 @@ docker compose up
 - Configure database seeds with realistic sample users, products, and likes.
 - Expand automated tests (models, controllers, and key flows via system tests).
 - Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
-- Implement a secure payment flow (e.g. Stripe/PayPal integration) to support online transactions between buyers and sellers.
+- ~~Implement a secure payment flow (e.g. Stripe/PayPal integration)~~ — Stripe Connect + Checkout with escrow (buyer confirms receipt before seller is paid).
 - Add real-time item status updates and notifications (e.g. reserved/sold) using Action Cable so buyers and sellers see changes instantly.
 - Enable and polish PWA support (manifest route, service worker, basic offline behaviour).

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_27_091000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_27_100100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -85,6 +85,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_091000) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.integer "amount_cents", null: false
+    t.bigint "buyer_id", null: false
+    t.datetime "created_at", null: false
+    t.string "currency", default: "hkd", null: false
+    t.bigint "product_id", null: false
+    t.integer "status", default: 0, null: false
+    t.string "stripe_checkout_session_id"
+    t.string "stripe_payment_intent_id"
+    t.string "stripe_transfer_id"
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_orders_on_buyer_id"
+    t.index ["product_id"], name: "index_orders_on_product_id"
+    t.index ["stripe_checkout_session_id"], name: "index_orders_on_stripe_checkout_session_id", unique: true
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "category"
     t.datetime "created_at", null: false
@@ -105,6 +121,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_091000) do
     t.string "cuhk_id", null: false
     t.string "email", null: false
     t.string "password_digest", null: false
+    t.string "stripe_account_id"
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -121,5 +138,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_091000) do
   add_foreign_key "messages", "users"
   add_foreign_key "notifications", "products"
   add_foreign_key "notifications", "users"
+  add_foreign_key "orders", "products"
+  add_foreign_key "orders", "users", column: "buyer_id"
   add_foreign_key "products", "users"
 end

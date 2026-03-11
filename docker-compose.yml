@@ -25,6 +25,8 @@ services:
       - bundle_cache:/usr/local/bundle
     ports:
       - "3000:3000"
+    env_file:
+      - .env.development
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/cuhk_market_place_development
       RAILS_ENV: development

@@ -32,6 +32,16 @@
         <%= link_to "Edit Profile", edit_profile_path, class: "btn-primary" %>
         <%= link_to "Change Password", edit_password_path, class: "btn-secondary btn-security" %>
       </div>
+
+      <div class="profile-stripe-section">
+        <h3 class="profile-stripe-title">Payment account</h3>
+        <% if current_user.stripe_account_id.present? %>
+          <p class="profile-stripe-status profile-stripe-connected">Stripe account connected. You can receive payments when buyers purchase your items.</p>
+        <% else %>
+          <p class="profile-stripe-status">Connect your Stripe account to accept payments and enable Buy Now on your listings.</p>
+          <%= link_to "Connect Stripe account", stripe_account_path, class: "btn-primary" %>
+        <% end %>
+      </div>
     </div>
   </div>
 

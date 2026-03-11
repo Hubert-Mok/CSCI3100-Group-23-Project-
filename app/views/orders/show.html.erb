@@ -1,0 +1,28 @@
+<% content_for :title, "Order ##{@order.id} – CUHK Marketplace" %>
+
+<div class="order-show">
+  <h1>Order #<%= @order.id %></h1>
+
+  <div class="order-status-badge order-status-<%= @order.status %>">
+    <%= @order.status.capitalize %>
+  </div>
+
+  <div class="order-details">
+    <p><strong>Product:</strong> <%= link_to @order.product.title, @order.product %></p>
+    <p><strong>Amount:</strong> HK$<%= number_with_precision(@order.amount_cents / 100.0, precision: 2) %></p>
+    <% if current_user == @order.buyer %>
+      <p><strong>Seller:</strong> <%= @order.product.user.username %></p>
+    <% else %>
+      <p><strong>Buyer:</strong> <%= @order.buyer.username %></p>
+    <% end %>
+  </div>
+
+  <% if current_user == @order.buyer && @order.paid? %>
+    <div class="order-confirm-received">
+      <p>Have you received the item? Confirm to release payment to the seller.</p>
+      <%= button_to "Confirm I Received the Item", confirm_received_order_path(@order), method: :post, class: "btn-primary" %>
+    </div>
+  <% end %>
+
+  <p class="form-page-back"><%= link_to "← Back to listing", @order.product %></p>
+</div>

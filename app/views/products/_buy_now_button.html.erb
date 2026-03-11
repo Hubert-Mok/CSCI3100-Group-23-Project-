@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "product_buy_now_#{product.id}" do %>
+  <% if product.available? && product.sale? && product.user.stripe_account_id.present? %>
+    <%= link_to "Buy Now", new_order_path(product_id: product.id), class: "btn-primary btn-buy", data: { turbo_frame: "_top" } %>
+  <% end %>
+<% end %>

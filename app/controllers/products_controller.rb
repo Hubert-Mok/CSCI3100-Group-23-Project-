@@ -25,7 +25,11 @@ class ProductsController < ApplicationController
     @product = current_user.products.build(product_params)
 
     if @product.save
-      redirect_to @product, notice: "Listing published successfully!"
+      notice = "Listing published successfully!"
+      if @product.sale? && current_user.stripe_account_id.blank?
+        flash[:alert] = "Connect your Stripe account so buyers can use Buy Now and you can receive payments."
+      end
+      redirect_to @product, notice: notice
     else
       render :new, status: :unprocessable_entity
     end
@@ -59,6 +63,9 @@ class ProductsController < ApplicationController
           )
           broadcast_notification_badge_to(recipient)
         end
+      end
+      if @product.sale? && current_user.stripe_account_id.blank?
+        flash[:alert] = "Connect your Stripe account so buyers can use Buy Now and you can receive payments."
       end
       redirect_to @product, notice: "Listing updated successfully!"
     else

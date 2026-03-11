@@ -5,6 +5,7 @@ class Product < ApplicationRecord
   has_many :likers, through: :likes, source: :user
   has_many :conversations, dependent: :destroy
   has_many :notifications, dependent: :destroy
+  has_many :orders, dependent: :destroy
 
   CATEGORIES = [
     "Books & Notes",

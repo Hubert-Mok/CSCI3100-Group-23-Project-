@@ -1,0 +1,33 @@
+<% content_for :title, "My Orders – CUHK Marketplace" %>
+
+<div class="orders-index">
+  <h1>My Orders</h1>
+
+  <% if @orders.any? %>
+    <ul class="orders-list">
+      <% @orders.each do |order| %>
+        <li class="order-list-item">
+          <div class="order-list-main">
+            <%= link_to order_path(order), class: "order-list-link" do %>
+              <strong>Order #<%= order.id %></strong>
+              &middot;
+              <%= order.product.title %>
+              &middot;
+              <span class="order-list-status order-status-<%= order.status %>"><%= order.status.capitalize %></span>
+              &middot;
+              HK$<%= number_with_precision(order.amount_cents / 100.0, precision: 2) %>
+            <% end %>
+          </div>
+          <% if order.paid? %>
+            <div class="order-list-action">
+              <%= link_to "Confirm received", order_path(order), class: "btn-primary btn-sm" %>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="orders-empty">You have no orders yet.</p>
+    <p><%= link_to "Browse listings", root_path, class: "btn-secondary" %></p>
+  <% end %>
+</div>

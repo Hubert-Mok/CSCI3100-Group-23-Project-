@@ -1,0 +1,31 @@
+<% content_for :title, "Checkout – #{@product.title} – CUHK Marketplace" %>
+
+<div class="form-page">
+  <div class="form-page-header">
+    <h1>Checkout</h1>
+    <p>Review your order. Your payment is held securely until you confirm you received the item.</p>
+  </div>
+
+  <div class="order-preview">
+    <div class="order-preview-product">
+      <% if @product.thumbnail.attached? %>
+        <%= image_tag @product.thumbnail.variant(resize_to_limit: [200, 150]), alt: @product.title, class: "order-preview-thumb" %>
+      <% else %>
+        <div class="order-preview-thumb-placeholder">No Image</div>
+      <% end %>
+      <div class="order-preview-details">
+        <h2><%= @product.title %></h2>
+        <p class="order-preview-seller">Seller: <%= @product.user.username %></p>
+        <p class="order-preview-price">HK$<%= number_with_precision(@product.price, precision: 2) %></p>
+      </div>
+    </div>
+
+    <div class="order-escrow-notice">
+      <strong>Escrow protection:</strong> Your payment goes to the platform first. After you receive the item, click &ldquo;Confirm I Received the Item&rdquo; and the seller will be paid.
+    </div>
+
+    <%= button_to "Proceed to Payment", orders_path(product_id: @product.id), method: :post, class: "btn-primary btn-large", form: { data: { turbo: false } } %>
+  </div>
+
+  <p class="form-page-back"><%= link_to "← Back to listing", @product %></p>
+</div>

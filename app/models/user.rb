@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :conversations_as_buyer, class_name: "Conversation", foreign_key: :buyer_id, dependent: :nullify
   has_many :conversations_as_seller, class_name: "Conversation", foreign_key: :seller_id, dependent: :nullify
   has_many :messages, dependent: :destroy
+  has_many :orders, foreign_key: :buyer_id, dependent: :destroy
 
   COLLEGES = [
     "Chung Chi College",

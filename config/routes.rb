@@ -29,5 +29,23 @@ Rails.application.routes.draw do
     resources :messages, only: :create
   end
 
+  # Orders (escrow payment flow)
+  resources :orders, only: %i[index new create show] do
+    member do
+      get :success
+      get :cancel
+      post :confirm_received
+    end
+  end
+
+  # Stripe Connect (seller onboarding)
+  resource :stripe_account, only: [] do
+    get :new
+    get :callback
+  end
+
+  match "/webhooks/stripe", to: proc { [405, { "Content-Type" => "text/plain" }, ["Method Not Allowed"]] }, via: :get
+  post "/webhooks/stripe", to: "stripe_webhooks#create"
+
   root "products#index"
 end

@@ -37,4 +37,36 @@ class ApplicationController < ActionController::Base
       html: badge_html
     )
   end
+
+  def notify_seller_payment_received(order)
+    seller = order.product.user
+    notif = Notification.create!(
+      user: seller,
+      product: order.product,
+      message: "A buyer has paid for \"#{order.product.title}\". Payment is held until they confirm receipt."
+    )
+    Turbo::StreamsChannel.broadcast_prepend_to(
+      "notifications:#{seller.id}",
+      target: "notifications_list",
+      partial: "notifications/notification",
+      locals: { notification: notif }
+    )
+    broadcast_notification_badge_to(seller)
+  end
+
+  def notify_seller_release_received(order)
+    seller = order.product.user
+    notif = Notification.create!(
+      user: seller,
+      product: order.product,
+      message: "The buyer confirmed receipt. You've been paid for \"#{order.product.title}\"."
+    )
+    Turbo::StreamsChannel.broadcast_prepend_to(
+      "notifications:#{seller.id}",
+      target: "notifications_list",
+      partial: "notifications/notification",
+      locals: { notification: notif }
+    )
+    broadcast_notification_badge_to(seller)
+  end
 end
