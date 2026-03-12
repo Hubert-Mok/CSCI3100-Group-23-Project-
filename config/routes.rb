@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   resource :profile,  only: %i[show edit update]
   resource :password, only: %i[edit update]
 
+  # Public seller profiles
+  resources :sellers, only: %i[show]
+
   # Notifications
   resources :notifications, only: %i[index update destroy] do
     delete :clear_all, on: :collection

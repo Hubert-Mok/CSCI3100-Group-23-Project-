@@ -11,7 +11,12 @@
     </div>
 
     <div class="profile-info-col">
-      <h1 class="profile-name"><%= current_user.username %></h1>
+      <h1 class="profile-name">
+        <%= current_user.username %>
+        <% if current_user.stripe_account_id.present? %>
+          <%= render "shared/verified_badge" %>
+        <% end %>
+      </h1>
 
       <div class="profile-fields">
         <div class="profile-field">

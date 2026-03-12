@@ -599,6 +599,20 @@ body {
   font-size: 0.8rem;
 }
 
+.verified-badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.25rem;
+  width: 14px;
+  height: 14px;
+}
+
+.verified-badge svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 /* ── Status badge ── */
 .status-badge {
   position: absolute;
@@ -912,6 +926,90 @@ body {
   font-weight: 700;
   color: #1e1b4b;
   margin-bottom: 1rem;
+}
+
+.seller-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.seller-header-card {
+  background: #020617;
+  color: #f9fafb;
+  border-radius: 999px;
+  padding: 1.2rem 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.seller-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 0.03em;
+}
+
+.seller-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.seller-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.seller-college {
+  font-size: 0.85rem;
+  color: #d1d5db;
+}
+
+.seller-meta {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.seller-products-section {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  padding: 1.5rem 1.75rem;
+}
+
+.seller-products-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.seller-empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem 1rem;
+}
+
+@media (max-width: 640px) {
+  .seller-header-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .profile-fields {

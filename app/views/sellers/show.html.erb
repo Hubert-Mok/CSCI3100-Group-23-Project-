@@ -1,0 +1,44 @@
+<% content_for :title, "#{@seller.username} – Seller profile" %>
+
+<div class="seller-page">
+  <div class="seller-header-card">
+    <div class="seller-avatar">
+      <%= @seller.username.first(2).upcase %>
+    </div>
+    <div class="seller-header-info">
+      <div class="seller-header-top-line">
+        <h1 class="seller-name">
+          <%= @seller.username %>
+          <% if @seller.stripe_account_id.present? %>
+            <%= render "shared/verified_badge" %>
+          <% end %>
+        </h1>
+      </div>
+      <p class="seller-college"><%= @seller.college_affiliation %></p>
+      <p class="seller-meta">
+        <span><%= pluralize(@products.size, "listing") %></span>
+        ·
+        <span>Member since <%= @seller.created_at.strftime("%b %Y") %></span>
+      </p>
+    </div>
+  </div>
+
+  <div class="seller-products-section">
+    <div class="seller-products-header">
+      <h2>Products</h2>
+    </div>
+
+    <% if @products.any? %>
+      <div class="products-grid">
+        <% @products.each do |product| %>
+          <%= render "products/product", product: product %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="seller-empty">
+        <p>This seller has no active listings yet.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+

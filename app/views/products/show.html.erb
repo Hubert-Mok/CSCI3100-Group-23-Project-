@@ -41,7 +41,15 @@
 
     <div class="show-section">
       <h2 class="show-section-title">Seller</h2>
-      <p class="show-seller"><%= @product.user.username %> &middot; <%= @product.user.college_affiliation %></p>
+      <p class="show-seller">
+        <%= link_to seller_path(@product.user) do %>
+          <%= @product.user.username %>
+          <% if @product.user.stripe_account_id.present? %>
+            <%= render "shared/verified_badge" %>
+          <% end %>
+        <% end %>
+        &middot; <%= @product.user.college_affiliation %>
+      </p>
     </div>
 
     <div class="show-actions">

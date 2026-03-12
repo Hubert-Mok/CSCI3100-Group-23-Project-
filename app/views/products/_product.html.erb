@@ -23,7 +23,12 @@
           HK$<%= number_with_precision(product.price, precision: 0) %>
         <% end %>
       </span>
-      <span class="product-seller">by <%= product.user.username %></span>
+      <span class="product-seller">
+        by <%= product.user.username %>
+        <% if product.user.stripe_account_id.present? %>
+          <%= render "shared/verified_badge" %>
+        <% end %>
+      </span>
     </div>
   </div>
   <div class="product-card-footer">
