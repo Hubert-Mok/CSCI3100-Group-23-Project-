@@ -1,7 +1,7 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[show edit update destroy]
-  before_action :require_login, only: %i[new create edit update destroy]
-  before_action :require_owner, only: %i[edit update destroy]
+  before_action :set_product, only: %i[show edit update destroy delete_chats]
+  before_action :require_login, only: %i[new create edit update destroy delete_chats]
+  before_action :require_owner, only: %i[edit update destroy delete_chats]
 
   def index
     scope = logged_in? ? Product.where.not(user: current_user) : Product.all
@@ -79,6 +79,16 @@ class ProductsController < ApplicationController
     else
       redirect_to @product, alert: "Listing could not be removed. Please try again."
     end
+  end
+
+  def delete_chats
+    unless @product.sold?
+      redirect_to profile_path, alert: "Chats can only be deleted after the listing is marked as sold."
+      return
+    end
+
+    @product.conversations.destroy_all
+    redirect_to profile_path, notice: "All chats for this listing have been deleted."
   end
 
   private

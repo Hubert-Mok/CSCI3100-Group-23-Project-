@@ -2,9 +2,24 @@
      message.user_id == current_user.id ? "message-bubble message-bubble-outgoing" : "message-bubble message-bubble-incoming" %>
 
 <div class="<%= css_class %>">
-  <div class="message-body">
-    <%= simple_format(message.body) %>
-  </div>
+  <% if message.body.present? %>
+    <div class="message-body">
+      <%= simple_format(message.body) %>
+    </div>
+  <% end %>
+  <% if message.attachments.attached? %>
+    <div class="message-attachments">
+      <% message.attachments.each do |attachment| %>
+        <% if attachment.image? %>
+          <%= link_to rails_blob_path(attachment), target: "_blank", rel: "noopener", class: "message-attachment-link" do %>
+            <%= image_tag attachment.variant(resize_to_limit: [400, 400]), class: "message-attachment-image", alt: attachment.filename.to_s %>
+          <% end %>
+        <% else %>
+          <%= link_to attachment.filename, rails_blob_path(attachment), class: "message-attachment-file" %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
   <div class="message-meta">
     <span class="message-sender">
       <%= message.user_id == current_user.id ? "You" : message.user.username %>

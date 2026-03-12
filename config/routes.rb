@@ -17,15 +17,20 @@ Rails.application.routes.draw do
   resource :password, only: %i[edit update]
 
   # Notifications
-  resources :notifications, only: %i[index update]
+  resources :notifications, only: %i[index update destroy] do
+    delete :clear_all, on: :collection
+  end
 
   # Products
   resources :products, only: %i[index show new create edit update destroy] do
     resource :like, only: %i[create destroy]
+    member do
+      delete :delete_chats
+    end
   end
 
   # Conversations & messages
-  resources :conversations, only: %i[index show create] do
+  resources :conversations, only: %i[index show create destroy] do
     resources :messages, only: :create
   end
 

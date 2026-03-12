@@ -1,13 +1,16 @@
 class ConversationsController < ApplicationController
   before_action :require_login
-  before_action :set_conversation, only: :show
-  before_action :authorize_participation!, only: :show
+  before_action :set_conversation, only: %i[show destroy]
+  before_action :authorize_participation!, only: %i[show destroy]
 
   def index
+    base = Conversation.includes(:product, :buyer, :seller, :messages)
+    as_buyer = base.where(buyer: current_user, buyer_deleted_at: nil)
+    as_seller = base.where(seller: current_user, seller_deleted_at: nil)
+
     @conversations =
-      Conversation
-        .includes(:product, :buyer, :seller, :messages)
-        .where("buyer_id = :user_id OR seller_id = :user_id", user_id: current_user.id)
+      as_buyer
+        .or(as_seller)
         .order(Arel.sql("COALESCE(last_message_at, created_at) DESC"))
   end
 
@@ -26,8 +29,20 @@ class ConversationsController < ApplicationController
   end
 
   def show
+    if @conversation.deleted_for?(current_user)
+      redirect_to conversations_path, alert: "That conversation was deleted."
+      return
+    end
+
     @messages = @conversation.messages.includes(:user).order(:created_at)
     @message = @conversation.messages.build
+  end
+
+  def destroy
+    @conversation.mark_deleted_for!(current_user)
+    @conversation.destroy if @conversation.both_deleted?
+
+    redirect_to conversations_path, notice: "Conversation deleted."
   end
 
   private

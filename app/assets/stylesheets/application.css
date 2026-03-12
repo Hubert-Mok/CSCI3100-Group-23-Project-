@@ -125,6 +125,27 @@ body {
   color: #6b7280;
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.notifications-clear-all {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7c3aed;
+  cursor: pointer;
+}
+
+.notifications-clear-all:hover {
+  color: #6d28d9;
+  text-decoration: underline;
 }
 
 .notifications-list {
@@ -145,12 +166,44 @@ body {
 }
 
 .notification {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #f3f4f6;
   transition: background 0.1s;
   text-decoration: none;
   color: inherit;
+}
+
+.notification-link {
+  text-decoration: none;
+  color: inherit;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.notification-actions {
+  flex: 0 0 auto;
+}
+
+.notification-delete {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #9ca3af;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.notification-delete:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #ef4444;
 }
 
 .notification:last-child {
@@ -1371,6 +1424,55 @@ body {
 
 .message-time {
   opacity: 0.9;
+}
+
+.message-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.message-attachment-link {
+  display: block;
+  line-height: 0;
+}
+
+.message-attachment-image {
+  max-width: 100%;
+  max-height: 280px;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  object-fit: contain;
+}
+
+.message-attachment-file {
+  font-size: 0.875rem;
+  color: inherit;
+  text-decoration: underline;
+  word-break: break-all;
+}
+
+.message-bubble-incoming .message-attachment-file {
+  color: #7c3aed;
+}
+
+.message-bubble-incoming .message-attachment-file:hover {
+  color: #6d28d9;
+}
+
+.message-form-hint {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.message-file-input {
+  font-size: 0.875rem;
+  max-width: 100%;
 }
 
 @media (max-width: 640px) {

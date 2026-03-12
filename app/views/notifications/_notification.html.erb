@@ -1,7 +1,24 @@
-<%= link_to product_path(notification.product), id: dom_id(notification), class: "notification #{notification.read? ? 'notification--read' : 'notification--unread'}" do %>
-  <div class="notification-body">
-    <p class="notification-message"><%= notification.message %></p>
-    <p class="notification-meta"><%= time_ago_in_words(notification.created_at) %> ago</p>
+<% if notification.message.start_with?("New message from")
+     conversation = Conversation.where(product: notification.product)
+                                .where("buyer_id = ? OR seller_id = ?", notification.user_id, notification.user_id)
+                                .first
+     notif_path = conversation ? conversation_path(conversation) : product_path(notification.product)
+   else
+     notif_path = product_path(notification.product)
+   end %>
+<div id="<%= dom_id(notification) %>" class="notification #{notification.read? ? 'notification--read' : 'notification--unread'}">
+  <%= link_to notif_path, class: "notification-link" do %>
+    <div class="notification-body">
+      <p class="notification-message"><%= notification.message %></p>
+      <p class="notification-meta"><%= time_ago_in_words(notification.created_at) %> ago</p>
+    </div>
+  <% end %>
+  <div class="notification-actions">
+    <%= button_to "×",
+                  notification_path(notification),
+                  method: :delete,
+                  class: "notification-delete",
+                  form: { data: { turbo_confirm: "Delete this notification?" } } %>
   </div>
-<% end %>
+</div>
 

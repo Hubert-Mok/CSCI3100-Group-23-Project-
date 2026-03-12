@@ -28,8 +28,16 @@
               </span>
               <% if (last_message = conversation.messages.order(created_at: :desc).first) %>
                 <span class="conversation-snippet">
-                  <%= (last_message.user_id == current_user.id ? "You: " : "") +
-                      truncate(strip_tags(last_message.body.to_s), length: 80) %>
+                  <% prefix = last_message.user_id == current_user.id ? "You: " : "" %>
+                  <% if last_message.body.present? %>
+                    <%= prefix + truncate(strip_tags(last_message.body.to_s), length: 80) %>
+                  <% elsif last_message.attachments.attached? %>
+                    <% n = last_message.attachments.size %>
+                    <% images = last_message.attachments.select(&:image?).size %>
+                    <% files = n - images %>
+                    <%= prefix %>
+                    <%= [images.positive? ? (images == 1 ? "1 image" : "#{images} images") : nil, files.positive? ? (files == 1 ? "1 file" : "#{files} files") : nil].compact.join(", ") %>
+                  <% end %>
                 </span>
               <% end %>
             </div>

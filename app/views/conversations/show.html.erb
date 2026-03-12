@@ -16,6 +16,11 @@
     </div>
     <div class="conversation-header-actions">
       <%= link_to "View listing", product_path(@conversation.product), class: "btn-secondary btn-sm" %>
+      <%= button_to "Delete chat",
+                    conversation_path(@conversation),
+                    method: :delete,
+                    class: "btn-secondary btn-delete btn-sm",
+                    data: { turbo_confirm: "Hide this chat from your inbox? If both users hide it, it will be permanently deleted." } %>
     </div>
   </div>
 
@@ -41,6 +46,10 @@
                           rows: 2,
                           placeholder: "Type your message...",
                           class: "message-input" %>
+        </div>
+        <div class="message-form-field">
+          <%= f.file_field :attachments, multiple: true, accept: "image/*,.pdf,.doc,.docx", class: "message-file-input" %>
+          <p class="message-form-hint">Photos and files (optional)</p>
         </div>
         <div class="message-form-actions">
           <%= f.submit "Send", class: "btn-primary" %>

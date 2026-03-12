@@ -39,7 +39,14 @@
                 <span id="notification_badge" class="notification-badge" style="<%= 'display: none;' if unread_count.zero? %>"><%= unread_count %></span>
               </button>
               <div data-notifications-target="panel" class="notifications-dropdown" id="notifications_dropdown_panel">
-                <div class="notifications-dropdown-header">Notifications</div>
+                <div class="notifications-dropdown-header">
+                  <span>Notifications</span>
+                  <%= button_to "Clear all",
+                                clear_all_notifications_path,
+                                method: :delete,
+                                class: "notifications-clear-all",
+                                form: { data: { turbo_confirm: "Clear all notifications?" } } %>
+                </div>
                 <div id="notifications_list" class="notifications-list">
                   <% if current_user.notifications.recent.limit(10).none? %>
                     <div class="notifications-empty">No notifications yet.</div>

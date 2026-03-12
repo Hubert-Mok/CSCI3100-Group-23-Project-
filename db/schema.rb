@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_27_100100) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_27_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,14 +43,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_100100) do
   end
 
   create_table "conversations", force: :cascade do |t|
+    t.datetime "buyer_deleted_at"
     t.bigint "buyer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "last_message_at"
     t.bigint "product_id", null: false
+    t.datetime "seller_deleted_at"
     t.bigint "seller_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["buyer_deleted_at"], name: "index_conversations_on_buyer_deleted_at"
     t.index ["product_id", "buyer_id"], name: "index_conversations_on_product_id_and_buyer_id", unique: true
     t.index ["product_id"], name: "index_conversations_on_product_id"
+    t.index ["seller_deleted_at"], name: "index_conversations_on_seller_deleted_at"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -64,7 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_100100) do
   end
 
   create_table "messages", force: :cascade do |t|
-    t.text "body", null: false
+    t.text "body"
     t.bigint "conversation_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
