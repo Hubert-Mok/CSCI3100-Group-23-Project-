@@ -3,7 +3,11 @@
 <div class="seller-page">
   <div class="seller-header-card">
     <div class="seller-avatar">
-      <%= @seller.username.first(2).upcase %>
+      <% if @seller.avatar.attached? %>
+        <%= image_tag @seller.avatar.variant(resize_to_fill: [64, 64]), class: "seller-avatar-image", alt: @seller.username %>
+      <% else %>
+        <%= @seller.username.first(2).upcase %>
+      <% end %>
     </div>
     <div class="seller-header-info">
       <div class="seller-header-top-line">

@@ -1,5 +1,9 @@
 <% content_for :title, "Edit Profile – CUHK Marketplace" %>
 
+<% content_for :head do %>
+  <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">
+<% end %>
+
 <div class="form-page">
   <div class="form-page-header">
     <h1>Edit Profile</h1>
@@ -17,7 +21,52 @@
     </div>
   <% end %>
 
-  <%= form_with model: @user, url: profile_path, method: :patch, class: "auth-form" do |f| %>
+  <%= form_with model: @user, url: profile_path, method: :patch, class: "auth-form", multipart: true do |f| %>
+    <div class="form-group avatar-upload-group" data-controller="avatar-crop">
+      <label>Profile Photo</label>
+
+      <%# Live preview — updates after crop %>
+      <div class="avatar-upload-preview" data-avatar-crop-target="previewWrap">
+        <% if @user.avatar.attached? %>
+          <%= image_tag @user.avatar.variant(resize_to_fill: [96, 96]),
+                class: "avatar-upload-current", alt: "Current avatar" %>
+        <% else %>
+          <div class="avatar-upload-initials"><%= @user.username.first(2).upcase %></div>
+        <% end %>
+      </div>
+
+      <%# Visible button — opens the file picker %>
+      <button type="button" class="btn-primary btn-sm"
+              data-action="click->avatar-crop#openPicker">Choose Photo</button>
+
+      <%# Non-submitted trigger input — used only to pick the source image %>
+      <input type="file" accept="image/*" style="display:none"
+             data-avatar-crop-target="triggerInput"
+             data-action="change->avatar-crop#onFileChange">
+
+      <%# Real submitted input — receives the cropped blob via JavaScript %>
+      <input type="file" name="user[avatar]" style="display:none"
+             data-avatar-crop-target="hiddenInput">
+
+      <span class="static-hint">JPG or PNG, square crop will be applied.</span>
+
+      <%# Crop modal %>
+      <div class="avatar-crop-modal" data-avatar-crop-target="modal" style="display:none">
+        <div class="avatar-crop-dialog">
+          <h3 class="avatar-crop-title">Adjust Photo</h3>
+          <div class="avatar-crop-image-wrap">
+            <img data-avatar-crop-target="cropImage" src="" alt="Crop preview">
+          </div>
+          <div class="avatar-crop-actions">
+            <button type="button" class="btn-primary"
+                    data-action="click->avatar-crop#cropAndSave">Crop &amp; Save</button>
+            <button type="button" class="btn-secondary"
+                    data-action="click->avatar-crop#cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="form-group">
       <%= f.label :username, "Username" %>
       <%= f.text_field :username, required: true, autocomplete: "username" %>

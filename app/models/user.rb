@@ -10,6 +10,8 @@ class User < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :orders, foreign_key: :buyer_id, dependent: :destroy
 
+  has_one_attached :avatar
+
   COLLEGES = [
     "Chung Chi College",
     "New Asia College",
