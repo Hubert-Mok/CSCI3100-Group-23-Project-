@@ -15,7 +15,13 @@ Wait until you see `Listening on http://0.0.0.0:3000`. The first run takes a few
 docker compose exec web bundle exec rails db:create db:migrate
 ```
 
-**3. Open in your browser:**
+**3. In the second terminal tab, add sample data (for development only):**
+```bash
+docker compose exec web rails dev:reset_samples
+```
+You will see `⚠️  This will DELETE ALL PRODUCTS from the database! Are you sure? Type Y to continue, anything else to cancel.`, type `Y` to reset sample data.
+
+**4. Open in your browser:**
 ```
 http://localhost:3000
 ```
@@ -27,7 +33,7 @@ http://localhost:3000
 docker compose up
 ```
 
-**4. Stripe (payments):** Create a `.env.development` file in the project root with:
+**5. Stripe (payments):** Create a `.env.development` file in the project root with:
 - `STRIPE_SECRET_PUBLIC_KEY` — your Stripe publishable key (e.g. `pk_test_...`)
 - `STRIPE_SECRET_PRIVATE_KEY` — your Stripe secret key (e.g. `sk_test_...`)
 - `STRIPE_WEBHOOK_SECRET` — from `stripe listen --forward-to localhost:3000/webhooks/stripe` (development) or the Stripe Dashboard (production)
@@ -73,7 +79,7 @@ On each push and pull request to `main`, GitHub Actions runs:
 ### TODO (brief)
 - Refine product creation/editing UI and validations (e.g. price rules, description length).
 - Add more robust flash messages and edge-case handling (e.g. expired sessions, unauthorized access).
-- Configure database seeds with realistic sample users, products, and likes.
+- Configure database seeds with realistic ~~sample users, products, and~~ likes.
 - Expand automated tests (models, controllers, and key flows via system tests).
 - Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
 - ~~Implement a secure payment flow (e.g. Stripe/PayPal integration)~~ — Stripe Connect + Checkout with escrow (buyer confirms receipt before seller is paid).
