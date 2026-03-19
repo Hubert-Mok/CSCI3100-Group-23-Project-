@@ -20,7 +20,7 @@ docker compose exec web bundle exec rails db:create db:migrate
 docker compose exec web rails dev:reset_samples
 ```
 You will see "⚠️  This will DELETE ALL PRODUCTS from the database!
-Are you sure? Type `Y` to continue, anything else to cancel.", type Y to reset sample data.
+Are you sure? Type Y to continue, anything else to cancel.", type `Y` to reset sample data.
 
 **4. Open in your browser:**
 ```
