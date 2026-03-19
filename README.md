@@ -14,12 +14,13 @@ Wait until you see `Listening on http://0.0.0.0:3000`. The first run takes a few
 ```bash
 docker compose exec web bundle exec rails db:create db:migrate
 ```
+
 **3. In the second terminal tab, add sample data (for development only):**
 ```bash
 docker compose exec web rails dev:reset_samples
 ```
 You will see "⚠️  This will DELETE ALL PRODUCTS from the database!
-Are you sure? Type Y to continue, anything else to cancel.", type Y to reset sample data.
+Are you sure? Type `Y` to continue, anything else to cancel.", type Y to reset sample data.
 
 **4. Open in your browser:**
 ```
