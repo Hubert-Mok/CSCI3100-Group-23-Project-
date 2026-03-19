@@ -6,4 +6,3 @@ class SellersController < ApplicationController
                          .order(created_at: :desc)
   end
 end
-

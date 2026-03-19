@@ -6,4 +6,3 @@ class AddDeletedAtToConversations < ActiveRecord::Migration[8.1]
     add_index :conversations, :seller_deleted_at
   end
 end
-

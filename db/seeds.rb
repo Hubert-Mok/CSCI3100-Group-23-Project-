@@ -13,16 +13,16 @@ puts "🌱 Seeding sample data..."
 
 User.find_or_create_by!(email: "seller1@cuhk.edu.hk") do |u|
   u.password              = u.password_confirmation = "spassword1"
-  u.username              = "seller1"               
-  u.cuhk_id               = "1155111111"     
+  u.username              = "seller1"
+  u.cuhk_id               = "1155111111"
   u.college_affiliation   = "United College"
-end         
+end
 
 User.find_or_create_by!(email: "seller2@cuhk.edu.hk") do |u|
   u.password              = u.password_confirmation = "spassword2"
-  u.username              = "seller2"               
-  u.cuhk_id               = "1155222222"     
-  u.college_affiliation   = "Shaw College"         
+  u.username              = "seller2"
+  u.cuhk_id               = "1155222222"
+  u.college_affiliation   = "Shaw College"
 end
 
 User.find_or_create_by!(email: "buyer3@cuhk.edu.hk") do |u|
@@ -79,13 +79,12 @@ else
     puts "Products already exist, skipping product seeding."
 end
 
-
 # Likes - only if buyer exists and products exist
-#if buyer.persisted? && Product.exists?
- # Product.limit(3).each do |product|
-  #  Like.find_or_create_by!(user: buyer, product: product)
-  #end
-#end
+# if buyer.persisted? && Product.exists?
+# Product.limit(3).each do |product|
+#  Like.find_or_create_by!(user: buyer, product: product)
+# end
+# end
 
 puts "✅ Done! Check localhost:3000 after refresh."
 puts "Login examples:"
