@@ -3,14 +3,20 @@ class LikesController < ApplicationController
   before_action :set_product
 
   def create
-    current_user.likes.create(product: @product)
-    redirect_to @product
+    if current_user.likes.create(product: @product)
+      redirect_to @product, notice: "Added to your liked items."
+    else
+      redirect_to @product, alert: "Could not like this item."
+    end
   end
 
   def destroy
     like = current_user.likes.find_by(product: @product)
-    like&.destroy
-    redirect_to @product
+    if like&.destroy
+      redirect_to @product, notice: "Removed from your liked items."
+    else
+      redirect_to @product, alert: "Could not unlike this item."
+    end
   end
 
   private

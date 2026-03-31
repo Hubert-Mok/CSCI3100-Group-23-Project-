@@ -24,6 +24,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    flash[:alert] = "The page you were looking for doesn't exist."
+    redirect_to root_path
+  end
+
   def broadcast_notification_badge_to(user)
     count = user.notifications.unread.count
     badge_html = if count.zero?
