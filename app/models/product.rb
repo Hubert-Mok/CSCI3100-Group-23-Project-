@@ -23,9 +23,22 @@ class Product < ApplicationRecord
   enum :status, { available: 0, reserved: 1, sold: 2 }
   enum :listing_type, { sale: 0, gift: 1 }
 
-  validates :title, presence: true, length: { maximum: 100 }
-  validates :description, presence: true
+  validates :title, presence: true, length: { min: 3, maximum: 100 }
+  validates :description, presence: true, length: { minimum: 10, maximum: 1000 }
   validates :price, numericality: { greater_than_or_equal_to: 0 }
+  validate :price_matches_listing_type
+
+  private
+
+  def price_matches_listing_type
+    if gift? && price.to_f > 0
+      errors.add(:price, "must be 0 for free/gift listings")
+    elsif sale? && price.to_f <= 0
+      errors.add(:price, "must be greater than 0 for sale listings")
+    end
+  end
+
+
   validates :category, presence: true, inclusion: { in: CATEGORIES }
 
   scope :latest,      -> { order(created_at: :desc) }
