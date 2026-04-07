@@ -75,4 +75,3 @@ class ApplicationController < ActionController::Base
     broadcast_notification_badge_to(seller)
   end
 end
-
