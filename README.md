@@ -84,4 +84,4 @@ On each push and pull request to `main`, GitHub Actions runs:
 - Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
 - ~~Implement a secure payment flow (e.g. Stripe/PayPal integration)~~ — Stripe Connect + Checkout with escrow (buyer confirms receipt before seller is paid).
 - ~~Add real-time item status updates and notifications (e.g. reserved/sold) using Action Cable so buyers and sellers see changes instantly.~~ — implemented via Turbo Stream broadcasts for orders and item status, plus notification badge updates.
-- Enable and polish PWA support (manifest route, service worker, basic offline behaviour).
+- ~~Enable and polish PWA support (manifest route, service worker, basic offline behaviour).~~
