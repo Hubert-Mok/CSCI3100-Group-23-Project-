@@ -80,7 +80,7 @@ On each push and pull request to `main`, GitHub Actions runs:
 -~~Refine product creation/editing UI and validations (e.g. price rules, description length)~~
 - ~~Add more robust flash messages and edge-case handling (e.g. expired sessions, unauthorized access).~~
 - ~~Configure database seeds with realistic sample users, products, and likes.~~
-- ~~Expand automated tests (models, controllers, and key flows via system tests).~~
+- Expand automated tests (models, controllers, and key flows via system tests).
 - Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
 - ~~Implement a secure payment flow (e.g. Stripe/PayPal integration)~~ — Stripe Connect + Checkout with escrow (buyer confirms receipt before seller is paid).
 - ~~Add real-time item status updates and notifications (e.g. reserved/sold) using Action Cable so buyers and sellers see changes instantly.~~ — implemented via Turbo Stream broadcasts for orders and item status, plus notification badge updates.
