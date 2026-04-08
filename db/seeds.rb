@@ -21,7 +21,7 @@ users_data = [
   { email: "bob@cuhk.edu.hk", password: "bpassword5", username: "bob_deals", cuhk_id: "1155555555", college_affiliation: "S.H. Ho College" },
   { email: "carol@cuhk.edu.hk", password: "cpassword6", username: "carol_mart", cuhk_id: "1155666666", college_affiliation: "Morningside College" },
   { email: "dave@cuhk.edu.hk", password: "dpassword7", username: "dave_sells", cuhk_id: "1155777777", college_affiliation: "Lee Woo Sing College" },
-  { email: "emma@cuhk.edu.hk", password: "epassword8", username: "emma_finds", cuhk_id: "1155888888", college_affiliation: "Wu Yee Sun College" },
+  { email: "emma@cuhk.edu.hk", password: "epassword8", username: "emma_finds", cuhk_id: "1155888888", college_affiliation: "Wu Yee Sun College" }
 ]
 
 users = users_data.map do |data|
@@ -77,7 +77,7 @@ if Product.count.zero?
 
     # Others
     { title: "Moving Out Bundle - Kitchen Items", description: "Graduating and moving out! Includes electric kettle, rice cooker, plates, cups, and utensils. Everything must go. Prefer to sell as a bundle.", price: 150.00, status: "available", listing_type: "sale", category: "Others", user: users[3], thumbnail: "kitchen_item.jpg" },
-    { title: "Free Board Games Collection", description: "Settlers of Catan, Codenames, and Uno. All complete with no missing pieces. Great for hall gatherings. Pickup at United College.", price: 0.00, status: "available", listing_type: "gift", category: "Others", user: users[0], thumbnail: "boardgame.jpg" },
+    { title: "Free Board Games Collection", description: "Settlers of Catan, Codenames, and Uno. All complete with no missing pieces. Great for hall gatherings. Pickup at United College.", price: 0.00, status: "available", listing_type: "gift", category: "Others", user: users[0], thumbnail: "boardgame.jpg" }
   ]
 
   products_data.each do |data|
