@@ -4,11 +4,12 @@ namespace :dev do
   task reset_samples: :environment do
     abort "Only allowed in development" unless Rails.env.development?
 
-    puts "\n⚠️  This will DELETE ALL PRODUCTS from the database!"
+    puts "\n⚠️  This will DELETE ALL PRODUCTS and LIKES from the database!"
     puts "Are you sure? Type Y to continue, anything else to cancel."
     answer = STDIN.gets.chomp.strip.upcase
 
     if answer == "Y"
+      Like.delete_all
       Product.delete_all
       ActiveRecord::Base.connection.execute("ALTER SEQUENCE products_id_seq RESTART WITH 1;")
       puts "Sample data reset complete."
