@@ -50,7 +50,7 @@
   <div class="form-group">
     <%= f.label :thumbnail, "Photo" %>
     <%= f.file_field :thumbnail, accept: "image/*" %>
-    <% if product.thumbnail.attached? %>
+    <% if product.thumbnail.attached? && product.persisted? %>
       <div class="current-thumbnail">
         <%= image_tag product.thumbnail.variant(resize_to_fill: [120, 80]), alt: "Current image" %>
         <span>Current photo</span>
