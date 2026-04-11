@@ -20,6 +20,7 @@ RSpec.describe Product, type: :model do
       price: 500,
       category: Product::CATEGORIES.first,
       listing_type: 'sale',
+      status: :available,
       user: user
     }
   end
@@ -32,6 +33,11 @@ RSpec.describe Product, type: :model do
   it 'is valid with valid gift attributes and zero price' do
     product = Product.new(valid_attributes.merge(listing_type: 'gift', price: 0))
     expect(product).to be_valid
+  end
+
+  it 'defaults status to available' do
+    product = Product.new(valid_attributes.except(:status))
+    expect(product.status).to eq('available')
   end
 
   describe 'validations' do
@@ -51,6 +57,12 @@ RSpec.describe Product, type: :model do
       product = Product.new(valid_attributes.merge(price: 50, listing_type: 'gift'))
       expect(product).not_to be_valid
       expect(product.errors[:price]).to include('must be 0 for free/gift listings')
+    end
+
+    it 'is invalid without a category' do
+      product = Product.new(valid_attributes.except(:category))
+      expect(product).not_to be_valid
+      expect(product.errors[:category]).to include("can't be blank")
     end
 
     it 'is invalid when the description is too short' do
