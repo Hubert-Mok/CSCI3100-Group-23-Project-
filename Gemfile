@@ -23,6 +23,10 @@ gem "bcrypt", "~> 3.1.22"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ mswin mswin64 mingw x64_mingw jruby ]
 
+#fraud detection
+gem "rakismet", "~> 1.6"
+gem "fingerprintjs", "~> 0.1.0"
+
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cache"
 gem "solid_queue"

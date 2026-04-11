@@ -15,8 +15,13 @@ module FraudDetectable
     # Check 'body' (for Messages) or 'description' (for Products)
     content = self.try(:body) || self.try(:description)
     return false if content.blank?
-
-    SUSPICIOUS_PATTERNS.any? { |pattern| content.match?(pattern) }
+    #check blacklist patterns
+    return true if SUSPICIOUS_PATTERNS.any? { |pattern| content.match?(pattern) }
+    #check ip
+    return true if user.is_using_high_risk_ip? 
+    #check fast poster
+    return true if user.products.where('created_at > ?', 1.hour.ago).count > 5
+    false
   end
 
   def flag_for_review!
