@@ -24,6 +24,15 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_verified_email
+    return unless logged_in?
+
+    unless current_user.email_verified?
+      redirect_to new_email_verification_path(email: current_user.email),
+        alert: "Please verify your email address before continuing."
+    end
+  end
+
   rescue_from ActiveRecord::RecordNotFound do |exception|
     flash[:alert] = "The page you were looking for doesn't exist."
     redirect_to root_path

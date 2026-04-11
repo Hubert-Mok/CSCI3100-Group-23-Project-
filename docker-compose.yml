@@ -29,6 +29,7 @@ services:
       - .env.development
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/cuhk_market_place_development
+      TEST_DATABASE_URL: postgres://postgres:password@db:5432/cuhk_market_place_test
       RAILS_ENV: development
     depends_on:
       db:

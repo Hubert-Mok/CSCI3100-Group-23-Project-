@@ -10,7 +10,11 @@ WORKDIR /rails
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 COPY . .
 
 EXPOSE 3000
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

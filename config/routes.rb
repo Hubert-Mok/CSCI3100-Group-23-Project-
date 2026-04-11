@@ -12,7 +12,18 @@ Rails.application.routes.draw do
   post   "sign_in",  to: "sessions#create"
   delete "sign_out", to: "sessions#destroy",    as: :sign_out
 
-  # Profile & security
+  # Email verification
+  get  "email_verification",      to: "email_verifications#show", as: :email_verification
+  get  "email_verification/new",  to: "email_verifications#new",  as: :new_email_verification
+  post "email_verification",      to: "email_verifications#create"
+
+  # Forgot / reset password (public, token-based)
+  get   "password/forgot",       to: "password_resets#new",    as: :new_password_reset
+  post  "password/forgot",       to: "password_resets#create",  as: :password_reset_request
+  get   "password/reset",        to: "password_resets#edit",    as: :edit_password_reset
+  patch "password/reset",        to: "password_resets#update",  as: :password_reset
+
+  # Profile & security (logged-in)
   resource :profile,  only: %i[show edit update]
   resource :password, only: %i[edit update]
 

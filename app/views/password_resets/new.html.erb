@@ -1,0 +1,21 @@
+<% content_for :title, "Forgot Password – CUHK Marketplace" %>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <h1 class="auth-title">Forgot your password?</h1>
+    <p class="auth-subtitle">Enter your CUHK school email and we'll send you a reset link.</p>
+
+    <%= form_with url: password_reset_request_path, method: :post, class: "auth-form" do |f| %>
+      <div class="form-group">
+        <%= label_tag :email, "School email address" %>
+        <%= email_field_tag :email, params[:email], placeholder: "your@link.cuhk.edu.hk", autocomplete: "email", required: true %>
+      </div>
+
+      <%= submit_tag "Send reset link", class: "btn-primary" %>
+    <% end %>
+
+    <p class="auth-footer">
+      Remembered your password? <%= link_to "Sign In", sign_in_path %>
+    </p>
+  </div>
+</div>

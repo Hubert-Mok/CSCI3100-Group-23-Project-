@@ -1,0 +1,33 @@
+<% content_for :title, "Verify Your Email – CUHK Marketplace" %>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <h1 class="auth-title">Check your email</h1>
+    <p class="auth-subtitle">
+      We sent a verification link to
+      <% if @email.present? %>
+        <strong><%= @email %></strong>
+      <% else %>
+        your school email address
+      <% end %>.
+    </p>
+
+    <p>Click the link in the email to activate your account. The link expires in <strong>60 minutes</strong>.</p>
+
+    <div class="auth-divider">
+      <span>Didn't receive it?</span>
+    </div>
+
+    <%= form_with url: email_verification_path, method: :post, class: "auth-form" do |f| %>
+      <div class="form-group">
+        <%= f.label :email, "School email address" %>
+        <%= f.email_field :email, value: @email, placeholder: "your@link.cuhk.edu.hk", autocomplete: "email", required: true %>
+      </div>
+      <%= f.submit "Resend verification email", class: "btn-primary" %>
+    <% end %>
+
+    <p class="auth-footer">
+      Already verified? <%= link_to "Sign In", sign_in_path %>
+    </p>
+  </div>
+</div>

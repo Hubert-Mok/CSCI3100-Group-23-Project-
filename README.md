@@ -38,6 +38,13 @@ docker compose up
 - `STRIPE_SECRET_PRIVATE_KEY` — your Stripe secret key (e.g. `sk_test_...`)
 - `STRIPE_WEBHOOK_SECRET` — from `stripe listen --forward-to localhost:3000/webhooks/stripe` (development) or the Stripe Dashboard (production)
 
+**6. Email (verification + password reset):** Add the following to `.env.development`:
+- `RESEND_API_KEY` — your [Resend](https://resend.com) API key (e.g. `re_...`)
+- `MAILER_FROM` — the verified sender address in your Resend domain (e.g. `noreply@yourdomain.com`)
+
+Without `RESEND_API_KEY` set, emails are printed to the Rails log in development (no real emails sent). In production, also set:
+- `APP_HOST` — your production hostname (e.g. `marketplace.example.com`)
+
 Docker Compose loads `.env.development` into the web service. For local dev without Docker, the app uses the `dotenv-rails` gem to load `.env.development`.
 
 ### Development & testing
@@ -55,7 +62,7 @@ Docker Compose loads `.env.development` into the web service. For local dev with
   docker compose exec web bin/rails db:test:prepare test
   ```
 
-  This prepares the test database and runs the tests inside the same Docker environment used in development.
+  This prepares the test database and runs the tests inside the same Docker environment used in development. Requires the container to have been started after the latest `docker-compose.yml` (which injects `TEST_DATABASE_URL`). If you see a socket connection error, stop and restart: `docker compose down && docker compose up -d` then run the command again.
 
 ### CI (GitHub Actions)
 
@@ -68,6 +75,8 @@ On each push and pull request to `main`, GitHub Actions runs:
 ### Current status (brief)
 - Rails app set up with products (listings), users, and likes.
 - Email/password authentication with sign up / sign in / sign out flows.
+- School-email verification (CUHK domains only) — sent on sign-up, sign-in blocked until verified.
+- Forgot-password reset flow via time-limited email token (30-minute expiry).
 - User profile, password management, and Stripe account connection pages in place.
 - Product listing pages (index/show) with create/edit forms, image upload, and enums for status (available/reserved/sold) and type (sale/gift).
 - Search, category/status filtering, and sorting (price, most liked, newest) for product listings.
@@ -79,9 +88,7 @@ On each push and pull request to `main`, GitHub Actions runs:
 ### TODO (brief)
 - Refine product creation/editing UI and validations (e.g. price rules, description length).
 - Add more robust flash messages and edge-case handling (e.g. expired sessions, unauthorized access).
-- Configure database seeds with realistic ~~sample users, products, and~~ likes.
+- Set `email_verified_at` on seeded users (or document the email-verification step) so README demo credentials can sign in without extra friction.
 - Expand automated tests (models, controllers, and key flows via system tests).
 - Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
-- ~~Implement a secure payment flow (e.g. Stripe/PayPal integration)~~ — Stripe Connect + Checkout with escrow (buyer confirms receipt before seller is paid).
-- ~~Add real-time item status updates and notifications (e.g. reserved/sold) using Action Cable so buyers and sellers see changes instantly.~~ — implemented via Turbo Stream broadcasts for orders and item status, plus notification badge updates.
 - Enable and polish PWA support (manifest route, service worker, basic offline behaviour).

@@ -1,6 +1,7 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: %i[show edit update destroy delete_chats]
   before_action :require_login, only: %i[new create edit update destroy delete_chats]
+  before_action :require_verified_email, only: %i[new create edit update destroy delete_chats]
   before_action :require_owner, only: %i[edit update destroy delete_chats]
 
   def index
