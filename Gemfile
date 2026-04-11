@@ -67,7 +67,8 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-  
+  gem "rspec-rails", "~> 6.0"
+
   # Behavior Driven Development [https://cucumber.io/]
   gem "cucumber"
 end
