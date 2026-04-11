@@ -1,0 +1,28 @@
+<div class="admin-dashboard">
+  <h1>Moderation Queue</h1>
+
+  <section>
+    <h2>Flagged Products</h2>
+    <% @flagged_products.each do |product| %>
+      <div class="flagged-item">
+        <strong><%= product.title %></strong> by <%= product.user.username %>
+        <p><%= product.description %></p>
+        <%= button_to "Approve", 
+              approve_product_admin_moderation_path(product), 
+              method: :patch, 
+              class: "btn-success" %>
+      </div>
+    <% end %>
+  </section>
+
+  <section>
+    <h2>Flagged Messages</h2>
+    <% @flagged_messages.each do |msg| %>
+      <div class="flagged-item">
+        <strong>From: <%= msg.user.username %></strong>
+        <p><%= msg.body %></p>
+        <span class="meta">Sent in: <%= msg.conversation.product.title %></span>
+      </div>
+    <% end %>
+  </section>
+</div>

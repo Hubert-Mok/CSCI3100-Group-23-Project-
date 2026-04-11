@@ -1,4 +1,6 @@
 class Product < ApplicationRecord
+  include FraudDetectable
+  before_save :check_content_safety
   belongs_to :user
   has_one_attached :thumbnail
   has_many :likes, dependent: :destroy
@@ -30,6 +32,13 @@ class Product < ApplicationRecord
 
   private
 
+  def check_content_safety
+    if suspicious?
+      # Maybe set the product to "hidden" until approved
+      self.flagged = true
+    end
+  end
+  
   def price_matches_listing_type
     if gift? && price.to_f > 0
       errors.add(:price, "must be 0 for free/gift listings")

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_27_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_11_064228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -71,6 +71,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_110000) do
     t.text "body"
     t.bigint "conversation_id", null: false
     t.datetime "created_at", null: false
+    t.boolean "flagged", default: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
@@ -109,6 +110,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_110000) do
     t.string "category"
     t.datetime "created_at", null: false
     t.text "description"
+    t.boolean "flagged", default: false
     t.integer "likes_count", default: 0, null: false
     t.integer "listing_type", default: 0, null: false
     t.decimal "price", precision: 8, scale: 2, default: "0.0", null: false
@@ -120,6 +122,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_110000) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.boolean "admin", default: false
     t.string "college_affiliation", null: false
     t.datetime "created_at", null: false
     t.string "cuhk_id", null: false
