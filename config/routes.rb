@@ -55,7 +55,7 @@ Rails.application.routes.draw do
   namespace :admin do
     get 'moderation', to: 'moderation#index'
     patch 'moderation/approve_product/:id', to: 'moderation#approve_product', as: :approve_product_admin_moderation
-    resources :moderation, only: [] do
+    resources :moderation, only: [:index] do
     member do
       patch :approve_product
     end

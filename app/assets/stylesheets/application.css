@@ -292,6 +292,20 @@ body {
 
 .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
+.btn-admin {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  background: transparent;
+  color: #fb2424;
+  border: 1px solid #f61111;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-admin:hover { background: #fc0000; color: #fff; }
 /* ── Flash messages ── */
 .flash {
   padding: 0.75rem 1.25rem;
@@ -303,6 +317,15 @@ body {
   background: #d1fae5;
   color: #065f46;
   border-bottom: 1px solid #6ee7b7;
+}
+
+.flash-warning {
+  background-color: #fff3cd; /* Yellow background */
+  color: #856404;           /* Darker text */
+  padding: 1rem;
+  border: 1px solid #ffeeba;
+  border-radius: 4px;
+  text-align: center;
 }
 
 .flash-alert {
@@ -629,6 +652,7 @@ body {
 .status-available { background: #d1fae5; color: #065f46; }
 .status-reserved  { background: #fef3c7; color: #92400e; }
 .status-sold      { background: #e5e7eb; color: #4b5563; }
+.status-pending   { background-color: #fce8b2; color: #916a00}
 
 /* Inline badge (show page) */
 .status-badge:not(.status-available):not(.status-reserved):not(.status-sold) {
@@ -1897,4 +1921,58 @@ input[type="file"]::file-selector-button:hover {
 .orders-empty {
   color: #6b7280;
   margin-bottom: 1rem;
+}
+
+/* Container for horizontal scrolling if table is too wide */
+.table-container {
+  overflow-x: auto;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.moderation-table {
+  width: 100%;
+  border-collapse: collapse; /* Removes double borders */
+  font-size: 0.95rem;
+}
+
+/* Header Styling (Like Excel) */
+.moderation-table th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 15px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Row Styling */
+.moderation-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+/* Zebra Striping (Light gray on every second row) */
+.moderation-table tbody tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+/* Hover effect for rows */
+.moderation-table tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+/* Column width control */
+.actions-column { width: 200px; }
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.text-muted {
+  color: #6c757d;
+  font-size: 0.85rem;
 }

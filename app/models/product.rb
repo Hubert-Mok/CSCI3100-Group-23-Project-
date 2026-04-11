@@ -22,23 +22,26 @@ class Product < ApplicationRecord
     "Others"
   ].freeze
 
-  enum :status, { available: 0, reserved: 1, sold: 2 }
+  enum :status, { available: 0, reserved: 1, sold: 2 , pending: 3}
   enum :listing_type, { sale: 0, gift: 1 }
 
   validates :title, presence: true, length: { min: 3, maximum: 100 }
   validates :description, presence: true, length: { minimum: 10, maximum: 1000 }
   validates :price, numericality: { greater_than_or_equal_to: 0 }
   validate :price_matches_listing_type
-
+  
   private
 
   def check_content_safety
+    return if flagged_changed?(to: false)
     if suspicious?
       # Maybe set the product to "hidden" until approved
       self.flagged = true
+      self.status = :pending
+      puts "⚠️ Fraud Alert: Suspicious content detected in Product #{id} - \"#{title}\""
     end
   end
-  
+
   def price_matches_listing_type
     if gift? && price.to_f > 0
       errors.add(:price, "must be 0 for free/gift listings")
@@ -49,7 +52,7 @@ class Product < ApplicationRecord
 
 
   validates :category, presence: true, inclusion: { in: CATEGORIES }
-
+  scope :flagged_for_review, -> { where(flagged: true) }
   scope :latest,      -> { order(created_at: :desc) }
   scope :active,      -> { where.not(status: :sold) }
   scope :search,      ->(q)   { where("title ILIKE :q OR description ILIKE :q", q: "%#{q}%") if q.present? }
