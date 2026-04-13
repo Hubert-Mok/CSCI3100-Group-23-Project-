@@ -88,18 +88,13 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: cuhk_market_place_production
-    username: cuhk_market_place
-    password: <%= ENV["CUHK_MARKET_PLACE_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
-    database: cuhk_market_place_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: cuhk_market_place_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: cuhk_market_place_production_cable
     migrations_paths: db/cable_migrate
