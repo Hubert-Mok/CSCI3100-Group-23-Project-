@@ -45,24 +45,27 @@ docker compose up
 Without `RESEND_API_KEY` set, emails are printed to the Rails log in development (no real emails sent). In production, also set:
 - `APP_HOST` — your production hostname (e.g. `marketplace.example.com`)
 
-Docker Compose loads `.env.development` into the web service. For local dev without Docker, the app uses the `dotenv-rails` gem to load `.env.development`.
+Docker Compose loads `.env.development` into the web service.
 
 ### Development & testing
 
-- **Ruby version**: 3.4 (managed via Docker images; no need to install Ruby locally if you use Docker).
-- **Run RuboCop (style checks)**:
+Run these from the project root with the stack up (`docker compose up`).
+
+- **RuboCop**:
 
   ```bash
   docker compose exec web bin/rubocop
   ```
 
-- **Run test suite**:
+- **Tests (Minitest, RSpec, Cucumber)** — uses `TEST_DATABASE_URL` from `docker-compose.yml`:
 
   ```bash
-  docker compose exec web bin/rails db:test:prepare test
+  docker compose exec -e RAILS_ENV=test web bin/rails db:test:prepare test
+  docker compose exec -e RAILS_ENV=test web bundle exec rspec
+  docker compose exec -e RAILS_ENV=test web bundle exec cucumber
   ```
 
-  This prepares the test database and runs the tests inside the same Docker environment used in development. Requires the container to have been started after the latest `docker-compose.yml` (which injects `TEST_DATABASE_URL`). If you see a socket connection error, stop and restart: `docker compose down && docker compose up -d` then run the command again.
+  If the database connection fails, restart the stack: `docker compose down && docker compose up -d`.
 
 ### CI (GitHub Actions)
 
@@ -70,7 +73,7 @@ On each push and pull request to `main`, GitHub Actions runs:
 - **Security scans (Ruby)**: `bin/brakeman` and `bin/bundler-audit`
 - **Security scan (JavaScript)**: `bin/importmap audit`
 - **Linting**: `bin/rubocop -f github`
-- **Tests**: `bin/rails db:test:prepare test`
+- **Tests**: Minitest (`bin/rails db:test:prepare test`), RSpec, and Cucumber (with PostgreSQL and dummy Stripe test env vars)
 
 ### Current status (brief)
 - Rails app set up with products (listings), users, and likes.

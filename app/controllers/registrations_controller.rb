@@ -10,7 +10,15 @@ class RegistrationsController < ApplicationController
 
     if @user.save
       raw_token = @user.generate_email_verification_token!
+<<<<<<< HEAD
       deliver_email_verification(@user, raw_token)
+=======
+      begin
+        UserMailer.email_verification(@user, raw_token).deliver_now
+      rescue => err
+        Rails.logger.error("MAIL ERROR: #{err.class}: #{err.message}")
+      end
+>>>>>>> 88c3ff9 (add github actions/test)
       redirect_to new_email_verification_path(email: @user.email),
         notice: "Account created! Please check your CUHK email to verify your account before signing in."
     else

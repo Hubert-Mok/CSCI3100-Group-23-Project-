@@ -3,6 +3,10 @@
 # your test database is "scratch space" for the test suite and is wiped
 # and recreated between test runs. Don't rely on the data there!
 
+# Set before initializers (e.g. Stripe) so CI and local test runs need no real secrets.
+ENV["STRIPE_SECRET_PRIVATE_KEY"] ||= "sk_test_dummy_for_ci"
+ENV["STRIPE_WEBHOOK_SECRET"] ||= "test_webhook_signing_secret_for_ci"
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 

@@ -31,31 +31,6 @@ threads threads_count, threads_count
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 port ENV.fetch("PORT", 3000)
 
-# #region agent log
-begin
-  require "json"
-  _agent_log = "/Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/.cursor/debug-6aeaf5.log"
-  _p = ENV.fetch("PORT", 3000)
-  File.open(_agent_log, "a") do |f|
-    f.puts(JSON.generate({ sessionId: "6aeaf5", hypothesisId: "C", location: "config/puma.rb", message: "Puma port configured", data: { port: _p.to_s, port_env: ENV["PORT"] }, timestamp: (Time.now.to_f * 1000).to_i, runId: ENV["DEBUG_RUN_ID"] }))
-  end
-rescue StandardError
-end
-# #endregion
-
-on_booted do
-  # #region agent log
-  begin
-    require "json"
-    _agent_log = "/Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/.cursor/debug-6aeaf5.log"
-    File.open(_agent_log, "a") do |f|
-      f.puts(JSON.generate({ sessionId: "6aeaf5", hypothesisId: "A", location: "config/puma.rb:on_booted", message: "Puma on_booted fired (server should accept connections)", data: {}, timestamp: (Time.now.to_f * 1000).to_i, runId: ENV["DEBUG_RUN_ID"] }))
-    end
-  rescue StandardError
-  end
-  # #endregion
-end
-
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
 

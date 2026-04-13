@@ -1,0 +1,18 @@
+<% content_for :title, "Notifications – CUHK Marketplace" %>
+
+<div class="notifications-page">
+  <div class="notifications-header">
+    <h1>Notifications</h1>
+    <% if @notifications.any? %>
+      <%= button_to "Clear all", clear_all_notifications_path, method: :delete, class: "btn btn-outline-secondary btn-sm", form: { data: { turbo_confirm: "Clear all notifications?" } } %>
+    <% end %>
+  </div>
+
+  <% if @notifications.any? %>
+    <div id="notifications_list" class="notifications-list">
+      <%= render partial: "notifications/notification", collection: @notifications, as: :notification %>
+    </div>
+  <% else %>
+    <p class="text-muted">No notifications yet.</p>
+  <% end %>
+</div>
