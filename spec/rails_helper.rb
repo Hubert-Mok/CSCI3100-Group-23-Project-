@@ -4,6 +4,8 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 
 require 'rspec/rails'
 
+ActionController::Base.allow_forgery_protection = false if Rails.env.test?
+
 begin
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
@@ -14,6 +16,13 @@ end
 RSpec.configure do |config|
   config.fixture_path = Rails.root.join('test', 'fixtures')
   config.use_transactional_fixtures = true
+
+  if Rails.env.test?
+    config.before(:each, type: :request) do
+      ActionController::Base.allow_forgery_protection = false
+    end
+  end
+
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
 end

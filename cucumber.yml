@@ -1,0 +1,8 @@
+# Cucumber configuration file
+default: -r features/step_definitions -r features/support -f pretty --publish-quiet
+
+# Run only product publishing tests
+product_publishing: -r features/step_definitions -r features/support -f pretty -t @product_publishing
+
+# Run with HTML report
+html_report: -r features/step_definitions -r features/support -f html --out=test_results/cucumber_report.html --publish-quiet
