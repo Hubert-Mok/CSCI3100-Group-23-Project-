@@ -19,6 +19,8 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.include Rails::Controller::Testing::TemplateAssertions, type: :controller
+  config.include Rails::Controller::Testing::TestProcess, type: :controller
+  config.include Rails::Controller::Testing::Integration, type: :controller
 
   if Rails.env.test?
     config.before(:each, type: :request) do
