@@ -66,6 +66,7 @@ class Product < ApplicationRecord
   scope :search,      ->(q) { perform_search(q) if q.present? }
   scope :by_category, ->(cat) { where(category: cat) if cat.present? }
   scope :by_status,   ->(st)  { where(status: st) if st.present? }
+  scope :flagged_for_review, -> { where(flagged: true) }
   scope :sorted_by,   ->(s) {
     case s
     when "price_asc"  then order(price: :asc)
