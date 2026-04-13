@@ -2,6 +2,14 @@ Given('I am on the home page') do
   visit '/'
 end
 
+When('I visit the home page') do
+  visit '/'
+end
+
+When('I visit the home page again') do
+  visit '/'
+end
+
 When('I follow {string}') do |link_text|
   click_link_or_button(link_text)
 end
@@ -78,6 +86,13 @@ end
 
 Then('I should be on the email verification page') do
   expect(page).to have_current_path('/email_verification/new', ignore_query: true)
+end
+
+Then('I should see the account created message') do
+  unless page.has_content?("Account created!")
+    puts "\n=== DEBUG: Page Content ===\n#{page.text[0..800]}\n=== END DEBUG ===" 
+  end
+  expect(page).to have_content("Account created!")
 end
 
 Then('I should be on the sign up page') do
