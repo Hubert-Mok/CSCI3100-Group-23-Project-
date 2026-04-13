@@ -34,11 +34,13 @@ class Product < ApplicationRecord
 
   def check_content_safety
     return if flagged_changed?(to: false)
-    if suspicious?
+    ai_result = get_ai_fraud_score
+    if suspicious? || ai_result[:is_fraud]
       # Maybe set the product to "hidden" until approved
       self.flagged = true
       self.status = :pending
       puts "⚠️ Fraud Alert: Suspicious content detected in Product #{id} - \"#{title}\""
+      self.fraud_score = ai_result[:score]
     end
   end
 

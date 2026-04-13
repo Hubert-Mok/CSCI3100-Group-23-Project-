@@ -296,8 +296,8 @@ body {
   display: inline-block;
   padding: 0.4rem 0.9rem;
   background: transparent;
-  color: #fb2424;
-  border: 1px solid #f61111;
+  color: #fbcf0e;
+  border: 1px solid #da9201;
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
@@ -305,7 +305,7 @@ body {
   transition: background 0.15s, color 0.15s;
 }
 
-.btn-admin:hover { background: #fc0000; color: #fff; }
+.btn-admin:hover { background: #fcc500; color: #fff; }
 /* ── Flash messages ── */
 .flash {
   padding: 0.75rem 1.25rem;
