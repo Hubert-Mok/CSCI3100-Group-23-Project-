@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_13_084843) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_10_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -128,11 +128,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_084843) do
     t.datetime "created_at", null: false
     t.string "cuhk_id", null: false
     t.string "email", null: false
+    t.datetime "email_verification_sent_at"
+    t.string "email_verification_token_digest"
+    t.datetime "email_verified_at"
     t.string "password_digest", null: false
+    t.datetime "password_reset_sent_at"
+    t.string "password_reset_token_digest"
     t.string "stripe_account_id"
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["email_verification_token_digest"], name: "index_users_on_email_verification_token_digest", unique: true
+    t.index ["password_reset_token_digest"], name: "index_users_on_password_reset_token_digest", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

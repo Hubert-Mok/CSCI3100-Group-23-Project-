@@ -1,0 +1,17 @@
+verified_user:
+  email: alice@link.cuhk.edu.hk
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  cuhk_id: "1155000001"
+  username: alice
+  college_affiliation: Shaw College
+  email_verified_at: <%= 1.day.ago %>
+
+unverified_user:
+  email: bob@link.cuhk.edu.hk
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  cuhk_id: "1155000002"
+  username: bob
+  college_affiliation: United College
+  email_verified_at:
+  email_verification_token_digest:
+  email_verification_sent_at:

@@ -38,24 +38,34 @@ docker compose up
 - `STRIPE_SECRET_PRIVATE_KEY` — your Stripe secret key (e.g. `sk_test_...`)
 - `STRIPE_WEBHOOK_SECRET` — from `stripe listen --forward-to localhost:3000/webhooks/stripe` (development) or the Stripe Dashboard (production)
 
-Docker Compose loads `.env.development` into the web service. For local dev without Docker, the app uses the `dotenv-rails` gem to load `.env.development`.
+**6. Email (verification + password reset):** Add the following to `.env.development`:
+- `RESEND_API_KEY` — your [Resend](https://resend.com) API key (e.g. `re_...`)
+- `MAILER_FROM` — the verified sender address in your Resend domain (e.g. `noreply@yourdomain.com`)
+
+Without `RESEND_API_KEY` set, emails are printed to the Rails log in development (no real emails sent). In production, also set:
+- `APP_HOST` — your production hostname (e.g. `marketplace.example.com`)
+
+Docker Compose loads `.env.development` into the web service.
 
 ### Development & testing
 
-- **Ruby version**: 3.4 (managed via Docker images; no need to install Ruby locally if you use Docker).
-- **Run RuboCop (style checks)**:
+Run these from the project root with the stack up (`docker compose up`).
+
+- **RuboCop**:
 
   ```bash
   docker compose exec web bin/rubocop
   ```
 
-- **Run test suite**:
+- **Tests (Minitest, RSpec, Cucumber)** — uses `TEST_DATABASE_URL` from `docker-compose.yml`:
 
   ```bash
-  docker compose exec web bin/rails db:test:prepare test
+  docker compose exec -e RAILS_ENV=test web bin/rails db:test:prepare test
+  docker compose exec -e RAILS_ENV=test web bundle exec rspec
+  docker compose exec -e RAILS_ENV=test web bundle exec cucumber
   ```
 
-  This prepares the test database and runs the tests inside the same Docker environment used in development.
+  If the database connection fails, restart the stack: `docker compose down && docker compose up -d`.
 
 ### CI (GitHub Actions)
 
@@ -63,11 +73,13 @@ On each push and pull request to `main`, GitHub Actions runs:
 - **Security scans (Ruby)**: `bin/brakeman` and `bin/bundler-audit`
 - **Security scan (JavaScript)**: `bin/importmap audit`
 - **Linting**: `bin/rubocop -f github`
-- **Tests**: `bin/rails db:test:prepare test`
+- **Tests**: Minitest (`bin/rails db:test:prepare test`), RSpec, and Cucumber (with PostgreSQL and dummy Stripe test env vars)
 
 ### Current status (brief)
 - Rails app set up with products (listings), users, and likes.
 - Email/password authentication with sign up / sign in / sign out flows.
+- School-email verification (CUHK domains only) — sent on sign-up, sign-in blocked until verified.
+- Forgot-password reset flow via time-limited email token (30-minute expiry).
 - User profile, password management, and Stripe account connection pages in place.
 - Product listing pages (index/show) with create/edit forms, image upload, and enums for status (available/reserved/sold) and type (sale/gift).
 - Search, category/status filtering, and sorting (price, most liked, newest) for product listings.
@@ -79,9 +91,7 @@ On each push and pull request to `main`, GitHub Actions runs:
 ### TODO (brief)
 - Refine product creation/editing UI and validations (e.g. price rules, description length).
 - Add more robust flash messages and edge-case handling (e.g. expired sessions, unauthorized access).
-- Configure database seeds with realistic ~~sample users, products, and~~ likes.
+- Set `email_verified_at` on seeded users (or document the email-verification step) so README demo credentials can sign in without extra friction.
 - Expand automated tests (models, controllers, and key flows via system tests).
 - Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
-- ~~Implement a secure payment flow (e.g. Stripe/PayPal integration)~~ — Stripe Connect + Checkout with escrow (buyer confirms receipt before seller is paid).
-- ~~Add real-time item status updates and notifications (e.g. reserved/sold) using Action Cable so buyers and sellers see changes instantly.~~ — implemented via Turbo Stream broadcasts for orders and item status, plus notification badge updates.
 - Enable and polish PWA support (manifest route, service worker, basic offline behaviour).
