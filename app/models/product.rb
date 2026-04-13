@@ -23,10 +23,15 @@ class Product < ApplicationRecord
   enum :status, { available: 0, reserved: 1, sold: 2 }
   enum :listing_type, { sale: 0, gift: 1 }
 
+  after_initialize :set_default_status, if: :new_record?
+
   validates :title, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true, length: { minimum: 10, maximum: 1000 }
-  validates :price, numericality: { greater_than_or_equal_to: 0 }
-  validate :price_matches_listing_type
+  validates :category, presence: true, inclusion: { in: CATEGORIES }
+  validates :listing_type, presence: true
+  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :status, presence: true
+  validate :price_matches_listing_type, if: -> { listing_type.present? && price.present? }
 
   private
 
@@ -38,8 +43,9 @@ class Product < ApplicationRecord
     end
   end
 
-
-  validates :category, presence: true, inclusion: { in: CATEGORIES }
+  def set_default_status
+    self.status ||= :available
+  end
 
   scope :latest,      -> { order(created_at: :desc) }
   scope :active,      -> { where.not(status: :sold) }
