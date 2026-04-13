@@ -17,6 +17,10 @@ class ApplicationController < ActionController::Base
     current_user.present?
   end
 
+  def redirect_if_authenticated
+    redirect_to root_path, notice: "You are already signed in." if logged_in?
+  end
+
   def require_login
     unless logged_in?
       flash[:alert] = "You must be signed in to access that page."
