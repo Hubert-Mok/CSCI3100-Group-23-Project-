@@ -3,7 +3,8 @@ class LikesController < ApplicationController
   before_action :set_product
 
   def create
-    if current_user.likes.create(product: @product)
+    like = current_user.likes.create(product: @product)
+    if like.persisted?
       redirect_to @product, notice: "Added to your liked items."
     else
       redirect_to @product, alert: "Could not like this item."
