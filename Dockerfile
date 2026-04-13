@@ -51,8 +51,9 @@ COPY . .
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+# Precompile assets without RAILS_MASTER_KEY or real SMTP secrets (production.rb uses ENV.fetch for SMTP).
+RUN SECRET_KEY_BASE_DUMMY=1 SMTP_USERNAME=build@smtp.placeholder SMTP_PASSWORD=build-placeholder \
+    ./bin/rails assets:precompile
 
 
 
