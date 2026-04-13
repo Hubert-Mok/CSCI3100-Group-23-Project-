@@ -49,12 +49,7 @@ class Product < ApplicationRecord
 
   scope :latest,      -> { order(created_at: :desc) }
   scope :active,      -> { where.not(status: :sold) }
-  scope :search,      ->(q) {
-    if q.present?
-      exact = where("title ILIKE :q OR description ILIKE :q", q: "%#{q}%")
-      exact.exists? ? exact : where(id: fuzzy_match_ids(q, self))
-    end
-  }
+  scope :search,      ->(q) { perform_search(q) if q.present? }
   scope :by_category, ->(cat) { where(category: cat) if cat.present? }
   scope :by_status,   ->(st)  { where(status: st) if st.present? }
   scope :sorted_by,   ->(s) {
@@ -66,14 +61,25 @@ class Product < ApplicationRecord
     end
   }
 
-  def self.fuzzy_match_ids(query, relation = all)
+  def self.perform_search(query)
+    exact_matches = where("title ILIKE :q OR description ILIKE :q", q: "%#{query}%")
+    return exact_matches if exact_matches.exists?
+
+    fuzzy_matches(query)
+  end
+
+  def self.fuzzy_matches(query)
     tokens = normalize_tokens(query)
     return none if tokens.empty?
 
-    relation.to_a.select { |product| fuzzy_matches?(product, tokens) }.map(&:id)
+    where(id: fuzzy_match_ids(tokens, all))
   end
 
-  def self.fuzzy_matches?(product, tokens)
+  def self.fuzzy_match_ids(tokens, relation)
+    relation.to_a.select { |product| matches_tokens?(product, tokens) }.map(&:id)
+  end
+
+  def self.matches_tokens?(product, tokens)
     text_tokens = normalize_tokens([product.title, product.description].join(' '))
     tokens.all? do |token|
       text_tokens.any? do |word|
