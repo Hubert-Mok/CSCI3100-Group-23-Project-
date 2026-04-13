@@ -57,7 +57,7 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "example.com"), protocol: "https" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "https://cuhk-marketplace-2219fdf8f1c3.herokuapp.com/"), protocol: "https" }
 
   # Deliver via Gmail SMTP (port 465, implicit SSL).
   config.action_mailer.delivery_method = :smtp

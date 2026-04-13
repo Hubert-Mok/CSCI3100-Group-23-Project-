@@ -1,16 +1,4 @@
-# PostgreSQL. Versions 9.3 and up are supported.
-#
-# Install the pg driver:
-#   gem install pg
-# On macOS with Homebrew:
-#   gem install pg -- --with-pg-config=/opt/homebrew/bin/pg_config
-# On Windows:
-#   gem install pg
-#       Choose the win32 build.
-#       Install PostgreSQL and put its /bin directory on your path.
-#
-# Configure Using Gemfile
-# gem "pg"
+# PostgreSQL. Local development uses Docker Compose (see README).
 #
 default: &default
   adapter: postgresql
@@ -88,18 +76,13 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: cuhk_market_place_production
-    username: cuhk_market_place
-    password: <%= ENV["CUHK_MARKET_PLACE_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
-    database: cuhk_market_place_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: cuhk_market_place_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: cuhk_market_place_production_cable
     migrations_paths: db/cable_migrate
