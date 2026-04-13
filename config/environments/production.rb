@@ -62,10 +62,10 @@ Rails.application.configure do
   # Deliver via Gmail SMTP (port 465, implicit SSL).
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
-    port: 465,
-    user_name: ENV.fetch("SMTP_USERNAME"),
-    password: ENV.fetch("SMTP_PASSWORD"),
+    address: "smtp.sendgrid.net",
+    port: 587,
+    user_name: "apikey",
+    password: ENV.fetch("SENDGRID_API_KEY"),
     authentication: :plain,
     tls: true
   }
