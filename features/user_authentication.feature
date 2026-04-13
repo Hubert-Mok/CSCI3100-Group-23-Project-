@@ -30,6 +30,32 @@ Feature: User Authentication
     Then I should see "Password confirmation doesn't match Password"
     And I should be on the sign up page
 
+  Scenario: Unsuccessful sign up with duplicate email
+    Given a registered user exists with email "existing@link.cuhk.edu.hk" and password "password123" and is verified
+    When I follow "Sign Up"
+    And I fill in "Email" with "existing@link.cuhk.edu.hk"
+    And I fill in "CUHK Student ID" with "1155123456"
+    And I fill in "Username" with "newuser"
+    And I select "Chung Chi College" from "College"
+    And I fill in "Password" with "password123"
+    And I fill in "Confirm Password" with "password123"
+    And I press "Create Account"
+    Then I should see "An account with this email already exists"
+    And I should be on the sign up page
+
+  Scenario: Unsuccessful sign up with duplicate CUHK ID
+    Given a registered user exists with email "existing@link.cuhk.edu.hk" and CUHK ID "1155123456" and password "password123" and is verified
+    When I follow "Sign Up"
+    And I fill in "Email" with "newuser@link.cuhk.edu.hk"
+    And I fill in "CUHK Student ID" with "1155123456"
+    And I fill in "Username" with "newuser"
+    And I select "Chung Chi College" from "College"
+    And I fill in "Password" with "password123"
+    And I fill in "Confirm Password" with "password123"
+    And I press "Create Account"
+    Then I should see "An account with this CUHK ID already exists"
+    And I should be on the sign up page
+
   Scenario: Successful sign in
     Given a registered user exists with email "user@link.cuhk.edu.hk" and password "password123" and is verified
     When I follow "Sign In"

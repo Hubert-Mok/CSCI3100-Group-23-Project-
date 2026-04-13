@@ -30,10 +30,11 @@ class User < ApplicationRecord
   PASSWORD_RESET_EXPIRY = 30.minutes
 
   validates :email, presence: true,
-                    uniqueness: { case_sensitive: false },
                     format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" }
   validate :email_must_be_school_domain
-  validates :cuhk_id, presence: true, uniqueness: true
+  validate :email_uniqueness
+  validates :cuhk_id, presence: true
+  validate :cuhk_id_uniqueness
   validates :username, presence: true, length: { minimum: 2, maximum: 50 }
   validates :college_affiliation, presence: true, inclusion: { in: COLLEGES }
   validates :password, length: { minimum: 6 }, allow_nil: true
@@ -110,6 +111,22 @@ class User < ApplicationRecord
     domain = email.downcase.split("@").last
     unless ALLOWED_EMAIL_DOMAINS.include?(domain)
       errors.add(:email, "must be a CUHK school email (@link.cuhk.edu.hk or @cuhk.edu.hk)")
+    end
+  end
+
+  def email_uniqueness
+    return if email.blank?
+
+    if User.where(email: email.downcase).where.not(id: id).exists?
+      errors.add(:base, "An account with this email already exists")
+    end
+  end
+
+  def cuhk_id_uniqueness
+    return if cuhk_id.blank?
+
+    if User.where(cuhk_id: cuhk_id).where.not(id: id).exists?
+      errors.add(:base, "An account with this CUHK ID already exists")
     end
   end
 end

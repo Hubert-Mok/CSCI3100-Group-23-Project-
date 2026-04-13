@@ -3,6 +3,7 @@ require File.expand_path('../config/environment', __dir__)
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 
 require 'rspec/rails'
+require 'rails-controller-testing'
 
 ActionController::Base.allow_forgery_protection = false if Rails.env.test?
 
@@ -16,6 +17,8 @@ end
 RSpec.configure do |config|
   config.fixture_path = Rails.root.join('test', 'fixtures')
   config.use_transactional_fixtures = true
+
+  config.include Rails::Controller::Testing::TemplateAssertions, type: :controller
 
   if Rails.env.test?
     config.before(:each, type: :request) do

@@ -38,6 +38,18 @@ Given('a registered user exists with email {string} and password {string} and is
   user.verify_email!
 end
 
+Given('a registered user exists with email {string} and CUHK ID {string} and password {string} and is verified') do |email, cuhk_id, password|
+  user = User.create!(
+    email: email.downcase,
+    password: password,
+    password_confirmation: password,
+    cuhk_id: cuhk_id,
+    username: 'Test User',
+    college_affiliation: User::COLLEGES.first
+  )
+  user.verify_email!
+end
+
 Given('a registered user exists with email {string} and password {string} and is not verified') do |email, password|
   User.create!(
     email: email.downcase,
@@ -72,27 +84,8 @@ Given('I am logged in as a verified user with email {string}') do |email|
   click_button 'Sign In'
 end
 
-Then('I should be on the {string} page') do |page_name|
-  expected_path = case page_name
-                  when 'home' then '/'
-                  when 'sign up' then '/sign_up'
-                  when 'sign in' then '/sign_in'
-                  when 'email verification' then '/email_verification/new'
-                  else
-                    raise "Unknown page name: #{page_name}"
-                  end
-  expect(page).to have_current_path(expected_path)
-end
-
 Then('I should be on the email verification page') do
   expect(page).to have_current_path('/email_verification/new', ignore_query: true)
-end
-
-Then('I should see the account created message') do
-  unless page.has_content?("Account created!")
-    puts "\n=== DEBUG: Page Content ===\n#{page.text[0..800]}\n=== END DEBUG ===" 
-  end
-  expect(page).to have_content("Account created!")
 end
 
 Then('I should be on the sign up page') do
