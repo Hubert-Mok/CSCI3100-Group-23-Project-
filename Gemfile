@@ -71,4 +71,7 @@ group :test do
 
   # Behavior Driven Development [https://cucumber.io/]
   gem "cucumber"
+
+  # Code coverage [https://github.com/simplecov-ruby/simplecov]
+  gem "simplecov", require: false
 end
