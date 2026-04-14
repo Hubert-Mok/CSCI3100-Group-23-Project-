@@ -9,7 +9,7 @@
 
   <div class="order-details">
     <p><strong>Product:</strong> <%= link_to @order.product.title, @order.product %></p>
-    <p><strong>Amount:</strong> HK$<%= number_with_precision(@order.amount_cents / 100.0, precision: 2) %></p>
+    <p><strong>Amount:</strong> HK$<%= number_with_precision(@order.amount_cents / 100.0, precision: 1) %></p>
     <% if current_user == @order.buyer %>
       <p><strong>Seller:</strong> <%= @order.product.user.username %></p>
     <% else %>

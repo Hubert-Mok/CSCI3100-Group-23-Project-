@@ -161,7 +161,7 @@ RSpec.describe ProfilesController, type: :controller do
       expect(liked_products.second).to eq(older_liked)
     end
 
-    it 'shows listing prices with two decimal places' do
+    it 'shows listing prices with one decimal place' do
       Product.create!(
         title: 'Graphing Calculator',
         description: 'Scientific calculator in good condition with cover included.',
@@ -175,10 +175,11 @@ RSpec.describe ProfilesController, type: :controller do
       get :show
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('HK$88.50')
+      expect(response.body).to include('HK$88.5')
+      expect(response.body).not_to include('HK$88.50')
     end
 
-    it 'shows liked product prices with two decimal places' do
+    it 'shows liked product prices with one decimal place' do
       liked_product = Product.create!(
         title: 'External SSD',
         description: 'Fast USB-C SSD with cable and protective case.',
@@ -193,7 +194,8 @@ RSpec.describe ProfilesController, type: :controller do
       get :show
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('HK$245.60')
+      expect(response.body).to include('HK$245.6')
+      expect(response.body).not_to include('HK$245.60')
     end
   end
 

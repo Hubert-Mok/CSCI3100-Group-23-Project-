@@ -16,7 +16,7 @@
       <div class="order-preview-details">
         <h2><%= @product.title %></h2>
         <p class="order-preview-seller">Seller: <%= @product.user.username %></p>
-        <p class="order-preview-price">HK$<%= number_with_precision(@product.price, precision: 2) %></p>
+        <p class="order-preview-price">HK$<%= number_with_precision(@product.price, precision: 1) %></p>
       </div>
     </div>
 

@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe OrdersController, type: :controller do
+  render_views
+
   let(:buyer) do
     User.create!(
       email: 'buyer@link.cuhk.edu.hk',
@@ -67,6 +69,14 @@ RSpec.describe OrdersController, type: :controller do
       expect(assigns(:orders).first).to eq(order)
       expect(assigns(:orders).second).to eq(older_order)
     end
+
+    it 'shows order amount with one decimal place' do
+      get :index
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('HK$500.0')
+      expect(response.body).not_to include('HK$500.00')
+    end
   end
 
   describe 'GET #new' do
@@ -81,6 +91,16 @@ RSpec.describe OrdersController, type: :controller do
         expect(assigns(:order)).to be_a_new(Order)
         expect(assigns(:order).product).to eq(product)
         expect(assigns(:order).buyer).to eq(buyer)
+      end
+
+      it 'shows product price with one decimal place in checkout preview' do
+        product.update!(price: 123.4)
+
+        get :new, params: { product_id: product.id }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('HK$123.4')
+        expect(response.body).not_to include('HK$123.40')
       end
     end
 
@@ -201,6 +221,14 @@ RSpec.describe OrdersController, type: :controller do
     it 'assigns the order' do
       get :show, params: { id: order.id }
       expect(assigns(:order)).to eq(order)
+    end
+
+    it 'shows order amount with one decimal place' do
+      get :show, params: { id: order.id }
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('HK$500.0')
+      expect(response.body).not_to include('HK$500.00')
     end
   end
 

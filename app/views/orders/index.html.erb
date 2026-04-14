@@ -15,7 +15,7 @@
               &middot;
               <span class="order-list-status order-status-<%= order.status %>"><%= order.status.capitalize %></span>
               &middot;
-              HK$<%= number_with_precision(order.amount_cents / 100.0, precision: 2) %>
+              HK$<%= number_with_precision(order.amount_cents / 100.0, precision: 1) %>
             <% end %>
           </div>
           <% if order.paid? %>

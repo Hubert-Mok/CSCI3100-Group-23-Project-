@@ -703,11 +703,12 @@ RSpec.describe ProductsController, type: :controller do
       )
     end
 
-    it 'shows two decimal places on the home listing card' do
+    it 'shows one decimal place on the home listing card' do
       get :index
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('HK$123.40')
+      expect(response.body).to include('HK$123.4')
+      expect(response.body).not_to include('HK$123.40')
     end
 
     it 'shows one decimal place on the product detail page' do
