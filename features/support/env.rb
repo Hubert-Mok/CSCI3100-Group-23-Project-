@@ -1,5 +1,6 @@
 # Cucumber environment setup
 ENV['RAILS_ENV'] = 'test'
+ENV['SIMPLECOV_COMMAND_NAME'] ||= 'Cucumber'
 
 require 'capybara'
 require 'capybara/dsl'

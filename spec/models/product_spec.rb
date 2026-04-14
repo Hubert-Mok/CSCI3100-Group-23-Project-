@@ -136,7 +136,10 @@ RSpec.describe Product, type: :model do
 
     it 'falls back safely when the AI service is unavailable' do
       product = Product.new(valid_attributes)
-      stub_const('HTTParty', Class.new)
+      stub_const('HTTParty', Class.new do
+        def self.post(*)
+        end
+      end)
       allow(HTTParty).to receive(:post).and_raise(StandardError, 'AI down')
       allow(Rails.logger).to receive(:error)
 

@@ -1,4 +1,5 @@
 require 'simplecov'
+SimpleCov.command_name 'RSpec'
 SimpleCov.start 'rails' do
   add_filter '/spec/'
   add_filter '/test/'
@@ -12,7 +13,6 @@ at_exit { SimpleCov.result.format! }
 ENV['RAILS_ENV'] ||= 'test'
 
 require 'bundler/setup'
-require 'rspec'
 
 RSpec.configure do |config|
   config.example_status_persistence_file_path = 'spec/examples.txt'

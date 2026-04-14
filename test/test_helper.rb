@@ -1,4 +1,5 @@
 require 'simplecov'
+SimpleCov.command_name ENV.fetch('SIMPLECOV_COMMAND_NAME', 'Minitest')
 SimpleCov.start 'rails' do
   add_filter '/spec/'
   add_filter '/test/'
