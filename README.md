@@ -48,21 +48,25 @@ Without `RESEND_API_KEY` set, emails are printed to the Rails log in development
 ### Heroku image storage (required)
 
 Heroku dyno disk is ephemeral, so Active Storage files will disappear after restart if you use local disk.
-Configure S3 for production image persistence:
+Configure S3-compatible object storage for production image persistence.
+
+Cloudflare R2 works with free-tier usage and is compatible with this app.
 
 1. Add S3 adapter gem and lock it:
 	- Add `gem "aws-sdk-s3", require: false` to `Gemfile`
 	- Run `bundle lock --update aws-sdk-s3` (or `bundle install` in your deploy environment)
-2. Create an S3 bucket.
+2. Create a Cloudflare R2 bucket and API token.
 3. Set these Heroku config vars:
 	- `AWS_ACCESS_KEY_ID`
 	- `AWS_SECRET_ACCESS_KEY`
-	- `AWS_REGION` (e.g. `ap-east-1`)
+	- `AWS_REGION` (use `auto` for R2)
 	- `AWS_BUCKET`
+	- `AWS_S3_ENDPOINT` (format: `https://<account_id>.r2.cloudflarestorage.com`)
+	- `AWS_S3_FORCE_PATH_STYLE` (`false` for R2)
 4. Set `APP_HOST` to hostname only (no `https://`, no trailing slash).
 5. Redeploy.
 
-This app auto-selects S3 in production when all three keys are present (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`), otherwise it falls back to local disk.
+This app auto-selects object storage in production when `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_BUCKET` are present; otherwise it falls back to local disk.
 
 Docker Compose loads `.env.development` into the web service. For local dev without Docker, the app uses the `dotenv-rails` gem to load `.env.development`.
 
