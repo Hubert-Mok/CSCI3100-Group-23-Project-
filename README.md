@@ -85,14 +85,21 @@ On each push and pull request to `main`, GitHub Actions runs:
 - GitHub Actions CI pipeline for security scans, linting, and running the Rails test suite.
 - Basic PWA manifest and service worker views stubbed.
 
+
+There's extar real production link: https://cuhkmarket.com (UI/UX different deign)
+
 | Feature Name | Primary Developer (Development) | Secondary Developer (Testing and Bugfix) | Notes |
 | :--- | :--- | :--- | :--- |
 | User Authentication | Ben | Kwok Chi Him Jacco | Sign up, sign in, sign out flows |
 | Email Verification | Ben | Jacco | School-email verification (CUHK domains) |
 | User Profiles | Ben | Jacco | View and edit user profiles |
-| Products Publising | Ben | Jacco | Create, edit, delete, and publish product listings |
-| Searching | Jacco Ben | - | Fuzzy search, category/status filtering, sorting |
-| Product Likes | Ben | Jacco | Like/unlike products and view liked products |
-| Notifications | Ben | Jacco | Real-time notifications via Turbo Streams & Action Cable |
+| Products Publising | - | Jacco | Create, edit, delete, and publish product listings |
+| Searching | Jacco  | - | Fuzzy search, category/status filtering, sorting |
+| Product Likes | - | Jacco | Like/unlike products and view liked products |
+| Notifications | Ben  | Jacco | Real-time notifications via Turbo Streams & Action Cable |
 | Messaging | Ben | Jacco | Buyer-seller conversations with message management |
 | Orders & Checkout | Ben | Jacco | Stripe-based escrow payment flow |
+| Data initialization | - | - | give virtual and initialal data setup|
+| Delay use testing | - | - | Daily normal usage test |
+| Website deployment | - | - | deploy the website to heroku |
+| Bug Analyise | - | - | Find error and bugs |  
