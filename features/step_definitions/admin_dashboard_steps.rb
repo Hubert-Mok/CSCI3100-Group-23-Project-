@@ -127,11 +127,23 @@ When('I approve the flagged product from the dashboard') do
   click_button 'Approve'
 end
 
+When('I delete the flagged product from the dashboard') do
+  rows = all('table tbody tr')
+  row = rows.find { |r| r.has_content?(@flagged_product.title) }
+  raise 'Could not find product row' unless row
+  row.find('button', text: 'Delete').click
+end
+
 Then('the product should be unflagged and available') do
   @flagged_product.reload
   raise 'Expected product to be unflagged after approval' if @flagged_product.flagged
   raise "Expected available status, got #{@flagged_product.status}" unless @flagged_product.status == 'available'
   raise 'Expected success message for approval' unless page.has_content?('Product approved and listed!')
+end
+
+Then('the flagged product should be removed from the moderation queue') do
+  raise 'Expected flagged product to be removed from moderation queue' if page.has_content?(@flagged_product.title)
+  raise 'Expected product to be deleted from database' if Product.exists?(@flagged_product.id)
 end
 
 Then('I should be denied access to the moderation dashboard') do
@@ -211,10 +223,22 @@ When('I approve the flagged message from the dashboard') do
   row.find('button', text: 'Approve').click
 end
 
+When('I delete the flagged message from the dashboard') do
+  rows = all('table tbody tr')
+  row = rows.find { |r| r.has_content?(@flagged_message.body) }
+  raise 'Could not find message row' unless row
+  row.find('button', text: 'Delete').click
+end
+
 Then('the message should be unflagged') do
   @flagged_message.reload
   raise 'Expected message to be unflagged after approval' if @flagged_message.flagged
   raise 'Expected success message for approval' unless page.has_content?('Message approved!')
+end
+
+Then('the flagged message should be removed from the moderation queue') do
+  raise 'Expected flagged message to be removed from moderation queue' if page.has_content?(@flagged_message.body)
+  raise 'Expected message to be deleted from database' if Message.exists?(@flagged_message.id)
 end
 
 When('I visit the home page to check admin badge') do

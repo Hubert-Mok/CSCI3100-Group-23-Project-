@@ -1,6 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe ProductsController, type: :controller do
+  let(:admin_user) do
+    User.create!(
+      email: "admin_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+      password: 'Password123',
+      password_confirmation: 'Password123',
+      cuhk_id: SecureRandom.hex(4),
+      username: 'Admin User',
+      college_affiliation: User::COLLEGES.first,
+      email_verified_at: Time.current,
+      admin: true
+    )
+  end
+
   describe 'GET #index' do
     let!(:viewer) do
       User.create!(
@@ -182,6 +195,41 @@ RSpec.describe ProductsController, type: :controller do
 
       liked_ids = controller.instance_variable_get(:@liked_ids)
       expect(liked_ids).to eq([])
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    let!(:product) do
+      Product.create!(
+        title: 'Flagged Laptop',
+        description: 'This product is pending moderation',
+        price: 20,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :pending,
+        flagged: true,
+        user: User.create!(
+          email: "seller_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+          password: 'Password123',
+          password_confirmation: 'Password123',
+          cuhk_id: SecureRandom.hex(4),
+          username: 'Seller',
+          college_affiliation: User::COLLEGES.first,
+          email_verified_at: Time.current
+        )
+      )
+    end
+
+    it 'redirects admin back to moderation queue when referer is moderation page' do
+      session[:user_id] = admin_user.id
+      request.env['HTTP_REFERER'] = admin_moderation_index_path
+
+      expect {
+        delete :destroy, params: { id: product.id }
+      }.to change(Product, :count).by(-1)
+
+      expect(response).to redirect_to(admin_moderation_index_path)
+      expect(flash[:notice]).to eq('Listing removed successfully.')
     end
   end
 end

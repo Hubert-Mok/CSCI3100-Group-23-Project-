@@ -30,6 +30,13 @@ Feature: Admin dashboard moderation
     And I approve the flagged product from the dashboard
     Then the product should be unflagged and available
 
+  Scenario: Admin deletes a flagged product from moderation queue
+    Given I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
+    When I visit the admin moderation dashboard
+    And I delete the flagged product from the dashboard
+    Then the flagged product should be removed from the moderation queue
+    And I should see "Listing removed successfully."
+
   Scenario: Non-admin cannot access moderation dashboard
     Given a normal user exists with email "buyer@link.cuhk.edu.hk" and password "Password123"
     And I sign in as admin with email "buyer@link.cuhk.edu.hk" and password "Password123"
@@ -61,3 +68,11 @@ Feature: Admin dashboard moderation
     And I click the flagged message product title link
     Then I should be on the flagged message product page
     And I should see the back to admin dashboard button
+
+  Scenario: Admin deletes a flagged message from moderation queue
+    Given a flagged message exists for moderation
+    And I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
+    When I visit the admin moderation dashboard
+    And I delete the flagged message from the dashboard
+    Then the flagged message should be removed from the moderation queue
+    And I should see "Message deleted successfully"
