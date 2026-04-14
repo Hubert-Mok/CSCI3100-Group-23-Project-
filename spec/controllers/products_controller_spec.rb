@@ -36,7 +36,7 @@ RSpec.describe ProductsController, type: :controller do
         listing_type: 'sale',
         status: :available,
         user: User.create!(
-          email: 'seller@link.cuhk.edu.hk',
+          email: "seller_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
           password: 'Password123',
           password_confirmation: 'Password123',
           cuhk_id: SecureRandom.hex(4),

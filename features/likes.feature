@@ -29,3 +29,57 @@ Feature: Like System
     And I try to like the product
     Then I should be redirected to sign in page
 
+  Scenario: Buyer cannot like the same product twice
+    Given the buyer has liked the product "Used Laptop"
+    When I sign in as "buyer@link.cuhk.edu.hk" with password "password123"
+    And I navigate to the product "Used Laptop"
+    And I try to like the product again
+    Then I should see "Could not like this item."
+    And the product should have 1 like
+
+  Scenario: Buyer cannot unlike a product that was not liked
+    When I sign in as "buyer@link.cuhk.edu.hk" with password "password123"
+    And I navigate to the product "Used Laptop"
+    And I try to unlike the product without liking it first
+    Then I should see "Could not unlike this item."
+    And the product should have 0 likes
+
+  Scenario: Unauthenticated user cannot unlike products
+    Given the buyer has liked the product "Used Laptop"
+    When I navigate to the product "Used Laptop"
+    And I try to unlike the product while signed out
+    Then I should be redirected to sign in page
+
+  Scenario: Seller cannot like their own product
+    When I sign in as "seller@link.cuhk.edu.hk" with password "password123"
+    And I navigate to the product "Used Laptop"
+    And I try to like my own product directly
+    Then I should see "You cannot like your own listing."
+    And the product should have 0 likes
+
+  Scenario: Seller does not see like controls on own listing page
+    When I sign in as "seller@link.cuhk.edu.hk" with password "password123"
+    And I navigate to the product "Used Laptop"
+    Then I should not see like controls on the product page
+
+  Scenario: Like control toggles with count on product page
+    When I sign in as "buyer@link.cuhk.edu.hk" with password "password123"
+    And I navigate to the product "Used Laptop"
+    Then I should see a like button with count 0
+    When I click "Like"
+    Then I should see an unlike button with count 1
+    When I click "Unlike"
+    Then I should see a like button with count 0
+
+  Scenario: Like request for missing product is redirected safely
+    When I sign in as "buyer@link.cuhk.edu.hk" with password "password123"
+    And I send a like request for a missing product id
+    Then I should be on the home page
+    And I should see "The page you were looking for doesn't exist."
+
+  Scenario: Unlike request for missing product is redirected safely
+    When I sign in as "buyer@link.cuhk.edu.hk" with password "password123"
+    And I send an unlike request for a missing product id
+    Then I should be on the home page
+    And I should see "The page you were looking for doesn't exist."
+

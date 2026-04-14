@@ -10,9 +10,33 @@ end
 When('I try to like the product again') do
   # The button currently shows "Unlike" since the buyer already likes the product
   # Try to post directly to the like endpoint again to test duplicate like prevention
-  page.driver.post "/products/#{@product.id}/likes"
-  # After the POST, visit the page again to see the response
-  visit current_url
+  page.driver.post "/products/#{@product.id}/like"
+  follow_redirect_after_direct_request
+end
+
+When('I try to unlike the product without liking it first') do
+  page.driver.delete "/products/#{@product.id}/like"
+  follow_redirect_after_direct_request
+end
+
+When('I try to unlike the product while signed out') do
+  page.driver.delete "/products/#{@product.id}/like"
+  follow_redirect_after_direct_request
+end
+
+When('I try to like my own product directly') do
+  page.driver.post "/products/#{@product.id}/like"
+  follow_redirect_after_direct_request
+end
+
+When('I send a like request for a missing product id') do
+  page.driver.post '/products/999999999/like'
+  follow_redirect_after_direct_request
+end
+
+When('I send an unlike request for a missing product id') do
+  page.driver.delete '/products/999999999/like'
+  follow_redirect_after_direct_request
 end
 
 Given('the buyer has liked the product {string}') do |product_title|
@@ -31,4 +55,30 @@ end
 
 Then('I should be redirected to sign in page') do
   expect(current_path).to eq('/sign_in')
+end
+
+Then('I should not see like controls on the product page') do
+  expect(page).not_to have_button('Like')
+  expect(page).not_to have_button('Unlike')
+end
+
+Then('I should see a like button with count {int}') do |count|
+  texts = all('button').map { |btn| btn.text.to_s.gsub(/\s+/, ' ').strip }
+  expect(texts.any? { |text| text.match?(/Like \(#{count}\)/) && !text.include?('Unlike') }).to be(true)
+end
+
+Then('I should see an unlike button with count {int}') do |count|
+  texts = all('button').map { |btn| btn.text.to_s.gsub(/\s+/, ' ').strip }
+  expect(texts.any? { |text| text.include?("Unlike (#{count})") }).to be(true)
+end
+
+def follow_redirect_after_direct_request
+  location = page.driver.response_headers['Location']
+  return visit(location) if location && !location.empty?
+
+  if @product&.id
+    visit "/products/#{@product.id}"
+  else
+    visit '/'
+  end
 end

@@ -42,6 +42,33 @@ RSpec.describe LikesController, type: :controller do
   end
 
   describe 'POST #create' do
+    context 'when user tries to like their own product' do
+      let(:own_product) do
+        Product.create!(
+          title: 'Own Product',
+          description: 'This is the owner product with enough description text',
+          price: 99.0,
+          user: user,
+          category: Product::CATEGORIES.first,
+          listing_type: 'sale',
+          status: :available
+        )
+      end
+
+      it 'does not create a like' do
+        expect {
+          post :create, params: { product_id: own_product.id }
+        }.not_to change(Like, :count)
+      end
+
+      it 'redirects with alert' do
+        post :create, params: { product_id: own_product.id }
+
+        expect(response).to redirect_to(own_product)
+        expect(flash[:alert]).to eq('You cannot like your own listing.')
+      end
+    end
+
     context 'when like is created successfully' do
       it 'creates a new like' do
         expect {
@@ -65,6 +92,15 @@ RSpec.describe LikesController, type: :controller do
       it 'associates the like with the current user' do
         post :create, params: { product_id: product.id }
         expect(user.likes.first.product).to eq(product)
+      end
+    end
+
+    context 'when product is missing' do
+      it 'redirects to root with not-found alert' do
+        post :create, params: { product_id: 999999999 }
+
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq("The page you were looking for doesn't exist.")
       end
     end
 
@@ -134,6 +170,15 @@ RSpec.describe LikesController, type: :controller do
         delete :destroy, params: { product_id: product.id }
         expect(response).to redirect_to(product)
         expect(flash[:alert]).to eq('Could not unlike this item.')
+      end
+    end
+
+    context 'when product is missing' do
+      it 'redirects to root with not-found alert' do
+        delete :destroy, params: { product_id: 999999999 }
+
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq("The page you were looking for doesn't exist.")
       end
     end
   end
