@@ -86,7 +86,7 @@ On each push and pull request to `main`, GitHub Actions runs:
 - Basic PWA manifest and service worker views stubbed.
 
 
-There's extar real production link: https://cuhkmarket.com (UI/UX different deign)
+There's another production link(with azure config and cloudflare dns) : https://cuhkmarket.com (UI/UX different deign)
 
 | Feature Name | Primary Developer (Development) | Secondary Developer (Testing and Bugfix) | Notes |
 | :--- | :--- | :--- | :--- |
