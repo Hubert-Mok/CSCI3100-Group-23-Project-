@@ -55,6 +55,62 @@ RSpec.describe ProfilesController, type: :controller do
       expect(products).to include(product)
     end
 
+    it 'does not include products from other users' do
+      own_product = Product.create!(
+        title: 'Own Product',
+        description: 'Own product description',
+        price: 100,
+        user: user,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available
+      )
+      other_product = Product.create!(
+        title: 'Other Product',
+        description: 'Other product description',
+        price: 200,
+        user: other_user,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available
+      )
+
+      get :show
+
+      products = controller.instance_variable_get(:@products)
+      expect(products).to include(own_product)
+      expect(products).not_to include(other_product)
+    end
+
+    it 'orders user products by latest first' do
+      older_product = Product.create!(
+        title: 'Older Product',
+        description: 'Older product description',
+        price: 50,
+        user: user,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available
+      )
+      newer_product = Product.create!(
+        title: 'Newer Product',
+        description: 'Newer product description',
+        price: 80,
+        user: user,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available
+      )
+      older_product.update_column(:created_at, 2.days.ago)
+      newer_product.update_column(:created_at, 1.day.ago)
+
+      get :show
+
+      products = controller.instance_variable_get(:@products)
+      expect(products.first).to eq(newer_product)
+      expect(products.second).to eq(older_product)
+    end
+
     it 'assigns liked products' do
       product = Product.create!(
         title: 'Test Product',
@@ -69,6 +125,38 @@ RSpec.describe ProfilesController, type: :controller do
       get :show
       liked_products = controller.instance_variable_get(:@liked_products)
       expect(liked_products).to include(product)
+    end
+
+    it 'orders liked products by latest first' do
+      older_liked = Product.create!(
+        title: 'Older Liked Product',
+        description: 'Older liked product description',
+        price: 100,
+        user: other_user,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available
+      )
+      newer_liked = Product.create!(
+        title: 'Newer Liked Product',
+        description: 'Newer liked product description',
+        price: 120,
+        user: other_user,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available
+      )
+      older_liked.update_column(:created_at, 3.days.ago)
+      newer_liked.update_column(:created_at, 1.day.ago)
+
+      Like.create!(user: user, product: older_liked)
+      Like.create!(user: user, product: newer_liked)
+
+      get :show
+
+      liked_products = controller.instance_variable_get(:@liked_products)
+      expect(liked_products.first).to eq(newer_liked)
+      expect(liked_products.second).to eq(older_liked)
     end
   end
 
@@ -123,6 +211,37 @@ RSpec.describe ProfilesController, type: :controller do
         user.reload
         expect(user.college_affiliation).to eq(new_college)
       end
+
+      it 'updates multiple profile fields in one request' do
+        new_email = "multi_#{SecureRandom.hex(4)}@link.cuhk.edu.hk"
+        new_college = User::COLLEGES.third
+
+        patch :update, params: {
+          user: {
+            username: 'multiupdateuser',
+            email: new_email,
+            college_affiliation: new_college
+          }
+        }
+
+        user.reload
+        expect(user.username).to eq('multiupdateuser')
+        expect(user.email).to eq(new_email)
+        expect(user.college_affiliation).to eq(new_college)
+      end
+
+      it 'ignores unpermitted params' do
+        patch :update, params: {
+          user: {
+            username: 'safeuser',
+            admin: true
+          }
+        }
+
+        user.reload
+        expect(user.username).to eq('safeuser')
+        expect(user.admin).to be(false)
+      end
     end
 
     context 'with invalid parameters' do
@@ -148,6 +267,34 @@ RSpec.describe ProfilesController, type: :controller do
         patch :update, params: { user: { email: 'invalid-email' } }
         user.reload
         expect(user.email).to eq(original_email)
+      end
+
+      it 'does not update to a duplicate email' do
+        original_email = user.email
+        patch :update, params: { user: { email: other_user.email } }
+
+        user.reload
+        expect(user.email).to eq(original_email)
+        expect(response).to render_template(:edit)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'does not update with invalid college affiliation' do
+        original_college = user.college_affiliation
+        patch :update, params: { user: { college_affiliation: 'Invalid College' } }
+
+        user.reload
+        expect(user.college_affiliation).to eq(original_college)
+        expect(response).to render_template(:edit)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'with missing user params' do
+      it 'raises parameter missing error' do
+        expect {
+          patch :update, params: {}
+        }.to raise_error(ActionController::ParameterMissing)
       end
     end
   end
