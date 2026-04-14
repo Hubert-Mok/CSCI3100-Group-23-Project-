@@ -13,6 +13,15 @@ class PasswordResetsController < ApplicationController
 
     # #region agent log
     begin
+      Rails.logger.info({
+        sessionId: "90ad6c",
+        runId: run_id,
+        hypothesisId: "H1",
+        location: "app/controllers/password_resets_controller.rb:create",
+        message: "Password reset request received",
+        data: { user_found: user.present?, email_verified: user&.email_verified? || false, user_id: user&.id, adapter: ActiveJob::Base.queue_adapter.class.name },
+        timestamp: (Time.now.to_f * 1000).to_i
+      }.to_json)
       File.open(DEBUG_LOG_PATH, "a") do |f|
         f.puts({
           sessionId: "90ad6c",
@@ -31,17 +40,27 @@ class PasswordResetsController < ApplicationController
     # Always show the same response to prevent user enumeration.
     if user&.email_verified?
       raw_token = user.generate_password_reset_token!
-      job = UserMailer.password_reset(user, raw_token).deliver_later
+      # Password reset is latency-sensitive and must not depend on async worker availability.
+      UserMailer.password_reset(user, raw_token).deliver_now
       # #region agent log
       begin
+        Rails.logger.info({
+          sessionId: "90ad6c",
+          runId: run_id,
+          hypothesisId: "H2",
+          location: "app/controllers/password_resets_controller.rb:create",
+          message: "Password reset mail delivered synchronously",
+          data: { user_id: user.id },
+          timestamp: (Time.now.to_f * 1000).to_i
+        }.to_json)
         File.open(DEBUG_LOG_PATH, "a") do |f|
           f.puts({
             sessionId: "90ad6c",
             runId: run_id,
             hypothesisId: "H2",
             location: "app/controllers/password_resets_controller.rb:create",
-            message: "Password reset mail job enqueued",
-            data: { job_id: job&.job_id, queue_name: job&.queue_name, user_id: user.id },
+            message: "Password reset mail delivered synchronously",
+            data: { user_id: user.id },
             timestamp: (Time.now.to_f * 1000).to_i
           }.to_json)
         end

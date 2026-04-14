@@ -18,6 +18,15 @@ class UserMailer < ApplicationMailer
     # #region agent log
     begin
       host = @reset_url.to_s.split("/")[2]
+      Rails.logger.info({
+        sessionId: "90ad6c",
+        runId: run_id,
+        hypothesisId: "H4",
+        location: "app/mailers/user_mailer.rb:password_reset",
+        message: "Password reset email composed",
+        data: { user_id: @user.id, reset_url_host: host, expiry_minutes: @expiry_minutes },
+        timestamp: (Time.now.to_f * 1000).to_i
+      }.to_json)
       File.open(DEBUG_LOG_PATH, "a") do |f|
         f.puts({
           sessionId: "90ad6c",
