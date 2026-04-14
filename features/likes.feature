@@ -50,3 +50,10 @@ Feature: Like System
     And I try to unlike the product while signed out
     Then I should be redirected to sign in page
 
+  Scenario: Seller cannot like their own product
+    When I sign in as "seller@link.cuhk.edu.hk" with password "password123"
+    And I navigate to the product "Used Laptop"
+    And I try to like my own product directly
+    Then I should see "You cannot like your own listing."
+    And the product should have 0 likes
+

@@ -42,6 +42,33 @@ RSpec.describe LikesController, type: :controller do
   end
 
   describe 'POST #create' do
+    context 'when user tries to like their own product' do
+      let(:own_product) do
+        Product.create!(
+          title: 'Own Product',
+          description: 'This is the owner product with enough description text',
+          price: 99.0,
+          user: user,
+          category: Product::CATEGORIES.first,
+          listing_type: 'sale',
+          status: :available
+        )
+      end
+
+      it 'does not create a like' do
+        expect {
+          post :create, params: { product_id: own_product.id }
+        }.not_to change(Like, :count)
+      end
+
+      it 'redirects with alert' do
+        post :create, params: { product_id: own_product.id }
+
+        expect(response).to redirect_to(own_product)
+        expect(flash[:alert]).to eq('You cannot like your own listing.')
+      end
+    end
+
     context 'when like is created successfully' do
       it 'creates a new like' do
         expect {

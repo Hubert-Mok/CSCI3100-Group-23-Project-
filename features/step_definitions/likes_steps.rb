@@ -24,6 +24,11 @@ When('I try to unlike the product while signed out') do
   follow_redirect_after_direct_request
 end
 
+When('I try to like my own product directly') do
+  page.driver.post "/products/#{@product.id}/like"
+  follow_redirect_after_direct_request
+end
+
 Given('the buyer has liked the product {string}') do |product_title|
   @product = Product.find_by(title: product_title)
   Like.create!(user: @buyer, product: @product)
