@@ -21,8 +21,16 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # On Heroku, local disk is ephemeral. Use S3 when AWS env vars and adapter are available.
+  s3_configured = ENV["AWS_ACCESS_KEY_ID"].present? && ENV["AWS_SECRET_ACCESS_KEY"].present? && ENV["AWS_BUCKET"].present?
+  s3_adapter_available = begin
+    require "aws-sdk-s3"
+    true
+  rescue LoadError
+    false
+  end
+
+  config.active_storage.service = (s3_configured && s3_adapter_available) ? :amazon : :local
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # config.assume_ssl = true
@@ -57,7 +65,7 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "https://cuhk-marketplace-2219fdf8f1c3.herokuapp.com/"), protocol: "https" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "cuhk-marketplace-2219fdf8f1c3.herokuapp.com"), protocol: "https" }
 
   # Deliver via Gmail SMTP (port 465, implicit SSL).
   config.action_mailer.delivery_method = :smtp

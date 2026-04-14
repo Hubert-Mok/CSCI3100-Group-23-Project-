@@ -45,6 +45,25 @@ docker compose up
 Without `RESEND_API_KEY` set, emails are printed to the Rails log in development (no real emails sent). In production, also set:
 - `APP_HOST` — your production hostname (e.g. `marketplace.example.com`)
 
+### Heroku image storage (required)
+
+Heroku dyno disk is ephemeral, so Active Storage files will disappear after restart if you use local disk.
+Configure S3 for production image persistence:
+
+1. Add S3 adapter gem and lock it:
+	- Add `gem "aws-sdk-s3", require: false` to `Gemfile`
+	- Run `bundle lock --update aws-sdk-s3` (or `bundle install` in your deploy environment)
+2. Create an S3 bucket.
+3. Set these Heroku config vars:
+	- `AWS_ACCESS_KEY_ID`
+	- `AWS_SECRET_ACCESS_KEY`
+	- `AWS_REGION` (e.g. `ap-east-1`)
+	- `AWS_BUCKET`
+4. Set `APP_HOST` to hostname only (no `https://`, no trailing slash).
+5. Redeploy.
+
+This app auto-selects S3 in production when all three keys are present (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`), otherwise it falls back to local disk.
+
 Docker Compose loads `.env.development` into the web service. For local dev without Docker, the app uses the `dotenv-rails` gem to load `.env.development`.
 
 **7. Testing:**
