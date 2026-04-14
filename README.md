@@ -47,13 +47,23 @@ Without `RESEND_API_KEY` set, emails are printed to the Rails log in development
 
 Docker Compose loads `.env.development` into the web service. For local dev without Docker, the app uses the `dotenv-rails` gem to load `.env.development`.
 
-### CI (GitHub Actions)
+**7. Testing:**
 
-On each push and pull request to `main`, GitHub Actions runs:
-- **Security scans (Ruby)**: `bin/brakeman` and `bin/bundler-audit`
-- **Security scan (JavaScript)**: `bin/importmap audit`
-- **Linting**: `bin/rubocop -f github`
-- **Tests**: `bin/rails db:test:prepare test`
+**Unit Tests (RSpec):**
+```bash
+docker compose exec web bundle exec rspec
+```
+
+**Minitest:**
+```bash
+docker compose exec web bin/rails db:test:prepare test
+```
+
+**Behavior Tests (Cucumber):**
+```bash
+docker compose exec web bundle exec cucumber
+```
+
 
 
 | Feature Name | Primary Developer (Development) | Secondary Developer (Testing and Bugfix) | Notes |
@@ -75,3 +85,6 @@ On each push and pull request to `main`, GitHub Actions runs:
 | Admin Moderation | Hubert | Ng Hei Yi Melody | Added Admin access and Admin Dashboard to check suspicious products and messages |
 | PWA Support | Alice | - | Manifest, service worker, basic offline behaviour |
 | Demo Video Editing | Ng Hei Yi Melody | Alice | Screen shooting and editing the demo video with narration and subtitle added |
+
+ **SimpleCov Report**
+ ![SimpleCov Screenshot](./Screenshot%202026-04-14%20233457.png)
