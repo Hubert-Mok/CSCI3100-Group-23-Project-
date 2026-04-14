@@ -95,6 +95,15 @@ RSpec.describe LikesController, type: :controller do
       end
     end
 
+    context 'when product is missing' do
+      it 'redirects to root with not-found alert' do
+        post :create, params: { product_id: 999999999 }
+
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq("The page you were looking for doesn't exist.")
+      end
+    end
+
     context 'when like creation fails' do
       before do
         # Create existing like
@@ -161,6 +170,15 @@ RSpec.describe LikesController, type: :controller do
         delete :destroy, params: { product_id: product.id }
         expect(response).to redirect_to(product)
         expect(flash[:alert]).to eq('Could not unlike this item.')
+      end
+    end
+
+    context 'when product is missing' do
+      it 'redirects to root with not-found alert' do
+        delete :destroy, params: { product_id: 999999999 }
+
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq("The page you were looking for doesn't exist.")
       end
     end
   end

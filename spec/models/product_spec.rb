@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Product, type: :model do
   let(:user) do
     User.create!(
-      email: 'seller@link.cuhk.edu.hk',
+      email: "seller_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
       password: 'Password123',
       password_confirmation: 'Password123',
       cuhk_id: SecureRandom.hex(4),
