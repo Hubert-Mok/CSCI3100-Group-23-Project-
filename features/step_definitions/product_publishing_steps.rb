@@ -56,6 +56,36 @@ Given('I am on the new product page') do
   visit '/products/new'
 end
 
+Given('I already have a published product listing titled {string} with status {string}') do |title, status|
+  @product = Product.create!(
+    title: title,
+    description: 'A well-described item that is ready for editing in the listing flow.',
+    price: 100,
+    category: Product::CATEGORIES.first,
+    listing_type: 'sale',
+    status: status.downcase.to_sym,
+    user: @user
+  )
+end
+
+Given('I am on the edit listing page for {string}') do |title|
+  @product = Product.find_by!(title: title, user: @user)
+  visit "/products/#{@product.id}/edit"
+end
+
+Given('the listing has existing product photo file {string}') do |filename|
+  file_path = Rails.root.join('test', 'fixtures', 'files', filename)
+  raise "Missing fixture file: #{file_path}" unless File.exist?(file_path)
+
+  @product.thumbnail.attach(
+    io: File.open(file_path),
+    filename: filename,
+    content_type: 'image/png'
+  )
+  @product.reload
+  @original_photo_blob_id = @product.thumbnail.blob_id
+end
+
 Given('I try to visit the new product page') do
   visit '/products/new'
 end
@@ -72,6 +102,7 @@ When('I fill in the product form with:') do |table|
   fill_in 'Description', with: form_hash['Description']
   fill_in 'Price (HKD)', with: form_hash['Price']
   select form_hash['Category'], from: 'Category'
+  select form_hash['Status'], from: 'Status' if form_hash['Status'].present?
 
   if form_hash['Listing Type'].casecmp('Sale').zero?
     choose 'For Sale'
@@ -80,10 +111,17 @@ When('I fill in the product form with:') do |table|
   end
 end
 
+When('I attach product photo file {string}') do |filename|
+  file_path = Rails.root.join('test', 'fixtures', 'files', filename)
+  raise "Missing fixture file: #{file_path}" unless File.exist?(file_path)
+
+  attach_file('Photo', file_path, visible: false)
+end
+
 # Form submission steps
 When('I submit the product form') do
   @product_count_before = Product.count
-  click_button 'Publish Listing'
+  click_button(page.has_button?('Update Listing') ? 'Update Listing' : 'Publish Listing')
 end
 
 # Success assertions
@@ -97,6 +135,10 @@ Then('I should see {string}') do |text|
   raise "Expected to see #{text}" unless page.has_content?(text)
 end
 
+Then('I should not see {string}') do |text|
+  raise "Expected not to see #{text}" if page.has_content?(text)
+end
+
 Then('the product should have status {string}') do |status|
   @product.reload
   raise "Expected product status #{status}, got #{@product.status}" unless @product.status == status
@@ -105,6 +147,33 @@ end
 Then('the product should be listed on the market') do
   visit "/products/#{@product.id}"
   raise "Expected product #{@product.title} to be visible on its show page" unless page.has_content?(@product.title)
+end
+
+Then('the product should have status pending') do
+  @product.reload
+  raise "Expected product status pending, got #{@product.status}" unless @product.status == 'pending'
+end
+
+Then('the product should have title {string}') do |title|
+  @product.reload
+  raise "Expected product title #{title}, got #{@product.title}" unless @product.title == title
+end
+
+Then('the product should have an attached photo') do
+  @product.reload
+  raise 'Expected product to have an attached photo' unless @product.thumbnail.attached?
+end
+
+Then('the product photo should be replaced') do
+  @product.reload
+  raise 'Expected product to have an attached photo' unless @product.thumbnail.attached?
+  raise 'Expected product photo blob to be replaced' if @product.thumbnail.blob_id == @original_photo_blob_id
+end
+
+Then('the product photo should remain unchanged') do
+  @product.reload
+  raise 'Expected product to keep an attached photo' unless @product.thumbnail.attached?
+  raise 'Expected product photo blob to stay unchanged' unless @product.thumbnail.blob_id == @original_photo_blob_id
 end
 
 # Failure assertions

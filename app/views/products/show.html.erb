@@ -72,7 +72,7 @@
       <% end %>
 
       <% if logged_in? && current_user == @product.user %>
-        <% if current_user.stripe_account_id.blank? && @product.sale? %>
+        <% if current_user.stripe_account_id.blank? && @product.sale? && @product.available? %>
           <p class="stripe-connect-prompt">
             <%= link_to "Connect with Stripe to receive payments", stripe_account_path, class: "btn-primary" %>
           </p>
