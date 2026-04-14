@@ -91,15 +91,17 @@ There's another production link(with azure config and cloudflare dns) : https://
 | Feature Name | Primary Developer (Development) | Secondary Developer (Testing and Bugfix) | Notes |
 | :--- | :--- | :--- | :--- |
 | User Authentication | Ben | Kwok Chi Him Jacco | Sign up, sign in, sign out flows |
-| Email Verification | Ben | Jacco | School-email verification (CUHK domains) |
-| User Profiles | Ben | Jacco | View and edit user profiles |
-| Products Publising | - | Jacco | Create, edit, delete, and publish product listings |
-| Searching | Jacco  | - | Fuzzy search, category/status filtering, sorting |
-| Product Likes | - | Jacco | Like/unlike products and view liked products |
-| Notifications | Ben  | Jacco | Real-time notifications via Turbo Streams & Action Cable |
-| Messaging | Ben | Jacco | Buyer-seller conversations with message management |
+| Email Verification | Ben, MOK Yik Him Hubert | Jacco | School-email verification (CUHK domains) |
+| User Profiles | Ben | Jacco, Hubert | View and edit user profiles |
+| Products Publising | - | Jacco, Hubert | Create, edit, delete, and publish product listings |
+| Searching | Jacco  | Hubert | Fuzzy search, category/status filtering, sorting |
+| Product Likes | - | Jacco, Hubert | Like/unlike products and view liked products |
+| Notifications | Ben  | Jacco, Hubert | Real-time notifications via Turbo Streams & Action Cable |
+| Messaging | Ben | Jacco, Hubert | Buyer-seller conversations with message management |
 | Orders & Checkout | Ben | Jacco | Stripe-based escrow payment flow |
 | Data initialization | - | - | give virtual and initialal data setup|
 | Delay use testing | - | - | Daily normal usage test |
-| Website deployment | - | - | deploy the website to heroku |
+| Website deployment | Hubert | - | deploy the website to heroku |
 | Bug Analyise | - | - | Find error and bugs |  
+| Fraud Detection | Hubert | - | Find suspicious products and messages
+| Admin Moderation| Hubert | - | Added Admin access and Admin Dashboard to check suspicious products and messages
