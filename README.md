@@ -68,7 +68,7 @@ On each push and pull request to `main`, GitHub Actions runs:
 | Messaging | Ben | Jacco, Hubert | Buyer-seller conversations with message management |
 | Orders & Checkout | Ben | Jacco | Stripe-based escrow payment flow |
 | Data initialization | Alice, Ng Hei Yi Melody | - | Database seeds with 8 users, 19 products across all categories, and likes |
-| Delay use testing | Hubert, Meldoy | Alice | Daily normal usage test |
+| Delay use testing | Hubert, Ng Hei Yi Meldoy | Alice | Daily normal usage test |
 | Website deployment | Hubert | - | deploy the website to heroku |
 | handle http error code | - | Alice, Ng Hei Yi Melody | Fixed lint errors, added 404 error handling |
 | Fraud Detection | Hubert | - | Find suspicious products and messages |
