@@ -110,4 +110,4 @@ docker compose exec web bundle exec cucumber
 | Demo Video Editing | Ng Hei Yi Melody | Alice | Screen shooting and editing the demo video with narration and subtitle added |
 
  **SimpleCov Report**
- ![SimpleCov Screenshot](./Screenshot%202026-04-14%20233457.png)
+ ![SimpleCov Screenshot](./cuhk-marketplace-simplecov-report.png)
