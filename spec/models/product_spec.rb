@@ -53,6 +53,23 @@ RSpec.describe Product, type: :model do
       expect(product.errors[:price]).to include('must be greater than 0 for sale listings')
     end
 
+    it 'is invalid when price is above the allowed maximum' do
+      product = Product.new(valid_attributes.merge(price: 1_000_000))
+      expect(product).not_to be_valid
+      expect(product.errors[:price]).to include('is too high (maximum is 999999.9)')
+    end
+
+    it 'accepts price with one decimal place' do
+      product = Product.new(valid_attributes.merge(price: 123.4))
+      expect(product).to be_valid
+    end
+
+    it 'is invalid when price has more than one decimal place' do
+      product = Product.new(valid_attributes.merge(price: 123.45))
+      expect(product).not_to be_valid
+      expect(product.errors[:price]).to include('can have at most 1 decimal place')
+    end
+
     it 'is invalid when a gift listing has a positive price' do
       product = Product.new(valid_attributes.merge(price: 50, listing_type: 'gift'))
       expect(product).not_to be_valid

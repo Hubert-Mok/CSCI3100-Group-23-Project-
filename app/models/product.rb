@@ -25,6 +25,8 @@ class Product < ApplicationRecord
   enum :status, { available: 0, reserved: 1, sold: 2 , pending: 3}
   enum :listing_type, { sale: 0, gift: 1 }
 
+  MAX_PRICE = 999_999.9
+
   after_initialize :set_default_status, if: :new_record?
 
   validates :title, presence: true, length: { minimum: 3, maximum: 100 }
@@ -34,6 +36,8 @@ class Product < ApplicationRecord
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :status, presence: true
   validate :price_matches_listing_type, if: -> { listing_type.present? && price.present? }
+  validate :price_within_maximum, if: -> { price.present? }
+  validate :price_has_at_most_one_decimal_place, if: -> { price.present? }
 
   private
 
@@ -55,6 +59,19 @@ class Product < ApplicationRecord
     elsif sale? && price.to_f <= 0
       errors.add(:price, "must be greater than 0 for sale listings")
     end
+  end
+
+  def price_within_maximum
+    return if price.to_d <= MAX_PRICE
+
+    errors.add(:price, "is too high (maximum is #{MAX_PRICE})")
+  end
+
+  def price_has_at_most_one_decimal_place
+    scaled = price.to_d * 10
+    return if scaled == scaled.truncate
+
+    errors.add(:price, "can have at most 1 decimal place")
   end
 
   def set_default_status
