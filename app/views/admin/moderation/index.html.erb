@@ -20,11 +20,6 @@
               <td><strong><%= product.title %></strong></td>
               <td><%= product.user.username %></td>
               <td class="text-muted"><%= truncate(product.description, length: 50) %></td>
-              <%# <td>
-                <span class="badge <%= product.fraud_score.to_f > 0.7 ? 'text-danger' : 'text-warning' %>">
-                  <%= (product.fraud_score.to_f * 100).to_i %>%
-                </span>
-              </td> %>
               <td class="actions-cell">
                 <%= button_to "Approve", 
                       approve_product_admin_moderation_path(product), 

@@ -4,7 +4,7 @@ RSpec.describe SessionsController, type: :controller do
   describe 'POST #create' do
     let!(:verified_user) do
       User.create!(
-        email: 'user@link.cuhk.edu.hk',
+        email: "user_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
         password: 'password123',
         password_confirmation: 'password123',
         cuhk_id: SecureRandom.hex(4),
@@ -16,7 +16,7 @@ RSpec.describe SessionsController, type: :controller do
 
     let!(:unverified_user) do
       User.create!(
-        email: 'unverified@link.cuhk.edu.hk',
+        email: "unverified_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
         password: 'password123',
         password_confirmation: 'password123',
         cuhk_id: SecureRandom.hex(4),
@@ -53,7 +53,7 @@ RSpec.describe SessionsController, type: :controller do
   describe 'DELETE #destroy' do
     let!(:user) do
       User.create!(
-        email: 'user@link.cuhk.edu.hk',
+        email: "user_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
         password: 'password123',
         password_confirmation: 'password123',
         cuhk_id: SecureRandom.hex(4),
