@@ -76,3 +76,11 @@ Feature: Admin dashboard moderation
     And I delete the flagged message from the dashboard
     Then the flagged message should be removed from the moderation queue
     And I should see "Message deleted successfully"
+
+  Scenario: Newest flagged items appear first in moderation queue
+    Given two flagged products exist for moderation in chronological order
+    And two flagged messages exist for moderation in chronological order
+    And I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
+    When I visit the admin moderation dashboard
+    Then the newest flagged product should appear before the older one in the moderation queue
+    And the newest flagged message should appear before the older one in the moderation queue

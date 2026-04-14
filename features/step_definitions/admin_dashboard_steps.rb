@@ -74,6 +74,48 @@ Given('{int} flagged products exist for moderation') do |count|
   end
 end
 
+Given('two flagged products exist for moderation in chronological order') do
+  Product.class_eval do
+    def get_ai_fraud_score
+      { score: 0.0, is_fraud: false }
+    end
+  end
+
+  seller = User.create!(
+    email: "seller_order_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+    password: 'Password123',
+    password_confirmation: 'Password123',
+    cuhk_id: SecureRandom.hex(4),
+    username: 'Seller Order',
+    college_affiliation: User::COLLEGES.first,
+    email_verified_at: Time.current
+  )
+
+  @older_flagged_product = Product.create!(
+    title: 'Older Suspicious Item',
+    description: 'Contact me on whatsapp +85212345678',
+    price: 100,
+    category: Product::CATEGORIES.first,
+    listing_type: 'sale',
+    status: :pending,
+    flagged: true,
+    user: seller
+  )
+  @older_flagged_product.update_columns(created_at: 2.hours.ago, updated_at: 2.hours.ago)
+
+  @newer_flagged_product = Product.create!(
+    title: 'Newer Suspicious Item',
+    description: 'Contact me on whatsapp +85287654321',
+    price: 120,
+    category: Product::CATEGORIES.first,
+    listing_type: 'sale',
+    status: :pending,
+    flagged: true,
+    user: seller
+  )
+  @newer_flagged_product.update_columns(created_at: 1.hour.ago, updated_at: 1.hour.ago)
+end
+
 Given('a normal user exists with email {string} and password {string}') do |email, password|
   @normal_user = User.create!(
     email: email,
@@ -200,6 +242,60 @@ Given('a flagged message exists for moderation') do
   )
 end
 
+Given('two flagged messages exist for moderation in chronological order') do
+  @seller_for_order_message = User.create!(
+    email: "seller_msg_order_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+    password: 'Password123',
+    password_confirmation: 'Password123',
+    cuhk_id: SecureRandom.hex(4),
+    username: 'Seller Msg Order',
+    college_affiliation: User::COLLEGES.first,
+    email_verified_at: Time.current
+  )
+
+  @buyer_for_order_message = User.create!(
+    email: "buyer_msg_order_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+    password: 'Password123',
+    password_confirmation: 'Password123',
+    cuhk_id: SecureRandom.hex(4),
+    username: 'Buyer Msg Order',
+    college_affiliation: User::COLLEGES.first,
+    email_verified_at: Time.current
+  )
+
+  product = Product.create!(
+    title: 'Order Product',
+    description: 'A valid product for message ordering checks',
+    price: 100,
+    category: Product::CATEGORIES.first,
+    listing_type: 'sale',
+    status: :available,
+    user: @seller_for_order_message
+  )
+
+  conversation = Conversation.create!(
+    product: product,
+    buyer: @buyer_for_order_message,
+    seller: @seller_for_order_message
+  )
+
+  @older_flagged_message = Message.create!(
+    conversation: conversation,
+    user: @buyer_for_order_message,
+    body: 'Older flagged whatsapp +85211111111',
+    flagged: true
+  )
+  @older_flagged_message.update_columns(created_at: 2.hours.ago, updated_at: 2.hours.ago)
+
+  @newer_flagged_message = Message.create!(
+    conversation: conversation,
+    user: @buyer_for_order_message,
+    body: 'Newer flagged whatsapp +85222222222',
+    flagged: true
+  )
+  @newer_flagged_message.update_columns(created_at: 1.hour.ago, updated_at: 1.hour.ago)
+end
+
 Then('I should see the flagged message in the moderation queue') do
   raise 'Expected flagged message to appear in moderation queue' unless page.has_content?(@flagged_message.body)
   raise 'Expected sender username in moderation queue' unless page.has_content?(@buyer_for_message.username)
@@ -239,6 +335,20 @@ end
 Then('the flagged message should be removed from the moderation queue') do
   raise 'Expected flagged message to be removed from moderation queue' if page.has_content?(@flagged_message.body)
   raise 'Expected message to be deleted from database' if Message.exists?(@flagged_message.id)
+end
+
+Then('the newest flagged product should appear before the older one in the moderation queue') do
+  newer_index = page.body.index(@newer_flagged_product.title)
+  older_index = page.body.index(@older_flagged_product.title)
+  raise 'Expected both flagged products to appear in moderation queue' if newer_index.nil? || older_index.nil?
+  raise 'Expected newest flagged product to appear before the older one' unless newer_index < older_index
+end
+
+Then('the newest flagged message should appear before the older one in the moderation queue') do
+  newer_index = page.body.index(@newer_flagged_message.body)
+  older_index = page.body.index(@older_flagged_message.body)
+  raise 'Expected both flagged messages to appear in moderation queue' if newer_index.nil? || older_index.nil?
+  raise 'Expected newest flagged message to appear before the older one' unless newer_index < older_index
 end
 
 When('I visit the home page to check admin badge') do
