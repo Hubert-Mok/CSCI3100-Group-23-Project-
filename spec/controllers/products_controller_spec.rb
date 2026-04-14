@@ -231,5 +231,282 @@ RSpec.describe ProductsController, type: :controller do
       expect(response).to redirect_to(admin_moderation_index_path)
       expect(flash[:notice]).to eq('Listing removed successfully.')
     end
+
+    it 'redirects an owner back to their profile after removing a listing' do
+      owner = User.create!(
+        email: "owner_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+        password: 'Password123',
+        password_confirmation: 'Password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Owner User',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current
+      )
+      owned_product = Product.create!(
+        title: 'Desk Lamp',
+        description: 'Bright desk lamp for study spaces',
+        price: 40,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: owner
+      )
+
+      session[:user_id] = owner.id
+
+      expect {
+        delete :destroy, params: { id: owned_product.id }
+      }.to change(Product, :count).by(-1)
+
+      expect(response).to redirect_to(profile_path)
+      expect(flash[:notice]).to eq('Listing removed successfully.')
+    end
+  end
+
+  describe 'GET #edit' do
+    let!(:owner) do
+      User.create!(
+        email: "edit_owner_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+        password: 'Password123',
+        password_confirmation: 'Password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Edit Owner',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current
+      )
+    end
+
+    let!(:product) do
+      Product.create!(
+        title: 'Textbook Bundle',
+        description: 'A bundle of textbooks ready for the next semester',
+        price: 180,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: owner
+      )
+    end
+
+    before do
+      session[:user_id] = owner.id
+    end
+
+    it 'renders the edit form for the owner' do
+      get :edit, params: { id: product.id }
+
+      expect(response).to have_http_status(:success)
+      expect(response).to render_template(:edit)
+    end
+  end
+
+  describe 'PATCH #update' do
+    let!(:owner) do
+      User.create!(
+        email: "update_owner_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+        password: 'Password123',
+        password_confirmation: 'Password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Update Owner',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current
+      )
+    end
+
+    let!(:product) do
+      Product.create!(
+        title: 'Study Table',
+        description: 'A sturdy table suitable for study and work',
+        price: 220,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: owner
+      )
+    end
+
+    before do
+      session[:user_id] = owner.id
+    end
+
+    it 'updates the listing details and shows the Stripe prompt for sale listings' do
+      patch :update, params: {
+        id: product.id,
+        product: {
+          title: 'Study Table Pro',
+          description: 'Updated description with clearer details for interested buyers.',
+          price: 260,
+          category: Product::CATEGORIES.second,
+          listing_type: 'sale'
+        }
+      }
+
+      product.reload
+
+      expect(product.title).to eq('Study Table Pro')
+      expect(product.price).to eq(260)
+      expect(response).to redirect_to(product)
+      expect(flash[:notice]).to eq('Listing updated successfully!')
+      expect(flash[:alert]).to eq('Connect your Stripe account so buyers can use Buy Now and you can receive payments.')
+    end
+
+    it 'renders the edit form again when the update is invalid' do
+      patch :update, params: {
+        id: product.id,
+        product: {
+          title: 'OK',
+          description: 'Updated description with enough length to be valid.',
+          price: 260,
+          category: Product::CATEGORIES.second,
+          listing_type: 'sale'
+        }
+      }
+
+      product.reload
+
+      expect(product.title).to eq('Study Table')
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to render_template(:edit)
+    end
+
+    it 'broadcasts notifications when the status changes to sold' do
+      fan = User.create!(
+        email: "fan_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+        password: 'Password123',
+        password_confirmation: 'Password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Fan User',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current
+      )
+      Like.create!(user: fan, product: product)
+
+      allow(controller).to receive(:broadcast_notification_badge_to)
+      allow(Turbo::StreamsChannel).to receive(:broadcast_prepend_to)
+
+      expect {
+        patch :update, params: {
+          id: product.id,
+          product: {
+            title: 'Study Table Pro',
+            description: 'Updated description with clearer details for interested buyers.',
+            price: 260,
+            category: Product::CATEGORIES.second,
+            listing_type: 'sale',
+            status: 'sold'
+          }
+        }
+      }.to change(Notification, :count).by(1)
+
+      product.reload
+
+      expect(product.status).to eq('sold')
+      expect(controller).to have_received(:broadcast_notification_badge_to).with(fan)
+      expect(response).to redirect_to(product)
+    end
+
+    it 'does not show a Stripe prompt when a sale listing is updated to pending' do
+      patch :update, params: {
+        id: product.id,
+        product: {
+          title: 'Study Table',
+          description: 'A sturdy table suitable for study and work',
+          price: 220,
+          category: Product::CATEGORIES.first,
+          listing_type: 'sale',
+          status: 'pending'
+        }
+      }
+
+      product.reload
+
+      expect(product.status).to eq('pending')
+      expect(response).to redirect_to(product)
+      expect(flash[:notice]).to eq('Listing updated successfully!')
+      expect(flash[:alert]).to be_nil
+    end
+
+    it 'attaches a thumbnail image when updating a listing' do
+      upload = Rack::Test::UploadedFile.new(
+        Rails.root.join('test/fixtures/files/test-image.png'),
+        'image/png'
+      )
+
+      patch :update, params: {
+        id: product.id,
+        product: {
+          title: 'Study Table',
+          description: 'A sturdy table suitable for study and work',
+          price: 220,
+          category: Product::CATEGORIES.first,
+          listing_type: 'sale',
+          status: 'available',
+          thumbnail: upload
+        }
+      }
+
+      product.reload
+
+      expect(response).to redirect_to(product)
+      expect(product.thumbnail).to be_attached
+    end
+  end
+
+  describe 'POST #create' do
+    let(:seller) do
+      User.create!(
+        email: "seller_create_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+        password: 'Password123',
+        password_confirmation: 'Password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Seller Create',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current
+      )
+    end
+
+    before do
+      session[:user_id] = seller.id
+      allow_any_instance_of(Product).to receive(:get_ai_fraud_score).and_return({ score: 0.0, is_fraud: false })
+    end
+
+    it 'shows a Stripe prompt when a sale listing is published without a Stripe account' do
+      post :create, params: {
+        product: {
+          title: 'Budget Monitor',
+          description: 'A clean monitor with HDMI cable and stand included.',
+          price: 120,
+          category: Product::CATEGORIES.second,
+          listing_type: 'sale'
+        }
+      }
+
+      created_product = Product.where(user: seller).order(:created_at).last
+      expect(response).to redirect_to(created_product)
+      expect(flash[:notice]).to eq('Listing published successfully!')
+      expect(flash[:alert]).to eq('Connect your Stripe account so buyers can use Buy Now and you can receive payments.')
+      expect(created_product.status).to eq('available')
+    end
+
+    it 'marks suspicious listings as pending and shows approval warning' do
+      allow_any_instance_of(Product).to receive(:get_ai_fraud_score).and_return({ score: 0.2, is_fraud: false })
+
+      post :create, params: {
+        product: {
+          title: 'suspicious laptop, contact via whatsapp 12345678',
+          description: 'Clean description for a normal looking listing.',
+          price: 100,
+          category: Product::CATEGORIES.second,
+          listing_type: 'sale'
+        }
+      }
+
+      created_product = Product.where(user: seller).order(:created_at).last
+      expect(response).to redirect_to(created_product)
+      expect(flash[:warning]).to eq('Listing created and pending admin approval.')
+      expect(flash[:alert]).to be_nil
+      expect(created_product.status).to eq('pending')
+      expect(created_product.flagged).to be(true)
+    end
   end
 end
