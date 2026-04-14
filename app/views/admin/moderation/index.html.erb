@@ -41,12 +41,40 @@
 
   <section>
     <h2>Flagged Messages</h2>
-    <% @flagged_messages.each do |msg| %>
-      <div class="flagged-item">
-        <strong>From: <%= msg.user.username %></strong>
-        <p><%= msg.body %></p>
-        <span class="meta">Sent in: <%= msg.conversation.product.title %></span>
-      </div>
-    <% end %>
+    <div class="table-container">
+      <table class="moderation-table">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Product</th>
+            <th>Seller</th>
+            <th>Message</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @flagged_messages.each do |msg| %>
+            <tr>
+              <td><strong><%= msg.user.username %></strong></td>
+              <td><%= msg.conversation.product.title %></td>
+              <td><%= msg.conversation.seller.username %></td>
+              <td class="text-muted"><%= truncate(msg.body, length: 50) %></td>
+              <td class="actions-cell">
+                <%= button_to "Approve", 
+                      approve_message_admin_moderation_path(msg), 
+                      method: :patch, 
+                      class: "btn-primary btn-sm" %>
+                
+                <%= button_to "Delete", 
+                      message_path(msg), 
+                      method: :delete, 
+                      class: "btn-secondary btn-sm btn-delete",
+                      data: { turbo_confirm: "Delete this message?" } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </section>
 </div>
