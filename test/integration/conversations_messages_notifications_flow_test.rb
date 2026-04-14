@@ -88,4 +88,40 @@ class ConversationsMessagesNotificationsFlowTest < ActionDispatch::IntegrationTe
     assert_response :redirect
     assert_equal 0, @buyer.notifications.reload.count
   end
+
+  test "buyer can propose offer and seller can accept" do
+    sign_in_as @buyer
+    post conversations_path, params: { product_id: @product.id }
+    conversation = Conversation.last
+
+    assert_difference -> { Offer.count }, +1 do
+      post conversation_offers_path(conversation), params: { offer: { amount: 700 } }
+    end
+    assert_redirected_to conversation_path(conversation)
+    offer = Offer.last
+    assert_equal "proposed", offer.status
+    assert_equal @buyer.id, offer.proposed_by_id
+    assert_operator @seller.notifications.where("message LIKE ?", "Offer:%").count, :>=, 1
+
+    sign_in_as @seller
+    patch accept_conversation_offer_path(conversation, offer)
+    assert_redirected_to conversation_path(conversation)
+    assert_equal "accepted", offer.reload.status
+  end
+
+  test "conversation unread flag clears when conversation is opened" do
+    sign_in_as @buyer
+    post conversations_path, params: { product_id: @product.id }
+    conversation = Conversation.last
+    post conversation_messages_path(conversation), params: { message: { body: "Unread test message" } }
+
+    sign_in_as @seller
+    get conversations_path
+    assert_response :success
+    assert conversation.reload.unread_for?(@seller)
+
+    get conversation_path(conversation)
+    assert_response :success
+    assert_not conversation.reload.unread_for?(@seller)
+  end
 end

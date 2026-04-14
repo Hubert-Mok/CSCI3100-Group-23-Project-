@@ -50,6 +50,7 @@
         <% end %>
         &middot; <%= @product.user.college_affiliation %>
       </p>
+      <p class="trust-hint">Verified badge means payout account connected.</p>
     </div>
 
     <div class="show-actions">
@@ -57,8 +58,15 @@
         <%= render "products/buy_now_button", product: @product %>
         <%= button_to conversations_path(product_id: @product.id),
                       method: :post,
-                      class: "btn-primary btn-chat" do %>
+                      class: "btn-secondary btn-chat" do %>
           💬 Chat with Seller
+        <% end %>
+        <% if @product.sale? && @product.available? %>
+          <%= button_to conversations_path(product_id: @product.id),
+                        method: :post,
+                        class: "btn-secondary btn-chat" do %>
+            💸 Make Offer
+          <% end %>
         <% end %>
         <% if @liked %>
           <%= button_to product_like_path(@product), method: :delete, class: "btn-like btn-liked", form: { data: { turbo: false } } do %>

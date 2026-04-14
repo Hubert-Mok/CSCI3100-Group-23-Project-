@@ -31,7 +31,7 @@ class OrdersController < ApplicationController
     @order = Order.new(
       product: @product,
       buyer: current_user,
-      amount_cents: (@product.price * 100).to_i,
+      amount_cents: checkout_amount_cents_for(@product, current_user),
       currency: "hkd"
     )
   end
@@ -58,7 +58,7 @@ class OrdersController < ApplicationController
     @order = Order.new(
       product: @product,
       buyer: current_user,
-      amount_cents: (@product.price * 100).to_i,
+      amount_cents: checkout_amount_cents_for(@product, current_user),
       currency: "hkd",
       status: :pending
     )
@@ -161,5 +161,15 @@ class OrdersController < ApplicationController
     notify_seller_payment_received(@order)
   rescue ::Stripe::StripeError
     # Webhook will update when it runs; don't break the success page
+  end
+
+  def checkout_amount_cents_for(product, buyer)
+    accepted_offer =
+      Offer
+        .where(product: product, buyer: buyer, seller: product.user, status: :accepted)
+        .order(created_at: :desc)
+        .first
+    amount = accepted_offer&.amount || product.price
+    (amount * 100).to_i
   end
 end

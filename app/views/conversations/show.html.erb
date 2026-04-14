@@ -25,6 +25,31 @@
   </div>
 
   <div class="conversation-layout">
+    <div class="offer-panel">
+      <% if @conversation.product.available? && @conversation.product.sale? %>
+        <% if current_user == @conversation.buyer %>
+          <%= form_with model: [@conversation, @offer], class: "offer-form" do |f| %>
+            <div class="offer-form-row">
+              <%= f.number_field :amount, min: 1, step: 1, placeholder: "Propose amount (HKD)", class: "offer-input" %>
+              <%= f.submit "Send Offer", class: "btn-primary btn-sm" %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="offer-hint">Offers can be initiated by the buyer. You can accept, reject, or counter incoming offers.</p>
+        <% end %>
+      <% else %>
+        <p class="offer-hint">Offers are only available for sale listings that are still available.</p>
+      <% end %>
+
+      <% if @offers.any? %>
+        <div class="offer-list">
+          <% @offers.each do |offer| %>
+            <%= render "offers/offer", offer: offer, conversation: @conversation %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
     <div id="<%= dom_id(@conversation, :messages) %>"
          class="conversation-messages"
          data-controller="auto-scroll">

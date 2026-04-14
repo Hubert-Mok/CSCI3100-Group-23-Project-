@@ -9,6 +9,9 @@ class User < ApplicationRecord
   has_many :conversations_as_seller, class_name: "Conversation", foreign_key: :seller_id, dependent: :nullify
   has_many :messages, dependent: :destroy
   has_many :orders, foreign_key: :buyer_id, dependent: :destroy
+  has_many :offers_as_buyer, class_name: "Offer", foreign_key: :buyer_id, dependent: :nullify
+  has_many :offers_as_seller, class_name: "Offer", foreign_key: :seller_id, dependent: :nullify
+  has_many :proposed_offers, class_name: "Offer", foreign_key: :proposed_by_id, dependent: :nullify
 
   has_one_attached :avatar
 
@@ -28,6 +31,7 @@ class User < ApplicationRecord
   ALLOWED_EMAIL_DOMAINS = %w[link.cuhk.edu.hk cuhk.edu.hk].freeze
   EMAIL_VERIFICATION_EXPIRY = 1.hour
   PASSWORD_RESET_EXPIRY = 30.minutes
+  THEME_PREFERENCES = %w[light dark].freeze
 
   validates :email, presence: true,
                     format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" }
@@ -37,6 +41,7 @@ class User < ApplicationRecord
   validate :cuhk_id_uniqueness
   validates :username, presence: true, length: { minimum: 2, maximum: 50 }
   validates :college_affiliation, presence: true, inclusion: { in: COLLEGES }
+  validates :theme_preference, inclusion: { in: THEME_PREFERENCES }
   validates :password, length: { minimum: 6 }, allow_nil: true
 
   before_save { self.email = email.downcase }
@@ -97,6 +102,10 @@ class User < ApplicationRecord
       password_reset_token_digest: nil,
       password_reset_sent_at: nil
     )
+  end
+
+  def dark_theme?
+    theme_preference == "dark"
   end
 
   private

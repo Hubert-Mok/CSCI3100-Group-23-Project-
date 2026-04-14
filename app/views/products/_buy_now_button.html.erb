@@ -1,5 +1,12 @@
 <%= turbo_frame_tag "product_buy_now_#{product.id}" do %>
   <% if product.available? && product.sale? && product.user.stripe_account_id.present? %>
     <%= link_to "Buy Now", new_order_path(product_id: product.id), class: "btn-primary btn-buy", data: { turbo_frame: "_top" } %>
+  <% elsif product.sale? && product.user.stripe_account_id.blank? %>
+    <button class="btn-secondary btn-buy" type="button" disabled>Buy unavailable</button>
+    <p class="trust-hint">Seller has not enabled payouts yet.</p>
+  <% elsif !product.available? %>
+    <button class="btn-secondary btn-buy" type="button" disabled>Not available</button>
+  <% else %>
+    <button class="btn-secondary btn-buy" type="button" disabled>Gift listing</button>
   <% end %>
 <% end %>

@@ -46,6 +46,13 @@ Rails.application.routes.draw do
   # Conversations & messages
   resources :conversations, only: %i[index show create destroy] do
     resources :messages, only: %i[create destroy]
+    resources :offers, only: :create do
+      member do
+        patch :accept
+        patch :reject
+        patch :counter
+      end
+    end
   end
   resources :messages, only: :destroy
 

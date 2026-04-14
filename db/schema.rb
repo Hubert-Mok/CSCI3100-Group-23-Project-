@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_13_164851) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_14_143000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -45,11 +45,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_164851) do
   create_table "conversations", force: :cascade do |t|
     t.datetime "buyer_deleted_at"
     t.bigint "buyer_id", null: false
+    t.datetime "buyer_last_read_message_at"
     t.datetime "created_at", null: false
     t.datetime "last_message_at"
     t.bigint "product_id", null: false
     t.datetime "seller_deleted_at"
     t.bigint "seller_id", null: false
+    t.datetime "seller_last_read_message_at"
     t.datetime "updated_at", null: false
     t.index ["buyer_deleted_at"], name: "index_conversations_on_buyer_deleted_at"
     t.index ["product_id", "buyer_id"], name: "index_conversations_on_product_id_and_buyer_id", unique: true
@@ -88,6 +90,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_164851) do
     t.index ["product_id"], name: "index_notifications_on_product_id"
     t.index ["user_id", "read"], name: "index_notifications_on_user_id_and_read"
     t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "offers", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.bigint "buyer_id", null: false
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "parent_offer_id"
+    t.bigint "product_id", null: false
+    t.bigint "proposed_by_id", null: false
+    t.bigint "seller_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_offers_on_buyer_id"
+    t.index ["conversation_id", "created_at"], name: "index_offers_on_conversation_id_and_created_at"
+    t.index ["conversation_id", "status"], name: "index_offers_on_conversation_id_and_status"
+    t.index ["conversation_id"], name: "index_offers_on_conversation_id"
+    t.index ["parent_offer_id"], name: "index_offers_on_parent_offer_id"
+    t.index ["product_id"], name: "index_offers_on_product_id"
+    t.index ["proposed_by_id"], name: "index_offers_on_proposed_by_id"
+    t.index ["seller_id"], name: "index_offers_on_seller_id"
   end
 
   create_table "orders", force: :cascade do |t|
@@ -277,6 +300,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_164851) do
     t.datetime "password_reset_sent_at"
     t.string "password_reset_token_digest"
     t.string "stripe_account_id"
+    t.string "theme_preference", default: "light", null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -295,6 +319,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_164851) do
   add_foreign_key "messages", "users"
   add_foreign_key "notifications", "products"
   add_foreign_key "notifications", "users"
+  add_foreign_key "offers", "conversations"
+  add_foreign_key "offers", "offers", column: "parent_offer_id"
+  add_foreign_key "offers", "products"
+  add_foreign_key "offers", "users", column: "buyer_id"
+  add_foreign_key "offers", "users", column: "proposed_by_id"
+  add_foreign_key "offers", "users", column: "seller_id"
   add_foreign_key "orders", "products"
   add_foreign_key "orders", "users", column: "buyer_id"
   add_foreign_key "products", "users"

@@ -24,7 +24,7 @@
         <% end %>
       </span>
       <span class="product-seller">
-        by <%= product.user.username %>
+        Seller: <%= product.user.username %>
         <% if product.user.stripe_account_id.present? %>
           <%= render "shared/verified_badge" %>
         <% end %>
@@ -32,6 +32,6 @@
     </div>
   </div>
   <div class="product-card-footer">
-    <span class="like-count"><% if @liked_ids&.include?(product.id) %>♥<% else %>♡<% end %> <%= product.likes_count %></span>
+    <span class="like-count"><% if @liked_ids&.include?(product.id) %>♥ Saved<% else %>♡ Save<% end %> · <%= product.likes_count %></span>
   </div>
 <% end %>

@@ -5,7 +5,7 @@ class ConversationsController < ApplicationController
   before_action :authorize_participation!, only: %i[show destroy]
 
   def index
-    base = Conversation.includes(:product, :buyer, :seller, :messages)
+    base = Conversation.includes(:product, :buyer, :seller, :messages, offers: :proposed_by)
     as_buyer = base.where(buyer: current_user, buyer_deleted_at: nil)
     as_seller = base.where(seller: current_user, seller_deleted_at: nil)
 
@@ -13,6 +13,7 @@ class ConversationsController < ApplicationController
       as_buyer
         .or(as_seller)
         .order(Arel.sql("COALESCE(last_message_at, created_at) DESC"))
+    @unread_conversations_count = @conversations.count { |conversation| conversation.unread_for?(current_user) }
   end
 
   def create
@@ -37,10 +38,14 @@ class ConversationsController < ApplicationController
     # Find all unread notifications for the user regarding the product
     # and mark them as read
     current_user.notifications.unread
-              .where(product: @conversation.product)
-              .update_all(read: true)
+      .where(product: @conversation.product)
+      .update_all(read: true)
+    @conversation.mark_read_for!(current_user)
+    broadcast_notification_badge_to(current_user)
     @messages = @conversation.messages.includes(:user).order(:created_at)
+    @offers = @conversation.offers.includes(:proposed_by).order(:created_at)
     @message = @conversation.messages.build
+    @offer = @conversation.offers.build
   end
 
   def destroy

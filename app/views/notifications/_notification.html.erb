@@ -1,4 +1,4 @@
-<% if notification.message.start_with?("New message from")
+<% if notification.message.start_with?("New message from", "Offer:")
      conversation = Conversation.where(product: notification.product)
                                 .where("buyer_id = ? OR seller_id = ?", notification.user_id, notification.user_id)
                                 .first

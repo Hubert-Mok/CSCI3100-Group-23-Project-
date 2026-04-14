@@ -81,6 +81,29 @@ class OrdersStripeFlowTest < ActionDispatch::IntegrationTest
     assert_redirected_to fake.url
   end
 
+  test "accepted offer amount is used for checkout" do
+    seller, product, buyer = paid_sale_setup
+    conversation = Conversation.create!(product: product, buyer: buyer, seller: seller)
+    Offer.create!(
+      conversation: conversation,
+      product: product,
+      buyer: buyer,
+      seller: seller,
+      proposed_by: buyer,
+      amount: 42.5,
+      status: :accepted
+    )
+
+    sign_in_as buyer
+
+    fake = new_checkout_session(session_id: "cs_test_offer_#{SecureRandom.hex(4)}")
+    stub_stripe_checkout_session_create(fake) do
+      post orders_path, params: { product_id: product.id }
+    end
+    order = Order.order(:created_at).last
+    assert_equal 4250, order.amount_cents
+  end
+
   test "buyer can cancel pending order" do
     _seller, product, buyer = paid_sale_setup
     order = Order.create!(

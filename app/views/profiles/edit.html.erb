@@ -91,6 +91,15 @@
       <span class="static-hint">Student ID cannot be changed after registration.</span>
     </div>
 
+    <div class="form-group">
+      <%= f.label :theme_preference, "Theme" %>
+      <%= f.select :theme_preference,
+            options_for_select([["Light", "light"], ["Dark", "dark"]], @user.theme_preference),
+            {},
+            { required: true } %>
+      <span class="static-hint">Theme applies across all pages after saving.</span>
+    </div>
+
     <%= f.submit "Save Changes", class: "btn-primary" %>
   <% end %>
 

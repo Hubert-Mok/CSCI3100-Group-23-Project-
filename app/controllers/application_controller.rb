@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  helper_method :current_user, :logged_in?
+  helper_method :current_user, :logged_in?, :unread_conversations_count_for
 
   private
 
@@ -86,5 +86,31 @@ class ApplicationController < ActionController::Base
       locals: { notification: notif }
     )
     broadcast_notification_badge_to(seller)
+  end
+
+  def recipient_for_offer(offer)
+    offer.proposed_by_id == offer.buyer_id ? offer.seller : offer.buyer
+  end
+
+  def notify_offer_event!(offer, recipient, message)
+    notif = Notification.create!(
+      user: recipient,
+      product: offer.product,
+      message: message
+    )
+
+    Turbo::StreamsChannel.broadcast_prepend_to(
+      "notifications:#{recipient.id}",
+      target: "notifications_list",
+      partial: "notifications/notification",
+      locals: { notification: notif }
+    )
+    broadcast_notification_badge_to(recipient)
+  end
+
+  def unread_conversations_count_for(user)
+    base = Conversation.where(buyer_deleted_at: nil).where(buyer: user)
+      .or(Conversation.where(seller_deleted_at: nil).where(seller: user))
+    base.count { |conversation| conversation.unread_for?(user) }
   end
 end

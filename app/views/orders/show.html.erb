@@ -2,6 +2,7 @@
 
 <div class="order-show">
   <h1>Order #<%= @order.id %></h1>
+  <p class="page-subtitle">Keep this page for pickup coordination and payment release.</p>
 
   <div class="order-status-badge order-status-<%= @order.status %>">
     <%= @order.status.capitalize %>
@@ -24,5 +25,5 @@
     </div>
   <% end %>
 
-  <p class="form-page-back"><%= link_to "← Back to listing", @order.product %></p>
+  <p class="form-page-back"><%= link_to "← Back to orders", orders_path %></p>
 </div>

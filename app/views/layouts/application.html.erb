@@ -23,11 +23,21 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body data-theme="<%= logged_in? && current_user.dark_theme? ? "dark" : "light" %>">
     <header class="site-header">
       <nav class="nav-container">
         <div class="nav-brand">
           <%= link_to "CUHK Marketplace", root_path %>
+        </div>
+        <div class="nav-search">
+          <%= form_with url: products_path, method: :get, local: true, class: "nav-search-form" do |f| %>
+            <%= f.text_field :q,
+                             value: params[:q],
+                             placeholder: "Search for textbooks, electronics, furniture...",
+                             class: "nav-search-input",
+                             aria: { label: "Search listings" } %>
+            <%= f.submit "Search", class: "btn-primary nav-search-button" %>
+          <% end %>
         </div>
         <div class="nav-links">
           <% if logged_in? %>
@@ -58,10 +68,21 @@
                 </div>
               </div>
             </div>
-            <%= link_to "+ Sell Item", new_product_path, class: "btn-primary nav-btn" %>
-            <%= link_to "My Orders", orders_path, class: "btn-secondary nav-btn" %>
-            <%= link_to "Messages", conversations_path, class: "btn-secondary nav-btn" %>
-            <%= link_to "Profile", profile_path, class: "btn-secondary nav-btn" %>
+            <%= link_to "Sell", new_product_path, class: "btn-primary nav-btn" %>
+            <%= button_to (current_user.dark_theme? ? "Light Mode" : "Dark Mode"),
+                          profile_path,
+                          method: :patch,
+                          params: { user: { theme_preference: (current_user.dark_theme? ? "light" : "dark") } },
+                          class: "btn-secondary nav-btn" %>
+            <%= link_to "Orders", orders_path, class: "nav-link" %>
+            <% unread_messages_count = unread_conversations_count_for(current_user) %>
+            <%= link_to conversations_path, class: "nav-link nav-link-messages" do %>
+              <span>Messages</span>
+              <% if unread_messages_count.positive? %>
+                <span class="messages-badge"><%= unread_messages_count > 99 ? "99+" : unread_messages_count %></span>
+              <% end %>
+            <% end %>
+            <%= link_to "Profile", profile_path, class: "nav-link" %>
             <% if current_user&.admin? %>
               <% flagged_products_count = Product.flagged_for_review.count %>
               <% flagged_messages_count = Message.where(flagged: true).count %>
@@ -82,10 +103,11 @@
       </nav>
     </header>
 
-    <% flash.each do |type, message| %>
-      <%# This ensures that :warning, :notice, and :alert all get rendered %>
-      <div class="flash flash-<%= type %>">
-        <%= message %>
+    <% if flash.any? %>
+      <div class="flash-wrap">
+        <% flash.each do |type, message| %>
+          <div class="flash flash-<%= type %>"><%= message %></div>
+        <% end %>
       </div>
     <% end %>
 

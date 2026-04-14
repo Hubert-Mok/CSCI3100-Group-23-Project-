@@ -15,54 +15,68 @@
   </div>
 </div>
 
-<%= form_with url: products_path, method: :get, local: true, class: "filter-bar" do |f| %>
-  <%= f.text_field :q, value: params[:q], placeholder: "Search listings…", class: "filter-input" %>
+<%= form_with url: products_path, method: :get, local: true do |f| %>
+  <div class="market-shell">
+    <aside class="market-filter-card">
+      <h2 class="market-filter-title">Refine Results</h2>
+      <div class="filter-bar">
+        <%= f.text_field :q, value: params[:q], placeholder: "Keywords", class: "filter-input" %>
+        <%= f.select :category,
+          options_for_select([["All Categories", ""]] + Product::CATEGORIES.map { |c| [c, c] }, params[:category]),
+          {}, class: "filter-select" %>
 
-  <%= f.select :category,
-    options_for_select([["All Categories", ""]] + Product::CATEGORIES.map { |c| [c, c] }, params[:category]),
-    {}, class: "filter-select" %>
+        <%= f.select :status,
+          options_for_select([
+            ["Available Items", "available"],
+            ["All Statuses", ""],
+            ["Reserved", "reserved"],
+            ["Sold", "sold"]
+          ], params[:status]),
+          {}, class: "filter-select" %>
 
-  <%= f.select :status,
-    options_for_select([
-      ["All Statuses", ""],
-      ["Available",    "available"],
-      ["Reserved",     "reserved"],
-      ["Sold",         "sold"]
-    ], params[:status]),
-    {}, class: "filter-select" %>
+        <%= f.submit "Apply Filters", class: "filter-submit" %>
+        <%= link_to "Clear all", products_path, class: "filter-clear" %>
+      </div>
+    </aside>
 
-  <%= f.select :sort,
-    options_for_select([
-      ["Newest",            ""],
-      ["Price: Low → High", "price_asc"],
-      ["Price: High → Low", "price_desc"],
-      ["Most Liked",        "most_liked"]
-    ], params[:sort]),
-    {}, class: "filter-select" %>
+    <section class="market-results-card">
+      <div class="market-results-toolbar">
+        <p class="market-results-count">
+          <%= pluralize(@products.size, "listing") %> found
+          <% if params[:q].present? %> for &ldquo;<%= params[:q] %>&rdquo;<% end %>
+        </p>
+        <%= f.select :sort,
+          options_for_select([
+            ["Best Match", ""],
+            ["Price: Low → High", "price_asc"],
+            ["Price: High → Low", "price_desc"],
+            ["Most Liked", "most_liked"]
+          ], params[:sort]),
+          {}, class: "filter-select" %>
+      </div>
 
-  <%= f.submit "Search", class: "filter-submit" %>
-  <%= link_to "Clear", products_path, class: "filter-clear" %>
-<% end %>
-
-<% if @products.any? %>
-  <div class="products-grid">
-    <%= render @products %>
-  </div>
-<% else %>
-  <div class="empty-state">
-    <div class="empty-state-icon">🛍️</div>
-    <% if params[:q].present? || params[:category].present? || params[:status].present? %>
-      <h2>No listings found</h2>
-      <p>Try adjusting your search or filters.</p>
-      <%= link_to "Clear filters", products_path, class: "btn-primary" %>
-    <% else %>
-      <h2>No listings yet</h2>
-      <p>Be the first to sell something on CUHK Marketplace!</p>
-      <% if logged_in? %>
-        <%= link_to "Post a listing", new_product_path, class: "btn-primary" %>
+      <% if @products.any? %>
+        <div class="products-grid">
+          <%= render @products %>
+        </div>
       <% else %>
-        <%= link_to "Sign in to post", sign_in_path, class: "btn-primary" %>
+        <div class="empty-state">
+          <div class="empty-state-icon">🛍️</div>
+          <% if params[:q].present? || params[:category].present? || params[:status].present? %>
+            <h2>No listings found</h2>
+            <p>Try adjusting your search or filters.</p>
+            <%= link_to "Clear filters", products_path, class: "btn-primary" %>
+          <% else %>
+            <h2>No listings yet</h2>
+            <p>Be the first to sell something on CUHK Marketplace!</p>
+            <% if logged_in? %>
+              <%= link_to "Post a listing", new_product_path, class: "btn-primary" %>
+            <% else %>
+              <%= link_to "Sign in to post", sign_in_path, class: "btn-primary" %>
+            <% end %>
+          <% end %>
+        </div>
       <% end %>
-    <% end %>
+    </section>
   </div>
 <% end %>

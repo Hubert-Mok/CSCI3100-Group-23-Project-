@@ -1,0 +1,21 @@
+<div class="offer-card offer-card-<%= offer.status %>">
+  <div class="offer-card-main">
+    <p class="offer-card-text">
+      <strong><%= offer.proposed_by_id == current_user.id ? "You" : offer.proposed_by.username %></strong>
+      proposed <strong>HK$<%= number_with_precision(offer.amount, precision: 2) %></strong>
+      <span class="offer-status-label">(<%= offer.status.capitalize %>)</span>
+    </p>
+    <p class="offer-card-meta"><%= time_ago_in_words(offer.created_at) %> ago</p>
+  </div>
+
+  <% if (offer.proposed? || offer.countered?) && offer.proposed_by_id != current_user.id %>
+    <div class="offer-card-actions">
+      <%= button_to "Accept", accept_conversation_offer_path(conversation, offer), method: :patch, class: "btn-primary btn-sm" %>
+      <%= button_to "Reject", reject_conversation_offer_path(conversation, offer), method: :patch, class: "btn-secondary btn-sm btn-delete" %>
+      <%= form_with url: counter_conversation_offer_path(conversation, offer), method: :patch, class: "offer-counter-form" do |f| %>
+        <%= f.number_field :amount, name: "offer[amount]", min: 1, step: 1, placeholder: "Counter HKD", class: "offer-counter-input" %>
+        <%= f.submit "Counter", class: "btn-secondary btn-sm" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -30,6 +30,7 @@ class MessagesController < ApplicationController
       )
 
       broadcast_notification_badge_to(recipient)
+      @conversation.mark_read_for!(current_user)
 
       respond_to do |format|
         format.turbo_stream

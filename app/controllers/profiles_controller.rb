@@ -13,7 +13,11 @@ class ProfilesController < ApplicationController
   def update
     @user = current_user
     if @user.update(profile_params)
-      redirect_to profile_path, notice: "Profile updated successfully."
+      if only_theme_preference_update?
+        redirect_back fallback_location: profile_path, notice: "Theme updated."
+      else
+        redirect_to profile_path, notice: "Profile updated successfully."
+      end
     else
       render :edit, status: :unprocessable_entity
     end
@@ -22,6 +26,13 @@ class ProfilesController < ApplicationController
   private
 
   def profile_params
-    params.expect(user: [ :username, :email, :college_affiliation, :avatar ])
+    params.expect(user: [ :username, :email, :college_affiliation, :avatar, :theme_preference ])
+  end
+
+  def only_theme_preference_update?
+    user_params = params[:user]
+    return false unless user_params.respond_to?(:keys)
+
+    user_params.keys.map(&:to_s) == ["theme_preference"]
   end
 end

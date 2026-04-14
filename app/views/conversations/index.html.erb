@@ -19,6 +19,9 @@
               <span class="conversation-status-badge status-<%= product.status %>">
                 <%= product.status.capitalize %>
               </span>
+              <% if conversation.unread_for?(current_user) %>
+                <span class="conversation-unread-badge">New</span>
+              <% end %>
             </div>
             <div class="conversation-meta">
               <span class="conversation-partner">
