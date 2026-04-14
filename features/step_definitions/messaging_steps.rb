@@ -92,7 +92,7 @@ Given('a conversation exists between buyer and seller about {string}') do |produ
 end
 
 Given('the buyer has sent a message {string}') do |message_text|
-  Message.create!(
+  @buyer_message = Message.create!(
     conversation: @conversation,
     user: @buyer,
     body: message_text
@@ -128,6 +128,59 @@ Then('I should be on the conversation page') do
   expect(current_path).to eq("/conversations/#{@conversation.id}")
 end
 
+Then('I should be on a conversation page') do
+  expect(current_path).to match(%r{\A/conversations/\d+\z})
+end
+
 Then('I should be redirected to home page') do
   expect(current_path).to eq("/")
+end
+
+When('I open the conversation page directly without signing in') do
+  visit "/conversations/#{@conversation.id}"
+end
+
+Then('I should be redirected to the sign-in page') do
+  expect(current_path).to eq('/sign_in')
+end
+
+When('I submit an empty message in the conversation') do
+  fill_in 'message[body]', with: ''
+  click_button 'Send'
+end
+
+When('I delete the flagged message from the moderation queue') do
+  rows = all('table tbody tr')
+  row = rows.find { |r| r.has_content?(@flagged_message.body) }
+  raise 'Could not find flagged message row' unless row
+
+  row.find('button', text: 'Delete').click
+end
+
+Then('the flagged message should be deleted') do
+  expect(Message.exists?(@flagged_message.id)).to be(false)
+end
+
+When('I submit a direct message create request with body {string}') do |message_body|
+  page.driver.submit :post,
+                     "/conversations/#{@conversation.id}/messages",
+                     { message: { body: message_body } }
+end
+
+When('I submit a direct conversation create request for the listed product') do
+  page.driver.submit :post, '/conversations', { product_id: @product.id }
+end
+
+When('I visit the messages inbox') do
+  visit '/conversations'
+end
+
+Given('the conversation is marked deleted for buyer') do
+  @conversation.update!(buyer_deleted_at: Time.current)
+end
+
+When('I submit a direct delete request for the buyer message in the conversation') do
+  page.driver.submit :delete,
+                     "/conversations/#{@conversation.id}/messages/#{@buyer_message.id}",
+                     {}
 end
