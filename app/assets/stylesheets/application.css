@@ -305,7 +305,35 @@ body {
   transition: background 0.15s, color 0.15s;
 }
 
+.admin-dashboard-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .btn-admin:hover { background: #fcc500; color: #fff; }
+
+.admin-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.65rem;
+  height: 1.25rem;
+  padding: 0 0.4rem;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 999px;
+  border: 2px solid #4a2c8a;
+  transform: translate(35%, -35%);
+}
+
 /* ── Flash messages ── */
 .flash {
   padding: 0.75rem 1.25rem;

@@ -43,6 +43,37 @@ Given('a flagged product exists for moderation') do
   @flagged_product.update_columns(flagged: true, status: Product.statuses[:pending])
 end
 
+Given('{int} flagged products exist for moderation') do |count|
+  Product.class_eval do
+    def get_ai_fraud_score
+      { score: 0.0, is_fraud: false }
+    end
+  end
+
+  seller = User.create!(
+    email: "seller_many_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+    password: 'Password123',
+    password_confirmation: 'Password123',
+    cuhk_id: SecureRandom.hex(4),
+    username: 'Seller Many',
+    college_affiliation: User::COLLEGES.first,
+    email_verified_at: Time.current
+  )
+
+  count.times do |index|
+    Product.create!(
+      title: "Suspicious Item #{index}",
+      description: 'Contact me on whatsapp +85212345678',
+      price: 100,
+      category: Product::CATEGORIES.first,
+      listing_type: 'sale',
+      status: :pending,
+      flagged: true,
+      user: seller
+    )
+  end
+end
+
 Given('a normal user exists with email {string} and password {string}') do |email, password|
   @normal_user = User.create!(
     email: email,
