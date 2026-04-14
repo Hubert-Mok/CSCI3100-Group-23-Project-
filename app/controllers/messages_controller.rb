@@ -1,7 +1,7 @@
 class MessagesController < ApplicationController
   before_action :require_login
-  before_action :set_conversation
-  before_action :authorize_participation!
+  before_action :set_conversation, only: :create
+  before_action :authorize_participation!, only: :create
 
   def create
     @message = @conversation.messages.build(message_params.merge(user: current_user))
@@ -65,6 +65,8 @@ class MessagesController < ApplicationController
   private
 
   def set_conversation
+    return if params[:conversation_id].blank?
+
     @conversation = Conversation.find(params[:conversation_id])
   end
 
