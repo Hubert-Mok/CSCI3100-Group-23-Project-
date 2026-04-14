@@ -135,6 +135,18 @@ RSpec.describe Admin::ModerationController, type: :controller do
       expect(flagged_product.reload.flagged).to be(false)
       expect(flagged_product.status).to eq('available')
     end
+
+    it 'shows an alert when product approval fails' do
+      allow(controller).to receive(:current_user).and_return(admin_user)
+      allow_any_instance_of(Product).to receive(:update).and_return(false)
+
+      patch :approve_product, params: { id: flagged_product.id }
+
+      expect(response).to redirect_to(admin_moderation_index_path)
+      expect(flash[:alert]).to eq('Failed to approve.')
+      expect(flagged_product.reload.flagged).to be(true)
+      expect(flagged_product.status).to eq('pending')
+    end
   end
 
   describe 'PATCH #approve_message' do
@@ -166,6 +178,17 @@ RSpec.describe Admin::ModerationController, type: :controller do
       expect(response).to redirect_to(admin_moderation_index_path)
       expect(flash[:notice]).to eq('Message approved!')
       expect(flagged_message.reload.flagged).to be(false)
+    end
+
+    it 'shows an alert when message approval fails' do
+      allow(controller).to receive(:current_user).and_return(admin_user)
+      allow_any_instance_of(Message).to receive(:update).and_return(false)
+
+      patch :approve_message, params: { id: flagged_message.id }
+
+      expect(response).to redirect_to(admin_moderation_index_path)
+      expect(flash[:alert]).to eq('Failed to approve message.')
+      expect(flagged_message.reload.flagged).to be(true)
     end
   end
 end
