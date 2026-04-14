@@ -815,6 +815,22 @@ body {
 .show-back a { color: #7c3aed; text-decoration: none; font-size: 0.9rem; }
 .show-back a:hover { text-decoration: underline; }
 
+.show-back .btn-admin-back {
+  margin-right: 0.4rem;
+}
+
+.show-back a.btn-admin {
+  color: #fbcf0e;
+  border: 1px solid #da9201;
+  text-decoration: none;
+}
+
+.show-back a.btn-admin:hover {
+  background: #fcc500;
+  color: #fff;
+  text-decoration: none;
+}
+
 /* ── Product form page ── */
 .form-page {
   max-width: 600px;

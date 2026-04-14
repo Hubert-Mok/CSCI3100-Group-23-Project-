@@ -12,6 +12,18 @@ Feature: Admin dashboard moderation
     When I visit the admin moderation dashboard
     Then I should see the flagged product in the moderation queue
 
+  Scenario: Admin can open product page from flagged product title
+    Given I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
+    When I visit the admin moderation dashboard
+    And I click the flagged product title link
+    Then I should be on that product page
+    And I should see the back to admin dashboard button
+
+  Scenario: Admin does not see admin back button on direct product visit
+    Given I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
+    When I visit the flagged product page directly
+    Then I should not see the back to admin dashboard button
+
   Scenario: Admin approves a flagged product from moderation queue
     Given I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
     When I visit the admin moderation dashboard
@@ -36,3 +48,11 @@ Feature: Admin dashboard moderation
     And I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
     When I visit the home page to check admin badge
     Then I should see "5" in the admin badge
+
+  Scenario: Admin can open product page from flagged message product title
+    Given a flagged message exists for moderation
+    And I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
+    When I visit the admin moderation dashboard
+    And I click the flagged message product title link
+    Then I should be on the flagged message product page
+    And I should see the back to admin dashboard button
