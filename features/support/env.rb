@@ -3,10 +3,14 @@ ENV['RAILS_ENV'] = 'test'
 
 require 'capybara'
 require 'capybara/dsl'
+require 'rspec/mocks'
 
 # Load Rails environment
 rails_root = File.join(File.dirname(__FILE__), '..', '..')
 require File.join(rails_root, 'config', 'environment')
+
+# Include RSpec mocks
+include RSpec::Mocks::ExampleMethods
 
 # Configure Capybara
 Capybara.app = Rails.application
@@ -18,7 +22,7 @@ Rails.application.config.hosts << '127.0.0.1'
 Rails.application.config.hosts << 'www.example.com'
 
 # Database cleaning
-Before do
+Before do |scenario|
   # Clean database between scenarios
   # Delete dependent records first (respecting foreign key constraints)
   Message.delete_all
@@ -34,3 +38,4 @@ end
 World(Capybara::DSL)
 World(Rails.application.routes.url_helpers)
 World(ActionDispatch::Integration::Runner)
+World(RSpec::Mocks::ExampleMethods)
