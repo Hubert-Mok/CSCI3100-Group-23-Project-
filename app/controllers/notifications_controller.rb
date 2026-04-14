@@ -1,7 +1,7 @@
 class NotificationsController < ApplicationController
   before_action :require_login
   before_action :set_notification, only: %i[update destroy]
-  after_action :broadcast_notification_badge, only: %i[destroy clear_all]
+  after_action :broadcast_notification_badge, only: %i[update destroy clear_all]
 
   def index
     @notifications = current_user.notifications.recent
