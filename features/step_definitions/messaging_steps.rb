@@ -62,10 +62,6 @@ When('I view the product details') do
   click_link @product.title
 end
 
-When('I click {string}') do |button_text|
-  click_button button_text
-end
-
 When('I go to the conversation') do
   visit "/conversations/#{@conversation.id}"
 end

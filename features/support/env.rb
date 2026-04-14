@@ -17,8 +17,32 @@ Capybara.app_host = 'http://127.0.0.1'
 Rails.application.config.hosts << '127.0.0.1'
 Rails.application.config.hosts << 'www.example.com'
 
+# Stripe mocking helpers
+FakeCheckoutSession = Struct.new(:id, :url, :payment_status, :payment_intent)
+FakeTransfer = Struct.new(:id)
+
+def mock_stripe_for_cucumber
+  # Mock Stripe::Checkout::Session.create
+  Stripe::Checkout::Session.define_singleton_method(:create) do |**kwargs|
+    FakeCheckoutSession.new('cs_test_session', 'https://checkout.stripe.com/test', 'unpaid', nil)
+  end
+
+  # Mock Stripe::Checkout::Session.retrieve
+  Stripe::Checkout::Session.define_singleton_method(:retrieve) do |session_id|
+    FakeCheckoutSession.new(session_id, 'https://checkout.stripe.com/test', 'paid', 'pi_test')
+  end
+
+  # Mock Stripe::Transfer.create
+  Stripe::Transfer.define_singleton_method(:create) do |**kwargs|
+    FakeTransfer.new('tr_test_transfer')
+  end
+end
+
+# Set up Stripe mocking at startup
+mock_stripe_for_cucumber
+
 # Database cleaning
-Before do
+Before do |scenario|
   # Clean database between scenarios
   # Delete dependent records first (respecting foreign key constraints)
   Message.delete_all
