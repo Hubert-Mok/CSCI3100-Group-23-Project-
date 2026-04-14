@@ -1,4 +1,6 @@
 class Product < ApplicationRecord
+  include FraudDetectable
+  before_save :check_content_safety
   belongs_to :user
   has_one_attached :thumbnail
   has_many :likes, dependent: :destroy
@@ -20,7 +22,7 @@ class Product < ApplicationRecord
     "Others"
   ].freeze
 
-  enum :status, { available: 0, reserved: 1, sold: 2 }
+  enum :status, { available: 0, reserved: 1, sold: 2 , pending: 3}
   enum :listing_type, { sale: 0, gift: 1 }
 
   after_initialize :set_default_status, if: :new_record?
@@ -34,6 +36,18 @@ class Product < ApplicationRecord
   validate :price_matches_listing_type, if: -> { listing_type.present? && price.present? }
 
   private
+
+  def check_content_safety
+    return if flagged_changed?(to: false)
+    ai_result = get_ai_fraud_score
+    if suspicious? || ai_result[:is_fraud]
+      # Maybe set the product to "hidden" until approved
+      self.flagged = true
+      self.status = :pending
+      puts "⚠️ Fraud Alert: Suspicious content detected in Product #{id} - \"#{title}\""
+      self.fraud_score = ai_result[:score]
+    end
+  end
 
   def price_matches_listing_type
     if gift? && price.to_f > 0
@@ -52,6 +66,7 @@ class Product < ApplicationRecord
   scope :search,      ->(q) { perform_search(q) if q.present? }
   scope :by_category, ->(cat) { where(category: cat) if cat.present? }
   scope :by_status,   ->(st)  { where(status: st) if st.present? }
+  scope :flagged_for_review, -> { where(flagged: true) }
   scope :sorted_by,   ->(s) {
     case s
     when "price_asc"  then order(price: :asc)

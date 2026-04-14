@@ -2,6 +2,14 @@ Given('I am on the home page') do
   visit '/'
 end
 
+When('I visit the home page') do
+  visit '/'
+end
+
+When('I visit the home page again') do
+  visit '/'
+end
+
 When('I follow {string}') do |link_text|
   click_link_or_button(link_text)
 end
@@ -24,6 +32,18 @@ Given('a registered user exists with email {string} and password {string} and is
     password: password,
     password_confirmation: password,
     cuhk_id: SecureRandom.hex(4),
+    username: 'Test User',
+    college_affiliation: User::COLLEGES.first
+  )
+  user.verify_email!
+end
+
+Given('a registered user exists with email {string} and CUHK ID {string} and password {string} and is verified') do |email, cuhk_id, password|
+  user = User.create!(
+    email: email.downcase,
+    password: password,
+    password_confirmation: password,
+    cuhk_id: cuhk_id,
     username: 'Test User',
     college_affiliation: User::COLLEGES.first
   )
@@ -62,18 +82,6 @@ Given('I am logged in as a verified user with email {string}') do |email|
   fill_in 'Email', with: email
   fill_in 'Password', with: 'password123'
   click_button 'Sign In'
-end
-
-Then('I should be on the {string} page') do |page_name|
-  expected_path = case page_name
-                  when 'home' then '/'
-                  when 'sign up' then '/sign_up'
-                  when 'sign in' then '/sign_in'
-                  when 'email verification' then '/email_verification/new'
-                  else
-                    raise "Unknown page name: #{page_name}"
-                  end
-  expect(page).to have_current_path(expected_path)
 end
 
 Then('I should be on the email verification page') do

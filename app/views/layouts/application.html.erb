@@ -62,6 +62,17 @@
             <%= link_to "My Orders", orders_path, class: "btn-secondary nav-btn" %>
             <%= link_to "Messages", conversations_path, class: "btn-secondary nav-btn" %>
             <%= link_to "Profile", profile_path, class: "btn-secondary nav-btn" %>
+            <% if current_user&.admin? %>
+              <% flagged_products_count = Product.flagged_for_review.count %>
+              <% flagged_messages_count = Message.where(flagged: true).count %>
+              <% total_review_count = flagged_products_count + flagged_messages_count %>
+              <%= link_to admin_moderation_index_path, class: "btn-admin nav-btn admin-dashboard-link" do %>
+                <span>Admin Dashboard</span>
+                <% if total_review_count.positive? %>
+                  <span class="admin-badge" aria-label="<%= total_review_count %> items need review"><%= total_review_count > 99 ? '99+' : total_review_count %></span>
+                <% end %>
+              <% end %>
+            <% end %>
             <%= button_to "Sign Out", sign_out_path, method: :delete, class: "btn-secondary", form: { data: { turbo: false } } %>
           <% else %>
             <%= link_to "Sign In", sign_in_path, class: "nav-link" %>
@@ -71,11 +82,11 @@
       </nav>
     </header>
 
-    <% if flash[:notice].present? %>
-      <div class="flash flash-notice"><%= flash[:notice] %></div>
-    <% end %>
-    <% if flash[:alert].present? %>
-      <div class="flash flash-alert"><%= flash[:alert] %></div>
+    <% flash.each do |type, message| %>
+      <%# This ensures that :warning, :notice, and :alert all get rendered %>
+      <div class="flash flash-<%= type %>">
+        <%= message %>
+      </div>
     <% end %>
 
     <main class="main-content">

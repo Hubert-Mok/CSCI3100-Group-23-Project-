@@ -34,7 +34,11 @@ class ConversationsController < ApplicationController
       redirect_to conversations_path, alert: "That conversation was deleted."
       return
     end
-
+    # Find all unread notifications for the user regarding the product
+    # and mark them as read
+    current_user.notifications.unread
+              .where(product: @conversation.product)
+              .update_all(read: true)
     @messages = @conversation.messages.includes(:user).order(:created_at)
     @message = @conversation.messages.build
   end

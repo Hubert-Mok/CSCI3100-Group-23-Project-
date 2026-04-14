@@ -55,13 +55,13 @@ Rails.application.configure do
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  #config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Raise delivery errors in production so failures surface in logs/error tracking.
   config.action_mailer.raise_delivery_errors = true
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "cuhk-marketplace.herokuapp.com"), protocol: "https" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "https://cuhk-marketplace-2219fdf8f1c3.herokuapp.com/"), protocol: "https" }
 
   # Default: Azure Communication Services Email SMTP (STARTTLS on 587). See infra/README.md.
   # For implicit TLS on 465 (e.g. Gmail), set SMTP_TLS_IMPLICIT=true and SMTP_ADDRESS=smtp.gmail.com.

@@ -6,6 +6,7 @@ class ProductsController < ApplicationController
 
   def index
     scope = logged_in? ? Product.where.not(user: current_user) : Product.all
+    scope = scope.where(flagged: false)
     scope = scope.search(params[:q])
                  .by_category(params[:category])
                  .by_status(params[:status])
@@ -26,11 +27,15 @@ class ProductsController < ApplicationController
     @product = current_user.products.build(product_params)
 
     if @product.save
-      notice = "Listing published successfully!"
+      if @product.pending?
+        flash[:warning] = "Listing created and pending admin approval."
+      else
+        flash[:notice] = "Listing published successfully!"
+      end
       if @product.sale? && current_user.stripe_account_id.blank?
         flash[:alert] = "Connect your Stripe account so buyers can use Buy Now and you can receive payments."
       end
-      redirect_to @product, notice: notice
+      redirect_to @product
     else
       render :new, status: :unprocessable_entity
     end
@@ -76,7 +81,11 @@ class ProductsController < ApplicationController
 
   def destroy
     if @product.destroy
+      if current_user.admin? && request.referer&.include?("admin/moderation")
+        redirect_to admin_moderation_index_path, notice: "Listing removed successfully."
+      else
       redirect_to profile_path, notice: "Listing removed successfully."
+      end
     else
       redirect_to @product, alert: "Listing could not be removed. Please try again."
     end
@@ -99,7 +108,7 @@ class ProductsController < ApplicationController
   end
 
   def require_owner
-    unless current_user == @product.user
+    unless current_user == @product.user || current_user.admin?
       redirect_to @product, alert: "You are not authorised to manage this listing."
     end
   end

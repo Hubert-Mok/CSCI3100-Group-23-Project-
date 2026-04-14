@@ -1,4 +1,8 @@
 <turbo-frame id="product_status_<%= product.id %>">
-  <span class="status-badge status-<%= product.status %>"><%= product.status.capitalize %></span>
+  <% if product.pending? %>
+    <span class="status-badge status-pending">Pending for Admin Approval</span>
+  <% else %>
+    <span class="status-badge status-<%= product.status %>"><%= product.status.capitalize %></span>
+  <% end %>
 </turbo-frame>
 

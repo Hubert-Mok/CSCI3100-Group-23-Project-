@@ -45,6 +45,23 @@ class MessagesController < ApplicationController
     end
   end
 
+  def destroy
+    @message = Message.find(params[:id])
+    conversation = @message.conversation
+    
+    # Allow admin or the sender to delete
+    return redirect_to root_path, alert: "Not authorized" unless current_user.admin? || @message.user_id == current_user.id
+    
+    @message.destroy
+    
+    # If called from admin dashboard (no conversation_id param), redirect there
+    if params[:conversation_id].blank?
+      redirect_to admin_moderation_index_path, notice: "Message deleted successfully"
+    else
+      redirect_to conversation_path(conversation), notice: "Message deleted"
+    end
+  end
+
   private
 
   def set_conversation

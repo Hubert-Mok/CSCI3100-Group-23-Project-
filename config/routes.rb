@@ -45,8 +45,9 @@ Rails.application.routes.draw do
 
   # Conversations & messages
   resources :conversations, only: %i[index show create destroy] do
-    resources :messages, only: :create
+    resources :messages, only: %i[create destroy]
   end
+  resources :messages, only: :destroy
 
   # Orders (escrow payment flow)
   resources :orders, only: %i[index new create show] do
@@ -61,6 +62,15 @@ Rails.application.routes.draw do
   resource :stripe_account, only: [] do
     get :new
     get :callback
+  end
+
+  namespace :admin do
+    resources :moderation, only: [:index] do
+      member do
+        patch :approve_product
+        patch :approve_message
+      end
+    end
   end
 
   match "/webhooks/stripe", to: proc { [ 405, { "Content-Type" => "text/plain" }, [ "Method Not Allowed" ] ] }, via: :get

@@ -1,11 +1,16 @@
 # Hooks for Cucumber scenarios
-# Database cleanup using ActiveRecord's transaction rollback
+# Database cleanup using truncation so each scenario starts with a fresh state.
 Before do
-  ActiveRecord::Base.connection.begin_transaction(joinable: false)
+  tables = ActiveRecord::Base.connection.tables - %w[schema_migrations ar_internal_metadata]
+
+  ActiveRecord::Base.connection.disable_referential_integrity do
+    tables.each do |table|
+      ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table} RESTART IDENTITY CASCADE")
+    end
+  end
 end
 
 After do
-  if ActiveRecord::Base.connection.transaction_open?
-    ActiveRecord::Base.connection.rollback_transaction
-  end
+  Capybara.reset_sessions!
+  Capybara.use_default_driver
 end

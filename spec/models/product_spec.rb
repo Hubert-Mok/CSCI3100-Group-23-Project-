@@ -71,4 +71,50 @@ RSpec.describe Product, type: :model do
       expect(product.errors[:description]).to include(/too short/i)
     end
   end
+
+  describe 'fraud moderation flow' do
+    it 'flags suspicious content and sets pending status' do
+      product = Product.new(valid_attributes.merge(description: 'Please contact me on WhatsApp +85212345678'))
+      allow(product).to receive(:get_ai_fraud_score).and_return({ score: 0.15, is_fraud: false })
+
+      product.save!
+
+      expect(product.flagged).to be(true)
+      expect(product.status).to eq('pending')
+      expect(product.fraud_score).to eq(0.15)
+    end
+
+    it 'flags suspicious product title and sets pending status' do
+      product = Product.new(valid_attributes.merge(title: 'suspicious laptop, contact via whatsapp 12345678'))
+      allow(product).to receive(:get_ai_fraud_score).and_return({ score: 0.12, is_fraud: false })
+
+      product.save!
+
+      expect(product.flagged).to be(true)
+      expect(product.status).to eq('pending')
+      expect(product.fraud_score).to eq(0.12)
+    end
+
+    it 'flags product when AI marks it as fraud even if text is clean' do
+      product = Product.new(valid_attributes)
+      allow(product).to receive(:get_ai_fraud_score).and_return({ score: 0.91, is_fraud: true })
+
+      product.save!
+
+      expect(product.flagged).to be(true)
+      expect(product.status).to eq('pending')
+      expect(product.fraud_score).to eq(0.91)
+    end
+
+    it 'does not re-flag immediately when an admin clears flagged state' do
+      product = Product.new(valid_attributes.merge(description: 'Telegram me at +85212345678'))
+      allow(product).to receive(:get_ai_fraud_score).and_return({ score: 0.25, is_fraud: false })
+      product.save!
+
+      product.update!(flagged: false, status: :available)
+
+      expect(product.reload.flagged).to be(false)
+      expect(product.status).to eq('available')
+    end
+  end
 end

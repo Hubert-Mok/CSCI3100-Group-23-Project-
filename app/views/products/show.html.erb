@@ -85,7 +85,9 @@
       <% end %>
 
       <% unless logged_in? %>
-        <span class="like-count-static">♡ <%= @product.likes_count %> <%= @product.likes_count == 1 ? "like" : "likes" %></span>
+        <%= button_to product_like_path(@product), method: :post, class: "btn-like", form: { data: { turbo: false } } do %>
+          ♡ Like (<%= @product.likes_count %>)
+        <% end %>
       <% end %>
     </div>
 
@@ -94,5 +96,8 @@
 </div>
 
 <div class="show-back">
+  <% if current_user&.admin? && params[:source] == 'admin_moderation' %>
+    <%= link_to "← Back to Admin Dashboard", admin_moderation_index_path, class: "btn-admin btn-admin-back" %>
+  <% end %>
   <%= link_to "← Back to listings", root_path %>
 </div>
