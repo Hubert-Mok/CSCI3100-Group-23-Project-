@@ -175,9 +175,17 @@ RSpec.describe ProductsController, type: :controller do
       get :index, params: { sort: 'price_desc' }
 
       products = controller.instance_variable_get(:@products)
+      # Check that products are sorted by price descending
       prices = products.map(&:price)
       expect(prices).to eq(prices.sort.reverse)
-      expect(products.first).to eq(matching_product)
+
+      # Check that our test products are included and in the correct relative order
+      test_products = [matching_product, other_product, third_product, viewer_own_product]
+      test_products_in_results = products.select { |p| test_products.include?(p) }
+
+      # The test products should be sorted by price descending among themselves
+      expected_order = test_products.sort_by(&:price).reverse
+      expect(test_products_in_results).to eq(expected_order)
     end
 
     it 'assigns liked product ids for logged-in user' do
