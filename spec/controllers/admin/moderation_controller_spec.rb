@@ -100,6 +100,15 @@ RSpec.describe Admin::ModerationController, type: :controller do
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq('Access denied.')
     end
+
+    it 'redirects signed-out users to sign in' do
+      allow(controller).to receive(:current_user).and_return(nil)
+
+      get :index
+
+      expect(response).to redirect_to(sign_in_path)
+      expect(flash[:alert]).to eq('You must be signed in to access that page.')
+    end
   end
 
   describe 'PATCH #approve_product' do

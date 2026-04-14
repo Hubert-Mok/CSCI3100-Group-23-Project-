@@ -1,4 +1,5 @@
 class Admin::ModerationController < ApplicationController
+  before_action :require_login
   before_action :require_admin # Ensure you have an admin check!
 
   def index
@@ -28,6 +29,6 @@ class Admin::ModerationController < ApplicationController
 
   def require_admin
     # Basic check: adjust this based on how you identify admins
-    redirect_to root_path, alert: "Access denied." unless current_user.admin?
+    redirect_to root_path, alert: "Access denied." unless current_user&.admin?
   end
 end

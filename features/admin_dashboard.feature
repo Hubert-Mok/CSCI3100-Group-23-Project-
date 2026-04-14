@@ -36,6 +36,11 @@ Feature: Admin dashboard moderation
     When I visit the admin moderation dashboard
     Then I should be denied access to the moderation dashboard
 
+  Scenario: Signed-out user is redirected from moderation dashboard
+    When I visit the admin moderation dashboard
+    Then I should be on the sign in page
+    And I should see "You must be signed in to access that page."
+
   Scenario: Admin dashboard badge shows 99 plus for many flagged products
     Given 105 flagged products exist for moderation
     And I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
