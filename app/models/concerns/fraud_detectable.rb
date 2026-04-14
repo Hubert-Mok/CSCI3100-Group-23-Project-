@@ -34,8 +34,8 @@ module FraudDetectable
   ]
 
   def suspicious?
-    # Check 'body' (for Messages) or 'description' (for Products)
-    content = self.try(:body) || self.try(:description)
+    # Check all relevant text fields for the current model.
+    content = [self.try(:title), self.try(:description), self.try(:body)].compact.join(" ")
     return false if content.blank?
     #check blacklist patterns
     return true if SUSPICIOUS_PATTERNS.any? { |pattern| content.match?(pattern) }

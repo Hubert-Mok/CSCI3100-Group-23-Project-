@@ -84,6 +84,17 @@ RSpec.describe Product, type: :model do
       expect(product.fraud_score).to eq(0.15)
     end
 
+    it 'flags suspicious product title and sets pending status' do
+      product = Product.new(valid_attributes.merge(title: 'suspicious laptop, contact via whatsapp 12345678'))
+      allow(product).to receive(:get_ai_fraud_score).and_return({ score: 0.12, is_fraud: false })
+
+      product.save!
+
+      expect(product.flagged).to be(true)
+      expect(product.status).to eq('pending')
+      expect(product.fraud_score).to eq(0.12)
+    end
+
     it 'flags product when AI marks it as fraud even if text is clean' do
       product = Product.new(valid_attributes)
       allow(product).to receive(:get_ai_fraud_score).and_return({ score: 0.91, is_fraud: true })

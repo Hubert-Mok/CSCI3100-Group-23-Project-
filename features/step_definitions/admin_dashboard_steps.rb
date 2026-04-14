@@ -102,6 +102,15 @@ Then('I should see the flagged product in the moderation queue') do
   raise 'Expected flagged product to appear in moderation queue' unless page.has_content?(@flagged_product.title)
 end
 
+When('I click the flagged product title link') do
+  click_link @flagged_product.title
+end
+
+Then('I should be on that product page') do
+  expected_path = "/products/#{@flagged_product.id}"
+  raise "Expected to be on flagged product page (#{expected_path}), got #{page.current_path}" unless page.current_path == expected_path
+end
+
 When('I approve the flagged product from the dashboard') do
   click_button 'Approve'
 end
@@ -171,6 +180,15 @@ Then('I should see the flagged message in the moderation queue') do
   raise 'Expected flagged message to appear in moderation queue' unless page.has_content?(@flagged_message.body)
   raise 'Expected sender username in moderation queue' unless page.has_content?(@buyer_for_message.username)
   raise 'Expected product title in moderation queue' unless page.has_content?(@product_for_message.title)
+end
+
+When('I click the flagged message product title link') do
+  click_link @product_for_message.title
+end
+
+Then('I should be on the flagged message product page') do
+  expected_path = "/products/#{@product_for_message.id}"
+  raise "Expected to be on flagged message product page (#{expected_path}), got #{page.current_path}" unless page.current_path == expected_path
 end
 
 When('I approve the flagged message from the dashboard') do

@@ -82,7 +82,7 @@ class ProductsController < ApplicationController
   def destroy
     if @product.destroy
       if current_user.admin? && request.referer&.include?("admin/moderation")
-        redirect_to admin_moderation_path, notice: "Listing removed successfully."
+        redirect_to admin_moderation_index_path, notice: "Listing removed successfully."
       else
       redirect_to profile_path, notice: "Listing removed successfully."
       end
