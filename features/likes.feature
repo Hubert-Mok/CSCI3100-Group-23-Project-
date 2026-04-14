@@ -29,3 +29,24 @@ Feature: Like System
     And I try to like the product
     Then I should be redirected to sign in page
 
+  Scenario: Buyer cannot like the same product twice
+    Given the buyer has liked the product "Used Laptop"
+    When I sign in as "buyer@link.cuhk.edu.hk" with password "password123"
+    And I navigate to the product "Used Laptop"
+    And I try to like the product again
+    Then I should see "Could not like this item."
+    And the product should have 1 like
+
+  Scenario: Buyer cannot unlike a product that was not liked
+    When I sign in as "buyer@link.cuhk.edu.hk" with password "password123"
+    And I navigate to the product "Used Laptop"
+    And I try to unlike the product without liking it first
+    Then I should see "Could not unlike this item."
+    And the product should have 0 likes
+
+  Scenario: Unauthenticated user cannot unlike products
+    Given the buyer has liked the product "Used Laptop"
+    When I navigate to the product "Used Laptop"
+    And I try to unlike the product while signed out
+    Then I should be redirected to sign in page
+
