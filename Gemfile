@@ -40,6 +40,8 @@ gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
+# Azure Blob backend (Rails 8 removed built-in Azure; see https://github.com/testdouble/azure-blob)
+gem "azure-blob", "~> 0.8"
 
 gem "stripe"
 gem "dotenv-rails", groups: %i[development test]

@@ -18,7 +18,7 @@
       <span>Didn't receive it?</span>
     </div>
 
-    <%= form_with url: email_verification_path, method: :post, class: "auth-form" do |f| %>
+    <%= form_with url: email_verification_path, method: :post, class: "auth-form", data: { turbo: false } do |f| %>
       <div class="form-group">
         <%= f.label :email, "School email address" %>
         <%= f.email_field :email, value: @email, placeholder: "your@link.cuhk.edu.hk", autocomplete: "email", required: true %>

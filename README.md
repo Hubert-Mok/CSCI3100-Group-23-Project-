@@ -67,6 +67,10 @@ Run these from the project root with the stack up (`docker compose up`).
 
   If the database connection fails, restart the stack: `docker compose down && docker compose up -d`.
 
+### Azure (production)
+
+Deploy the production [Dockerfile](Dockerfile) to **Azure Container Apps** with **PostgreSQL Flexible Server** using the Azure Developer CLI. See [infra/README.md](infra/README.md) for `azd up`, secrets, migrations, custom domains, and Stripe webhooks. CI includes an optional [`.github/workflows/azure-dev.yml`](.github/workflows/azure-dev.yml) workflow (manual run after `azd pipeline config`).
+
 ### CI (GitHub Actions)
 
 On each push and pull request to `main`, GitHub Actions runs:
@@ -93,5 +97,5 @@ On each push and pull request to `main`, GitHub Actions runs:
 - Add more robust flash messages and edge-case handling (e.g. expired sessions, unauthorized access).
 - Set `email_verified_at` on seeded users (or document the email-verification step) so README demo credentials can sign in without extra friction.
 - Expand automated tests (models, controllers, and key flows via system tests).
-- Finalize production deployment configuration, environment variables, and Kamal registry/host settings.
+- Production on Azure: see [infra/README.md](infra/README.md); optional Kamal/registry settings remain separate if you use that path.
 - Enable and polish PWA support (manifest route, service worker, basic offline behaviour).

@@ -59,6 +59,6 @@ class EmailVerificationsController < ApplicationController
 
   def resend_for(user)
     raw_token = user.generate_email_verification_token!
-    UserMailer.email_verification(user, raw_token).deliver_later
+    UserMailer.email_verification(user, raw_token).deliver_now
   end
 end

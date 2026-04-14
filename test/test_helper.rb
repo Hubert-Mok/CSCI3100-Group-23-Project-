@@ -41,3 +41,28 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+# #region agent log
+begin
+  integration_paths = Dir[Rails.root.join("test/integration/**/*_test.rb")].sort
+  payload = {
+    sessionId: "4e5ee3",
+    hypothesisId: "H-discovery",
+    location: "test/test_helper.rb",
+    message: "minitest file discovery",
+    data: {
+      integration_count: integration_paths.size,
+      integration_basenames: integration_paths.map { |p| File.basename(p) },
+      ci: ENV["CI"].present?,
+      pid: $$
+    },
+    timestamp: (Time.now.to_f * 1000).to_i
+  }
+  log_path = Rails.root.join(".cursor/debug-4e5ee3.log")
+  log_path.dirname.mkpath
+  File.open(log_path, "a") { |f| f.puts(payload.to_json) }
+  $stdout.puts("AGENT_DEBUG_DISCOVERY #{payload.to_json}") if ENV["CI"].present?
+rescue StandardError => e
+  warn("AGENT_DEBUG_DISCOVERY_LOG_FAIL #{e.class}: #{e.message}")
+end
+# #endregion

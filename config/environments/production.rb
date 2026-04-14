@@ -21,8 +21,12 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Durable uploads: Azure Blob when AZURE_STORAGE_* are set (see infra/core.bicep); else ephemeral Disk.
+  config.active_storage.service = if ENV["AZURE_STORAGE_ACCOUNT_NAME"].present? && ENV["AZURE_STORAGE_ACCESS_KEY"].present?
+    :azure
+  else
+    :local
+  end
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # config.assume_ssl = true
@@ -59,16 +63,31 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "cuhk-marketplace.herokuapp.com"), protocol: "https" }
 
-  # Deliver via Gmail SMTP (port 465, implicit SSL).
+  # Default: Azure Communication Services Email SMTP (STARTTLS on 587). See infra/README.md.
+  # For implicit TLS on 465 (e.g. Gmail), set SMTP_TLS_IMPLICIT=true and SMTP_ADDRESS=smtp.gmail.com.
   config.action_mailer.delivery_method = :smtp
+  smtp_implicit_tls = ActiveModel::Type::Boolean.new.cast(ENV.fetch("SMTP_TLS_IMPLICIT", "false"))
+  default_smtp_port = smtp_implicit_tls ? "465" : "587"
+  smtp_address = ENV.fetch("SMTP_ADDRESS", "smtp.azurecomm.net")
+  # Azure Communication Services (smtp.azurecomm.net) accepts AUTH LOGIN only; AUTH PLAIN returns 504 5.7.4.
+  smtp_authentication = if ENV["SMTP_AUTHENTICATION"].present?
+    ENV["SMTP_AUTHENTICATION"].to_sym
+  else
+    smtp_address.include?("azurecomm.net") ? :login : :plain
+  end
   config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
-    port: 465,
+    address: smtp_address,
+    port: ENV.fetch("SMTP_PORT", default_smtp_port).to_i,
     user_name: ENV.fetch("SMTP_USERNAME"),
     password: ENV.fetch("SMTP_PASSWORD"),
-    authentication: :plain,
-    tls: true
-  }
+    authentication: smtp_authentication
+  }.tap do |settings|
+    if smtp_implicit_tls
+      settings[:tls] = true
+    else
+      settings[:enable_starttls_auto] = true
+    end
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

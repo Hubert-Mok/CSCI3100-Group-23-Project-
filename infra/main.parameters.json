@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "resourceGroupName": {
+      "value": "${AZURE_RESOURCE_GROUP=}"
+    },
+    "postgresAdminLogin": {
+      "value": "${POSTGRES_ADMIN_LOGIN=marketplaceadmin}"
+    },
+    "postgresAdminPassword": {
+      "value": "${POSTGRES_ADMIN_PASSWORD}"
+    },
+    "railsMasterKey": {
+      "value": "${RAILS_MASTER_KEY}"
+    },
+    "smtpUsername": {
+      "value": "${SMTP_USERNAME}"
+    },
+    "smtpPassword": {
+      "value": "${SMTP_PASSWORD}"
+    },
+    "mailerFrom": {
+      "value": "${MAILER_FROM=}"
+    },
+    "stripePublishableKey": {
+      "value": "${STRIPE_SECRET_PUBLIC_KEY=}"
+    },
+    "stripeSecretPrivateKey": {
+      "value": "${STRIPE_SECRET_PRIVATE_KEY=}"
+    },
+    "stripeWebhookSecret": {
+      "value": "${STRIPE_WEBHOOK_SECRET=}"
+    },
+    "webImageName": {
+      "value": "${SERVICE_WEB_IMAGE_NAME=mcr.microsoft.com/azuredocs/containerapps-helloworld:latest}"
+    },
+    "webAppExists": {
+      "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
+    },
+    "containerRegistryHostSuffix": {
+      "value": "${CONTAINER_REGISTRY_HOST_SUFFIX=azurecr.io}"
+    }
+  }
+}

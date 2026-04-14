@@ -6,6 +6,13 @@ local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
+# Azure Blob (production: set AZURE_STORAGE_* via IaC or secrets; requires gem "azure-blob")
+azure:
+  service: AzureBlob
+  storage_account_name: <%= ENV["AZURE_STORAGE_ACCOUNT_NAME"] %>
+  storage_access_key: <%= ENV["AZURE_STORAGE_ACCESS_KEY"] %>
+  container: <%= ENV.fetch("AZURE_STORAGE_CONTAINER", "activestorage") %>
+
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
 #   service: S3

@@ -38,3 +38,10 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
+# Azure Developer CLI per-environment state (do not commit secrets).
+/.azure/
+
+# Compiled ARM templates from `az bicep build` (source of truth is *.bicep).
+/infra/main.json
+/infra/core.json
+
