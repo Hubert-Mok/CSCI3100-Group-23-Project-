@@ -1,6 +1,35 @@
 require 'rails_helper'
 
 RSpec.describe RegistrationsController, type: :controller do
+  describe 'GET #new' do
+    it 'renders the registration form' do
+      get :new
+
+      expect(response).to have_http_status(:ok)
+      expect(response).to render_template(:new)
+      expect(assigns(:user)).to be_a_new User
+    end
+
+    it 'redirects authenticated users away from registration' do
+      user = User.create!(
+        email: 'existing@link.cuhk.edu.hk',
+        password: 'password123',
+        password_confirmation: 'password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Existing User',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current
+      )
+
+      allow(controller).to receive(:current_user).and_return(user)
+      allow(controller).to receive(:user_signed_in?).and_return(true)
+
+      get :new
+
+      expect(response).to redirect_to(root_path)
+    end
+  end
+
   describe 'POST #create' do
     let(:valid_attributes) do
       {
