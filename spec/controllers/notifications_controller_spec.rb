@@ -98,6 +98,12 @@ RSpec.describe NotificationsController, type: :controller do
       expect(response).to redirect_to(notifications_path)
     end
 
+    it 'broadcasts badge update after marking as read' do
+      expect(controller).to receive(:broadcast_notification_badge_to).with(user)
+
+      patch :update, params: { id: first_notification.id }
+    end
+
     it 'uses redirect_back when referer is present' do
       request.env['HTTP_REFERER'] = '/products'
 
@@ -107,6 +113,8 @@ RSpec.describe NotificationsController, type: :controller do
     end
 
     it 'returns turbo stream response when requested' do
+      expect(controller).to receive(:broadcast_notification_badge_to).with(user)
+
       patch :update, params: { id: first_notification.id }, format: :turbo_stream
 
       expect(response).to have_http_status(:no_content)
