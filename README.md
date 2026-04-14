@@ -59,32 +59,19 @@ On each push and pull request to `main`, GitHub Actions runs:
 | Feature Name | Primary Developer (Development) | Secondary Developer (Testing and Bugfix) | Notes |
 | :--- | :--- | :--- | :--- |
 | User Authentication | Ben | Kwok Chi Him Jacco | Sign up, sign in, sign out flows |
-| Email Verification | Ben | Jacco | School-email verification (CUHK domains) |
-| User Profiles | Ben | Jacco | View and edit user profiles |
-| Products Publising | - | Jacco Alice| Create, edit, delete, and publish product listings |
-| Searching | Jacco  | - | Fuzzy search, category/status filtering, sorting |
-| Product Likes |Alice| Jacco| Like/unlike products and view liked products |
-| Notifications | Ben  | Jacco | Real-time notifications via Turbo Streams & Action Cable |
-| Messaging | Ben | Jacco | Buyer-seller conversations with message management |
-| Orders & Checkout | Ben | Jacco | Stripe-based escrow payment flow |
-| Data initialization | Alice | - | give virtual and initialal data setup|
-| Delay use testing | - | - | Daily normal usage test |
-| Website deployment | - | - | deploy the website to heroku |
-| Bug Analyise | - | Alice | Find error and bugs |  
-|PWA support|Alice|-|manifest and service worker views|
 | Email Verification | Ben, MOK Yik Him Hubert | Jacco, Ng Hei Yi Melody | School-email verification (CUHK domains) |
 | User Profiles | Ben | Jacco, Hubert | View and edit user profiles |
-| Products Publising | Alice | Jacco, Hubert | Create, edit, delete, and publish product listings |
-| Searching | Jacco  | Hubert | Fuzzy search, category/status filtering, sorting |
+| Products Publishing | Alice | Jacco, Hubert | Create, edit, delete, and publish product listings |
+| Searching | Jacco | Hubert | Fuzzy search, category/status filtering, sorting |
 | Product Likes | Chan Yat Yin Alice | Jacco, Hubert, Ng Hei Yi Melody | Like/unlike products and view liked products |
-| Notifications | Ben  | Jacco, Hubert | Real-time notifications via Turbo Streams & Action Cable |
+| Notifications | Ben | Jacco, Hubert | Real-time notifications via Turbo Streams & Action Cable |
 | Messaging | Ben | Jacco, Hubert | Buyer-seller conversations with message management |
 | Orders & Checkout | Ben | Jacco | Stripe-based escrow payment flow |
-| Data initialization | Alice, Ng Hei Yi Melody | - | give virtual and initialal data setup|
+| Data initialization | Alice, Ng Hei Yi Melody | - | Database seeds with 8 users, 19 products across all categories, and likes |
 | Delay use testing | - | - | Daily normal usage test |
 | Website deployment | Hubert | - | deploy the website to heroku |
-| Bug Analyise | - | Alice ,Ng Hei Yi Melody | Find error and bugs |  
-| Fraud Detection | Hubert | - | Find suspicious products and messages
-| Admin Moderation | Hubert | Ng Hei Yi Melody | Added Admin access and Admin Dashboard to check suspicious products and messages
-|PWA support|Alice|-| manifest, service worker, basic offline behaviour|
-| Demo video Editing | Ng Hei Yi Melody | Alice | Screen shooting and editing the demo video with narration and subtitle added
+| Bug Analysis | - | Alice, Ng Hei Yi Melody | Fixed lint errors, added 404 error handling |
+| Fraud Detection | Hubert | - | Find suspicious products and messages |
+| Admin Moderation | Hubert | Ng Hei Yi Melody | Added Admin access and Admin Dashboard to check suspicious products and messages |
+| PWA Support | Alice | - | Manifest, service worker, basic offline behaviour |
+| Demo Video Editing | Ng Hei Yi Melody | Alice | Screen shooting and editing the demo video with narration and subtitle added |
