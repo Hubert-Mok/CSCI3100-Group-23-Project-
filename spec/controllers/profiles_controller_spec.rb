@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ProfilesController, type: :controller do
+  render_views
+
   let(:user) do
     User.create!(
       email: "user_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
@@ -157,6 +159,41 @@ RSpec.describe ProfilesController, type: :controller do
       liked_products = controller.instance_variable_get(:@liked_products)
       expect(liked_products.first).to eq(newer_liked)
       expect(liked_products.second).to eq(older_liked)
+    end
+
+    it 'shows listing prices with two decimal places' do
+      Product.create!(
+        title: 'Graphing Calculator',
+        description: 'Scientific calculator in good condition with cover included.',
+        price: 88.5,
+        user: user,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available
+      )
+
+      get :show
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('HK$88.50')
+    end
+
+    it 'shows liked product prices with two decimal places' do
+      liked_product = Product.create!(
+        title: 'External SSD',
+        description: 'Fast USB-C SSD with cable and protective case.',
+        price: 245.6,
+        user: other_user,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available
+      )
+      Like.create!(user: user, product: liked_product)
+
+      get :show
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('HK$245.60')
     end
   end
 

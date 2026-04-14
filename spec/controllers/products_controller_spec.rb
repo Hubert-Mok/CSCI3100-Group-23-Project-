@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ProductsController, type: :controller do
+  render_views
+
   let(:admin_user) do
     User.create!(
       email: "admin_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
@@ -619,6 +621,101 @@ RSpec.describe ProductsController, type: :controller do
       expect(flash[:alert]).to be_nil
       expect(created_product.status).to eq('pending')
       expect(created_product.flagged).to be(true)
+    end
+
+    it 'returns validation error instead of 500 when price is too high' do
+      expect {
+        post :create, params: {
+          product: {
+            title: 'Luxury Watch',
+            description: 'Collector watch in excellent condition with original box.',
+            price: 1_000_000,
+            category: Product::CATEGORIES.second,
+            listing_type: 'sale'
+          }
+        }
+      }.not_to change(Product, :count)
+
+      created_product = controller.instance_variable_get(:@product)
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to render_template(:new)
+      expect(created_product.errors[:price]).to include('is too high (maximum is 999999.9)')
+    end
+
+    it 'accepts a price with one decimal place' do
+      post :create, params: {
+        product: {
+          title: 'Desk Lamp',
+          description: 'Dimmable desk lamp with stable stand and warm light mode.',
+          price: 123.4,
+          category: Product::CATEGORIES.second,
+          listing_type: 'sale'
+        }
+      }
+
+      created_product = Product.where(user: seller).order(:created_at).last
+      expect(response).to redirect_to(created_product)
+      expect(created_product.price.to_d).to eq(123.4.to_d)
+    end
+
+    it 'rejects a price with more than one decimal place' do
+      expect {
+        post :create, params: {
+          product: {
+            title: 'Bluetooth Speaker',
+            description: 'Portable speaker with strong bass and long battery life.',
+            price: 123.45,
+            category: Product::CATEGORIES.second,
+            listing_type: 'sale'
+          }
+        }
+      }.not_to change(Product, :count)
+
+      created_product = controller.instance_variable_get(:@product)
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to render_template(:new)
+      expect(created_product.errors[:price]).to include('can have at most 1 decimal place')
+    end
+  end
+
+  describe 'price display precision' do
+    let(:seller) do
+      User.create!(
+        email: "seller_precision_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+        password: 'Password123',
+        password_confirmation: 'Password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Price Seller',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current
+      )
+    end
+
+    let!(:priced_product) do
+      Product.create!(
+        title: 'Mechanical Keyboard',
+        description: 'Hot-swappable keyboard with tactile switches and RGB backlight.',
+        price: 123.4,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: seller
+      )
+    end
+
+    it 'shows two decimal places on the home listing card' do
+      get :index
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('HK$123.40')
+    end
+
+    it 'shows one decimal place on the product detail page' do
+      get :show, params: { id: priced_product.id }
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('HK$123.4')
+      expect(response.body).not_to include('HK$123.40')
     end
   end
 end

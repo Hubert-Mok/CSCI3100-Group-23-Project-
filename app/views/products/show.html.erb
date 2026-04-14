@@ -30,7 +30,7 @@
       <% if @product.gift? %>
         <span class="price-free">Free</span>
       <% else %>
-        <span class="price-amount">HK$<%= number_with_precision(@product.price, precision: 2) %></span>
+        <span class="price-amount">HK$<%= number_with_precision(@product.price, precision: 1) %></span>
       <% end %>
     </div>
 
