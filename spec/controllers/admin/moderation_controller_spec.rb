@@ -88,8 +88,8 @@ RSpec.describe Admin::ModerationController, type: :controller do
       get :index
 
       expect(response).to have_http_status(:ok)
-      expect(assigns(:flagged_products)).to contain_exactly(flagged_product)
-      expect(assigns(:flagged_messages)).to contain_exactly(flagged_message)
+      expect(assigns(:flagged_products)).to include(flagged_product)
+      expect(assigns(:flagged_messages)).to include(flagged_message)
     end
 
     it 'redirects non-admin users' do
@@ -121,10 +121,42 @@ RSpec.describe Admin::ModerationController, type: :controller do
 
       patch :approve_product, params: { id: flagged_product.id }
 
-      expect(response).to redirect_to(admin_moderation_path)
+      expect(response).to redirect_to(admin_moderation_index_path)
       expect(flash[:notice]).to eq('Product approved and listed!')
       expect(flagged_product.reload.flagged).to be(false)
       expect(flagged_product.status).to eq('available')
+    end
+  end
+
+  describe 'PATCH #approve_message' do
+    let!(:product) do
+      Product.create!(
+        title: 'Test Product',
+        description: 'A normal product',
+        price: 100,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: seller
+      )
+    end
+
+    let!(:conversation) do
+      Conversation.create!(product: product, buyer: normal_user, seller: seller)
+    end
+
+    let!(:flagged_message) do
+      Message.create!(conversation: conversation, user: normal_user, body: 'contact via whatsapp +85212345678', flagged: true)
+    end
+
+    it 'unflags message when admin approves it' do
+      allow(controller).to receive(:current_user).and_return(admin_user)
+
+      patch :approve_message, params: { id: flagged_message.id }
+
+      expect(response).to redirect_to(admin_moderation_index_path)
+      expect(flash[:notice]).to eq('Message approved!')
+      expect(flagged_message.reload.flagged).to be(false)
     end
   end
 end

@@ -9,9 +9,18 @@ class Admin::ModerationController < ApplicationController
   def approve_product
     @product = Product.find(params[:id])
     if @product.update(flagged: false, status: :available)
-        redirect_to admin_moderation_path, notice: "Product approved and listed!"
+        redirect_to admin_moderation_index_path, notice: "Product approved and listed!"
     else
-        redirect_to admin_moderation_path, alert: "Failed to approve."
+        redirect_to admin_moderation_index_path, alert: "Failed to approve."
+    end
+  end
+
+  def approve_message
+    @message = Message.find(params[:id])
+    if @message.update(flagged: false)
+        redirect_to admin_moderation_index_path, notice: "Message approved!"
+    else
+        redirect_to admin_moderation_index_path, alert: "Failed to approve message."
     end
   end
 

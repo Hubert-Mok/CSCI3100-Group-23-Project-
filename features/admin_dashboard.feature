@@ -23,3 +23,16 @@ Feature: Admin dashboard moderation
     And I sign in as admin with email "buyer@link.cuhk.edu.hk" and password "Password123"
     When I visit the admin moderation dashboard
     Then I should be denied access to the moderation dashboard
+
+  Scenario: Admin dashboard badge shows 99 plus for many flagged products
+    Given 105 flagged products exist for moderation
+    And I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
+    When I visit the home page to check admin badge
+    Then I should see "99+"
+
+  Scenario: Admin dashboard badge shows combined count of flagged products and messages
+    Given 3 flagged products exist for moderation
+    And a flagged message exists for moderation
+    And I sign in as admin with email "admin@link.cuhk.edu.hk" and password "Password123"
+    When I visit the home page to check admin badge
+    Then I should see "5" in the admin badge

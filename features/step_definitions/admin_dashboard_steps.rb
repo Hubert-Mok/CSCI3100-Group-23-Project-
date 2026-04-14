@@ -43,6 +43,37 @@ Given('a flagged product exists for moderation') do
   @flagged_product.update_columns(flagged: true, status: Product.statuses[:pending])
 end
 
+Given('{int} flagged products exist for moderation') do |count|
+  Product.class_eval do
+    def get_ai_fraud_score
+      { score: 0.0, is_fraud: false }
+    end
+  end
+
+  seller = User.create!(
+    email: "seller_many_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+    password: 'Password123',
+    password_confirmation: 'Password123',
+    cuhk_id: SecureRandom.hex(4),
+    username: 'Seller Many',
+    college_affiliation: User::COLLEGES.first,
+    email_verified_at: Time.current
+  )
+
+  count.times do |index|
+    Product.create!(
+      title: "Suspicious Item #{index}",
+      description: 'Contact me on whatsapp +85212345678',
+      price: 100,
+      category: Product::CATEGORIES.first,
+      listing_type: 'sale',
+      status: :pending,
+      flagged: true,
+      user: seller
+    )
+  end
+end
+
 Given('a normal user exists with email {string} and password {string}') do |email, password|
   @normal_user = User.create!(
     email: email,
@@ -85,4 +116,89 @@ end
 Then('I should be denied access to the moderation dashboard') do
   raise 'Expected to be redirected from moderation dashboard' unless page.current_path == '/'
   raise 'Expected access denied message' unless page.has_content?('Access denied.')
+end
+
+Given('a flagged message exists for moderation') do
+  # Create seller and buyer users
+  @seller_for_message = User.create!(
+    email: "seller_msg_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+    password: 'Password123',
+    password_confirmation: 'Password123',
+    cuhk_id: SecureRandom.hex(4),
+    username: 'Seller Message',
+    college_affiliation: User::COLLEGES.first,
+    email_verified_at: Time.current
+  )
+
+  @buyer_for_message = User.create!(
+    email: "buyer_msg_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+    password: 'Password123',
+    password_confirmation: 'Password123',
+    cuhk_id: SecureRandom.hex(4),
+    username: 'Buyer Message',
+    college_affiliation: User::COLLEGES.first,
+    email_verified_at: Time.current
+  )
+
+  # Create a product
+  @product_for_message = Product.create!(
+    title: 'Product with Flagged Message',
+    description: 'A normal product',
+    price: 100,
+    category: Product::CATEGORIES.first,
+    listing_type: 'sale',
+    status: :available,
+    user: @seller_for_message
+  )
+
+  # Create a conversation
+  @conversation_for_message = Conversation.create!(
+    product: @product_for_message,
+    buyer: @buyer_for_message,
+    seller: @seller_for_message
+  )
+
+  # Create a flagged message
+  @flagged_message = Message.create!(
+    conversation: @conversation_for_message,
+    user: @buyer_for_message,
+    body: 'Contact me on whatsapp +85212345678',
+    flagged: true
+  )
+end
+
+Then('I should see the flagged message in the moderation queue') do
+  raise 'Expected flagged message to appear in moderation queue' unless page.has_content?(@flagged_message.body)
+  raise 'Expected sender username in moderation queue' unless page.has_content?(@buyer_for_message.username)
+  raise 'Expected product title in moderation queue' unless page.has_content?(@product_for_message.title)
+end
+
+When('I approve the flagged message from the dashboard') do
+  # Find and click the approve button for the message by searching for the message body
+  rows = all('table tbody tr')
+  row = rows.find { |r| r.has_content?(@flagged_message.body) }
+  raise 'Could not find message row' unless row
+  row.find('button', text: 'Approve').click
+end
+
+Then('the message should be unflagged') do
+  @flagged_message.reload
+  raise 'Expected message to be unflagged after approval' if @flagged_message.flagged
+  raise 'Expected success message for approval' unless page.has_content?('Message approved!')
+end
+
+When('I visit the home page to check admin badge') do
+  visit '/'
+end
+
+Then('I should see {string} in the admin badge') do |text|
+  # Wait for badge element and check it contains the text
+  begin
+    badge = page.find('.admin-badge', visible: true)
+    raise "Badge not found with '#{text}'" unless badge.has_content?(text)
+  rescue Capybara::ElementNotFound
+    # Badge element not found, try to see what's actually on the page
+    page_content = page.body
+    raise "Badge element (.admin-badge) not found on page. Page content preview: #{page_content[0...500]}"
+  end
 end
