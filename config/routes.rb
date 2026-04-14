@@ -63,6 +63,16 @@ Rails.application.routes.draw do
     get :callback
   end
 
+  namespace :admin do
+    get 'moderation', to: 'moderation#index'
+    patch 'moderation/approve_product/:id', to: 'moderation#approve_product', as: :approve_product_admin_moderation
+    resources :moderation, only: [:index] do
+    member do
+      patch :approve_product
+    end
+  end
+  end
+
   match "/webhooks/stripe", to: proc { [ 405, { "Content-Type" => "text/plain" }, [ "Method Not Allowed" ] ] }, via: :get
   post "/webhooks/stripe", to: "stripe_webhooks#create"
 

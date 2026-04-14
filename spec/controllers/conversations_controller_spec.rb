@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ConversationsController, type: :controller do
   let(:user) do
     User.create!(
-      email: 'user@link.cuhk.edu.hk',
+      email: "user_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
       password: 'password123',
       password_confirmation: 'password123',
       cuhk_id: SecureRandom.hex(4),
@@ -15,7 +15,7 @@ RSpec.describe ConversationsController, type: :controller do
 
   let(:other_user) do
     User.create!(
-      email: 'other@link.cuhk.edu.hk',
+      email: "other_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
       password: 'password123',
       password_confirmation: 'password123',
       cuhk_id: SecureRandom.hex(4),
@@ -61,7 +61,7 @@ RSpec.describe ConversationsController, type: :controller do
     context 'when user email is not verified' do
       let(:unverified_user) do
         User.create!(
-          email: 'unverified@link.cuhk.edu.hk',
+          email: "unverified_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
           password: 'password123',
           password_confirmation: 'password123',
           cuhk_id: SecureRandom.hex(4),
@@ -220,7 +220,7 @@ RSpec.describe ConversationsController, type: :controller do
     context 'when user is not authorized' do
       let(:unauthorized_user) do
         User.create!(
-          email: 'unauth@link.cuhk.edu.hk',
+          email: "unauth_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
           password: 'password123',
           password_confirmation: 'password123',
           cuhk_id: SecureRandom.hex(4),
@@ -275,7 +275,7 @@ RSpec.describe ConversationsController, type: :controller do
     context 'when user is not authorized' do
       let(:unauthorized_user) do
         User.create!(
-          email: 'unauth2@link.cuhk.edu.hk',
+          email: "unauth2_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
           password: 'password123',
           password_confirmation: 'password123',
           cuhk_id: SecureRandom.hex(4),

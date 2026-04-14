@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe LikesController, type: :controller do
   let(:user) do
     User.create!(
-      email: 'user@link.cuhk.edu.hk',
+      email: "user_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
       password: 'password123',
       password_confirmation: 'password123',
       cuhk_id: SecureRandom.hex(4),
@@ -15,7 +15,7 @@ RSpec.describe LikesController, type: :controller do
 
   let(:other_user) do
     User.create!(
-      email: 'other@link.cuhk.edu.hk',
+      email: "other_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
       password: 'password123',
       password_confirmation: 'password123',
       cuhk_id: SecureRandom.hex(4),

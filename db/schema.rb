@@ -71,6 +71,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_164851) do
     t.text "body"
     t.bigint "conversation_id", null: false
     t.datetime "created_at", null: false
+    t.boolean "flagged", default: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
@@ -109,6 +110,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_164851) do
     t.string "category"
     t.datetime "created_at", null: false
     t.text "description"
+    t.boolean "flagged", default: false
+    t.float "fraud_score"
     t.integer "likes_count", default: 0, null: false
     t.integer "listing_type", default: 0, null: false
     t.decimal "price", precision: 8, scale: 2, default: "0.0", null: false
@@ -262,6 +265,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_13_164851) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.boolean "admin", default: false
     t.string "college_affiliation", null: false
     t.datetime "created_at", null: false
     t.string "cuhk_id", null: false

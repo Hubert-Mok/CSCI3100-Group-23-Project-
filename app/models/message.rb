@@ -1,4 +1,6 @@
 class Message < ApplicationRecord
+  include FraudDetectable
+  after_create_commit :check_for_fraud
   belongs_to :conversation
   belongs_to :user
 
@@ -14,5 +16,13 @@ class Message < ApplicationRecord
     return if body.present? || attachments.attached?
 
     errors.add(:base, "Message must have text or at least one attachment")
+  end
+
+  def check_for_fraud
+    if suspicious?
+      # You could notify an admin, or just mark it in the DB
+      flag_for_review!
+      puts "⚠️ Fraud Alert: Suspicious message detected from User #{user_id}"
+    end
   end
 end

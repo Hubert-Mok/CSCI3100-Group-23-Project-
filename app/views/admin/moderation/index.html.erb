@@ -1,0 +1,52 @@
+<div class="admin-dashboard">
+  <h1>Moderation Queue</h1>
+
+  <section>
+    <h2>Flagged Products</h2>
+    <div class="table-container">
+      <table class="moderation-table">
+        <thead>
+          <tr>
+            <th>Product Title</th>
+            <th>Seller</th>
+            <th>Description</th>
+            <%# <th>AI Fraud Score</th> %>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @flagged_products.each do |product| %>
+            <tr>
+              <td><strong><%= product.title %></strong></td>
+              <td><%= product.user.username %></td>
+              <td class="text-muted"><%= truncate(product.description, length: 50) %></td>
+              <td class="actions-cell">
+                <%= button_to "Approve", 
+                      approve_product_admin_moderation_path(product), 
+                      method: :patch, 
+                      class: "btn-primary btn-sm" %>
+                
+                <%= button_to "Delete", 
+                      product_path(product), 
+                      method: :delete, 
+                      class: "btn-secondary btn-sm btn-delete",
+                      data: { turbo_confirm: "Delete this listing?" } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Flagged Messages</h2>
+    <% @flagged_messages.each do |msg| %>
+      <div class="flagged-item">
+        <strong>From: <%= msg.user.username %></strong>
+        <p><%= msg.body %></p>
+        <span class="meta">Sent in: <%= msg.conversation.product.title %></span>
+      </div>
+    <% end %>
+  </section>
+</div>
