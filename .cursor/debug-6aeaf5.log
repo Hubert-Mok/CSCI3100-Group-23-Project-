@@ -1,0 +1,3 @@
+{"sessionId":"6aeaf5","hypothesisId":"H1","location":"docker-entrypoint.sh:boot","message":"Gem path state before bundle check","data":{"gem_home":"/usr/local/bundle","bundle_path":null,"usr_local_bundle_exists":true,"rails_gem_present":true,"gem_specs_count":0},"timestamp":1776096237551,"runId":null}
+{"sessionId":"6aeaf5","hypothesisId":"H2","location":"docker-entrypoint.sh:after_bundle_check","message":"bundle check exit status","data":{"exit_code":0,"output_tail":""},"timestamp":1776096238018,"runId":null}
+{"sessionId":"6aeaf5","hypothesisId":"H3","location":"docker-entrypoint.sh:before_exec","message":"Gem path state after ensure install","data":{"rails_gem_present":true,"gem_specs_count":0},"timestamp":1776096238264,"runId":null}

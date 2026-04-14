@@ -7,10 +7,15 @@ RUN apt-get update -qq && \
 
 WORKDIR /rails
 
-COPY Gemfile Gemfile.lock ./
+COPY Gemfile ./
+COPY Gemfile.lock* ./
 RUN bundle install
+
+COPY bin/docker-entrypoint /usr/local/bin/docker-entrypoint
+RUN chmod +x /usr/local/bin/docker-entrypoint
 
 COPY . .
 
 EXPOSE 3000
+ENTRYPOINT ["docker-entrypoint"]
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

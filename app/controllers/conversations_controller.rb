@@ -1,5 +1,6 @@
 class ConversationsController < ApplicationController
   before_action :require_login
+  before_action :require_verified_email
   before_action :set_conversation, only: %i[show destroy]
   before_action :authorize_participation!, only: %i[show destroy]
 

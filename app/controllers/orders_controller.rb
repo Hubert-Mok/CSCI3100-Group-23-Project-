@@ -2,6 +2,7 @@
 
 class OrdersController < ApplicationController
   before_action :require_login
+  before_action :require_verified_email
   before_action :set_order, only: %i[show success cancel confirm_received]
   before_action :authorize_order_access, only: %i[show success cancel confirm_received]
 

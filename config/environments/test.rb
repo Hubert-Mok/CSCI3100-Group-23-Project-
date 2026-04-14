@@ -3,6 +3,10 @@
 # your test database is "scratch space" for the test suite and is wiped
 # and recreated between test runs. Don't rely on the data there!
 
+# Set before initializers (e.g. Stripe) so CI and local test runs need no real secrets.
+ENV["STRIPE_SECRET_PRIVATE_KEY"] ||= "sk_test_dummy_for_ci"
+ENV["STRIPE_WEBHOOK_SECRET"] ||= "test_webhook_signing_secret_for_ci"
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -27,6 +31,10 @@ Rails.application.configure do
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
+
+  # Allow local test hosts in request specs.
+  config.hosts << '127.0.0.1'
+  config.hosts << 'www.example.com'
 
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test

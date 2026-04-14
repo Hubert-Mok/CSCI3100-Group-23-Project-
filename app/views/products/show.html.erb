@@ -85,7 +85,9 @@
       <% end %>
 
       <% unless logged_in? %>
-        <span class="like-count-static">♡ <%= @product.likes_count %> <%= @product.likes_count == 1 ? "like" : "likes" %></span>
+        <%= button_to product_like_path(@product), method: :post, class: "btn-like", form: { data: { turbo: false } } do %>
+          ♡ Like (<%= @product.likes_count %>)
+        <% end %>
       <% end %>
     </div>
 

@@ -1,0 +1,10 @@
+Hi <%= @user.username %>,
+
+Thanks for signing up for CUHK Marketplace. Please verify your email address to activate your account.
+
+This link expires in <%= @expiry_minutes %> minutes.
+
+Verify your email:
+<%= @verification_url %>
+
+If you didn't create an account, you can safely ignore this email.
