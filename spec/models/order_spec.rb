@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Order, type: :model do
   let(:buyer) do
     User.create!(
-      email: 'buyer@test.com',
+      email: 'buyer@link.cuhk.edu.hk',
       password: 'password123',
       password_confirmation: 'password123',
       cuhk_id: SecureRandom.hex(4),
@@ -14,7 +14,7 @@ RSpec.describe Order, type: :model do
   end
   let(:seller) do
     User.create!(
-      email: 'seller@test.com',
+      email: 'seller@link.cuhk.edu.hk',
       password: 'password123',
       password_confirmation: 'password123',
       cuhk_id: SecureRandom.hex(4),
@@ -38,12 +38,12 @@ RSpec.describe Order, type: :model do
 
   describe 'validations' do
     it 'is valid with valid attributes' do
-      order = build(:order, buyer: buyer, product: product)
+      order = Order.new(buyer: buyer, product: product, amount_cents: 10000, currency: 'hkd', status: :pending)
       expect(order).to be_valid
     end
 
     it 'requires amount_cents to be present and greater than 0' do
-      order = build(:order, buyer: buyer, product: product, amount_cents: nil)
+      order = Order.new(buyer: buyer, product: product, amount_cents: nil, currency: 'hkd', status: :pending)
       expect(order).not_to be_valid
       expect(order.errors[:amount_cents]).to include("can't be blank")
 
@@ -53,21 +53,21 @@ RSpec.describe Order, type: :model do
     end
 
     it 'requires currency to be present' do
-      order = build(:order, buyer: buyer, product: product, currency: nil)
+      order = Order.new(buyer: buyer, product: product, amount_cents: 10000, currency: nil, status: :pending)
       expect(order).not_to be_valid
       expect(order.errors[:currency]).to include("can't be blank")
     end
 
     it 'validates product availability on create' do
       product.update!(status: :sold)
-      order = build(:order, buyer: buyer, product: product)
+      order = Order.new(buyer: buyer, product: product, amount_cents: 10000, currency: 'hkd', status: :pending)
       expect(order).not_to be_valid
       expect(order.errors[:product]).to include("is not available for purchase")
     end
 
     it 'validates product is for sale on create' do
-      product.update!(listing_type: :gift)
-      order = build(:order, buyer: buyer, product: product)
+      product.update!(listing_type: :gift, price: 0)
+      order = Order.new(buyer: buyer, product: product, amount_cents: 10000, currency: 'hkd', status: :pending)
       expect(order).not_to be_valid
       expect(order.errors[:product]).to include("must be listed for sale")
     end
