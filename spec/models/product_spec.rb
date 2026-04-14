@@ -117,4 +117,68 @@ RSpec.describe Product, type: :model do
       expect(product.status).to eq('available')
     end
   end
+
+  describe '.search' do
+    let!(:laptop) do
+      Product.create!(
+        title: 'Used Laptop',
+        description: 'Reliable laptop with 8GB RAM',
+        price: 500,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: user
+      )
+    end
+
+    let!(:chair) do
+      Product.create!(
+        title: 'Desk Chair',
+        description: 'Comfortable study chair for desks',
+        price: 100,
+        category: Product::CATEGORIES.second,
+        listing_type: 'sale',
+        status: :available,
+        user: user
+      )
+    end
+
+    it 'returns exact title matches' do
+      results = Product.search('Laptop')
+
+      expect(results).to include(laptop)
+      expect(results).not_to include(chair)
+    end
+
+    it 'returns fuzzy matches when no exact match exists' do
+      results = Product.search('Laptpo')
+
+      expect(results).to include(laptop)
+      expect(results).not_to include(chair)
+    end
+
+    it 'is case insensitive' do
+      results = Product.search('lApToP')
+
+      expect(results).to include(laptop)
+    end
+
+    it 'matches description text' do
+      results = Product.search('RAM')
+
+      expect(results).to include(laptop)
+    end
+
+    it 'returns none when fuzzy and exact matching both fail' do
+      results = Product.search('totally-unmatched-query')
+
+      expect(results).to be_empty
+    end
+
+    it 'returns all records when query is blank' do
+      results = Product.search(nil)
+
+      expect(results).to include(laptop, chair)
+    end
+  end
 end
