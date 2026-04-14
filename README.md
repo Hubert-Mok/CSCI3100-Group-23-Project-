@@ -91,7 +91,7 @@ On each push and pull request to `main`, GitHub Actions runs:
 | Email Verification | - | Jacco | School-email verification (CUHK domains) |
 | User Profiles | - | Jacco | View and edit user profiles |
 | Products Publising | - | Jacco | Create, edit, delete, and publish product listings |
-| Searching | - | Jacco | Fuzzy search, category/status filtering, sorting |
+| Searching | Jacco | - | Fuzzy search, category/status filtering, sorting |
 | Product Likes | - | Jacco | Like/unlike products and view liked products |
 | Notifications | - | Jacco | Real-time notifications via Turbo Streams & Action Cable |
 | Messaging | - | Jacco | Buyer-seller conversations with message management |
