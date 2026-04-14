@@ -1,7 +1,6 @@
 # This configuration file will be evaluated by Puma. The top-level methods that
 # are invoked here are part of Puma's configuration DSL. For more information
 # about methods provided by the DSL, see https://puma.io/puma/Puma/DSL.html.
-require "json"
 #
 # Puma starts a configurable number of processes (workers) and each process
 # serves each request in a thread from an internal thread pool.
@@ -30,52 +29,13 @@ threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-port_value = ENV.fetch("PORT", 3000)
-port port_value
-
-# region agent log
-begin
-  File.open("/Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/.cursor/debug-90ad6c.log", "a") do |f|
-    f.puts({
-      sessionId: "90ad6c",
-      runId: "pre-fix",
-      hypothesisId: "H1",
-      location: "config/puma.rb:33",
-      message: "Puma startup port selection",
-      data: {
-        port: port_value.to_s,
-        rails_env: ENV["RAILS_ENV"],
-        web_concurrency: ENV["WEB_CONCURRENCY"],
-        rails_max_threads: ENV["RAILS_MAX_THREADS"]
-      },
-      timestamp: (Time.now.to_f * 1000).to_i
-    }.to_json)
-  end
-rescue StandardError
-end
-# endregion
+port ENV.fetch("PORT", 3000)
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
 
 # Run the Solid Queue supervisor inside of Puma for single-server deployments.
 plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
-# region agent log
-begin
-  File.open("/Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/.cursor/debug-90ad6c.log", "a") do |f|
-    f.puts({
-      sessionId: "90ad6c",
-      runId: "pre-fix",
-      hypothesisId: "H4",
-      location: "config/puma.rb:44",
-      message: "Solid queue in puma flag observed",
-      data: { solid_queue_in_puma: ENV["SOLID_QUEUE_IN_PUMA"] },
-      timestamp: (Time.now.to_f * 1000).to_i
-    }.to_json)
-  end
-rescue StandardError
-end
-# endregion
 
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.

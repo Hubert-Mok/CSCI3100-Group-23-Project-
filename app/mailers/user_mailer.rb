@@ -1,5 +1,5 @@
 class UserMailer < ApplicationMailer
-  DEBUG_LOG_PATH = Rails.root.join(".cursor", "debug-0c3e21.log")
+  DEBUG_LOG_PATH = Rails.root.join(".cursor", "debug-90ad6c.log")
 
   def email_verification(user, raw_token)
     @user = user
@@ -10,43 +10,22 @@ class UserMailer < ApplicationMailer
   end
 
   def password_reset(user, raw_token)
-    run_id = SecureRandom.hex(6)
-    # #region agent log
-    begin
-      File.open(DEBUG_LOG_PATH, "a") do |f|
-        f.puts({
-          sessionId: "0c3e21",
-          runId: run_id,
-          hypothesisId: "H3",
-          location: "app/mailers/user_mailer.rb:password_reset",
-          message: "Password reset mailer method invoked",
-          data: { user_id: user.id },
-          timestamp: (Time.now.to_f * 1000).to_i
-        }.to_json)
-      end
-    rescue StandardError
-    end
-    # #endregion
-
     @user = user
     @reset_url = edit_password_reset_url(token: raw_token)
     @expiry_minutes = (User::PASSWORD_RESET_EXPIRY / 1.minute).to_i
-    reset_host = begin
-      URI.parse(@reset_url).host
-    rescue StandardError
-      nil
-    end
+    run_id = SecureRandom.hex(6)
 
     # #region agent log
     begin
+      host = @reset_url.to_s.split("/")[2]
       File.open(DEBUG_LOG_PATH, "a") do |f|
         f.puts({
-          sessionId: "0c3e21",
+          sessionId: "90ad6c",
           runId: run_id,
           hypothesisId: "H4",
           location: "app/mailers/user_mailer.rb:password_reset",
-          message: "Password reset mail object being built",
-          data: { reset_url_present: @reset_url.present?, host: reset_host },
+          message: "Password reset email composed",
+          data: { user_id: @user.id, reset_url_host: host, expiry_minutes: @expiry_minutes },
           timestamp: (Time.now.to_f * 1000).to_i
         }.to_json)
       end

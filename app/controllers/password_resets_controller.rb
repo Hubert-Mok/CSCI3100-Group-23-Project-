@@ -1,5 +1,5 @@
 class PasswordResetsController < ApplicationController
-  DEBUG_LOG_PATH = Rails.root.join(".cursor", "debug-0c3e21.log")
+  DEBUG_LOG_PATH = Rails.root.join(".cursor", "debug-90ad6c.log")
 
   # GET /password/forgot
   def new
@@ -15,12 +15,12 @@ class PasswordResetsController < ApplicationController
     begin
       File.open(DEBUG_LOG_PATH, "a") do |f|
         f.puts({
-          sessionId: "0c3e21",
+          sessionId: "90ad6c",
           runId: run_id,
           hypothesisId: "H1",
           location: "app/controllers/password_resets_controller.rb:create",
           message: "Password reset request received",
-          data: { user_found: user.present?, email_verified: user&.email_verified? || false, user_id: user&.id },
+          data: { user_found: user.present?, email_verified: user&.email_verified? || false, user_id: user&.id, adapter: ActiveJob::Base.queue_adapter.class.name },
           timestamp: (Time.now.to_f * 1000).to_i
         }.to_json)
       end
@@ -36,7 +36,7 @@ class PasswordResetsController < ApplicationController
       begin
         File.open(DEBUG_LOG_PATH, "a") do |f|
           f.puts({
-            sessionId: "0c3e21",
+            sessionId: "90ad6c",
             runId: run_id,
             hypothesisId: "H2",
             location: "app/controllers/password_resets_controller.rb:create",

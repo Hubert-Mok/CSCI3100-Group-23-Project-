@@ -1,5 +1,5 @@
 class ApplicationJob < ActiveJob::Base
-  DEBUG_LOG_PATH = Rails.root.join(".cursor", "debug-0c3e21.log")
+  DEBUG_LOG_PATH = Rails.root.join(".cursor", "debug-90ad6c.log")
 
   around_perform do |job, block|
     if job.class.name == "ActionMailer::MailDeliveryJob"
@@ -8,7 +8,7 @@ class ApplicationJob < ActiveJob::Base
       begin
         File.open(DEBUG_LOG_PATH, "a") do |f|
           f.puts({
-            sessionId: "0c3e21",
+            sessionId: "90ad6c",
             runId: run_id,
             hypothesisId: "H5",
             location: "app/jobs/application_job.rb:around_perform",
@@ -27,7 +27,7 @@ class ApplicationJob < ActiveJob::Base
       begin
         File.open(DEBUG_LOG_PATH, "a") do |f|
           f.puts({
-            sessionId: "0c3e21",
+            sessionId: "90ad6c",
             runId: run_id,
             hypothesisId: "H5",
             location: "app/jobs/application_job.rb:around_perform",
@@ -47,7 +47,7 @@ class ApplicationJob < ActiveJob::Base
     begin
       File.open(DEBUG_LOG_PATH, "a") do |f|
         f.puts({
-          sessionId: "0c3e21",
+          sessionId: "90ad6c",
           runId: (defined?(run_id) && run_id) || SecureRandom.hex(6),
           hypothesisId: "H5",
           location: "app/jobs/application_job.rb:around_perform",
