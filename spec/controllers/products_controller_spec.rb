@@ -719,4 +719,84 @@ RSpec.describe ProductsController, type: :controller do
       expect(response.body).not_to include('HK$123.40')
     end
   end
+
+  describe 'product image behavior' do
+    let(:seller) do
+      User.create!(
+        email: "seller_image_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+        password: 'Password123',
+        password_confirmation: 'Password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Image Seller',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current
+      )
+    end
+
+    before do
+      session[:user_id] = seller.id
+      allow_any_instance_of(Product).to receive(:get_ai_fraud_score).and_return({ score: 0.0, is_fraud: false })
+    end
+
+    it 'attaches thumbnail when creating a product with photo upload' do
+      upload = Rack::Test::UploadedFile.new(
+        Rails.root.join('test/fixtures/files/test-image.png'),
+        'image/png'
+      )
+
+      post :create, params: {
+        product: {
+          title: 'Camera Listing',
+          description: 'Digital camera with charger and memory card included.',
+          price: 320.5,
+          category: Product::CATEGORIES.second,
+          listing_type: 'sale',
+          thumbnail: upload
+        }
+      }
+
+      created_product = Product.where(user: seller).order(:created_at).last
+      expect(response).to redirect_to(created_product)
+      expect(created_product.thumbnail).to be_attached
+    end
+
+    it 'shows No Image placeholder on index when product has no photo' do
+      Product.create!(
+        title: 'No Photo Product',
+        description: 'Listing created without photo to verify fallback placeholder.',
+        price: 100.0,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: seller
+      )
+
+      get :index
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('No Image')
+    end
+
+    it 'renders thumbnail image on product detail page when attached' do
+      product = Product.create!(
+        title: 'Photo Product',
+        description: 'Listing with attached photo for detail page rendering test.',
+        price: 220.0,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: seller
+      )
+      product.thumbnail.attach(
+        io: File.open(Rails.root.join('test/fixtures/files/test-image.png')),
+        filename: 'test-image.png',
+        content_type: 'image/png'
+      )
+
+      get :show, params: { id: product.id }
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('show-thumbnail')
+    end
+  end
 end

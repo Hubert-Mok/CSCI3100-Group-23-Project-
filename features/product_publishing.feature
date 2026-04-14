@@ -23,6 +23,68 @@ Feature: Publishing a product
     And the product should have status "available"
     And the product should be listed on the market
 
+  Scenario: Successfully publish a product with one decimal place price
+    Given I am logged in as "seller@link.cuhk.edu.hk"
+    And I am on the new product page
+    When I fill in the product form with:
+      | Field       | Value                    |
+      | Title       | Decimal Price Mouse      |
+      | Description | A lightweight mouse with smooth tracking and silent clicks. |
+      | Price       | 123.4                    |
+      | Category    | Electronics              |
+      | Listing Type| Sale                     |
+    And I submit the product form
+    Then the product should be published successfully
+    And the product should have price "123.4"
+    And I should see product page price "HK$123.4"
+
+  Scenario: Fail to publish product with too high price
+    Given I am logged in as "seller@link.cuhk.edu.hk"
+    And I am on the new product page
+    When I fill in the product form with:
+      | Field       | Value                    |
+      | Title       | Overpriced Car           |
+      | Description | Extremely expensive listing used to validate max price checks. |
+      | Price       | 1000000                  |
+      | Category    | Others                   |
+      | Listing Type| Sale                     |
+    And I submit the product form
+    Then the product publishing should fail
+    And I should see "Price is too high (maximum is 999999.9)"
+
+  Scenario: Fail to publish product with more than one decimal place
+    Given I am logged in as "seller@link.cuhk.edu.hk"
+    And I am on the new product page
+    When I fill in the product form with:
+      | Field       | Value                    |
+      | Title       | Invalid Decimal Keyboard |
+      | Description | Listing used to verify decimal precision validation for prices. |
+      | Price       | 123.45                   |
+      | Category    | Electronics              |
+      | Listing Type| Sale                     |
+    And I submit the product form
+    Then the product publishing should fail
+    And I should see "Price can have at most 1 decimal place"
+
+  Scenario: Product image appears on home and product page after publishing
+    Given I am logged in as "seller@link.cuhk.edu.hk"
+    And I am on the new product page
+    When I fill in the product form with:
+      | Field       | Value                    |
+      | Title       | Photo Market Laptop      |
+      | Description | Listing with image to verify image rendering in cards and detail page. |
+      | Price       | 499.9                    |
+      | Category    | Electronics              |
+      | Listing Type| Sale                     |
+    And I attach product photo file "test-image.png"
+    And I submit the product form
+    Then the product should be published successfully
+    And I sign out
+    When I visit the marketplace home page
+    Then I should see the product image for "Photo Market Laptop" in listing cards
+    When I open the listing page for "Photo Market Laptop"
+    Then I should see the product image on the product page
+
   Scenario: Seller sees Stripe prompt after publishing a sale listing without Stripe account
     Given I am logged in as "seller@link.cuhk.edu.hk"
     And I am on the new product page

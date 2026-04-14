@@ -159,6 +159,40 @@ Then('the product should have title {string}') do |title|
   raise "Expected product title #{title}, got #{@product.title}" unless @product.title == title
 end
 
+Then('the product should have price {string}') do |price|
+  @product.reload
+  expected = price.to_d
+  raise "Expected product price #{expected}, got #{@product.price.to_d}" unless @product.price.to_d == expected
+end
+
+Then('I should see product page price {string}') do |price_text|
+  raise "Expected to see #{price_text}" unless page.has_content?(price_text)
+end
+
+Then('I sign out') do
+  click_button 'Sign Out' if page.has_button?('Sign Out')
+end
+
+When('I visit the marketplace home page') do
+  visit '/'
+end
+
+When('I open the listing page for {string}') do |title|
+  product = Product.find_by!(title: title)
+  visit "/products/#{product.id}"
+end
+
+Then('I should see the product image for {string} in listing cards') do |title|
+  product = Product.where(title: title).order(created_at: :desc).first
+  raise "Expected product #{title} to exist" unless product
+  raise 'Expected product to have an attached photo' unless product.thumbnail.attached?
+  raise 'Expected listing card to include product image' unless page.has_css?("a.product-card[href='/products/#{product.id}'] img.product-thumbnail")
+end
+
+Then('I should see the product image on the product page') do
+  raise 'Expected product page image to be visible' unless page.has_css?('img.show-thumbnail')
+end
+
 Then('the product should have an attached photo') do
   @product.reload
   raise 'Expected product to have an attached photo' unless @product.thumbnail.attached?
