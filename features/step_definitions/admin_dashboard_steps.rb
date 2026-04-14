@@ -111,6 +111,18 @@ Then('I should be on that product page') do
   raise "Expected to be on flagged product page (#{expected_path}), got #{page.current_path}" unless page.current_path == expected_path
 end
 
+When('I visit the flagged product page directly') do
+  visit "/products/#{@flagged_product.id}"
+end
+
+Then('I should see the back to admin dashboard button') do
+  raise 'Expected back-to-admin button to be visible' unless page.has_link?('← Back to Admin Dashboard')
+end
+
+Then('I should not see the back to admin dashboard button') do
+  raise 'Expected back-to-admin button to be hidden' if page.has_link?('← Back to Admin Dashboard')
+end
+
 When('I approve the flagged product from the dashboard') do
   click_button 'Approve'
 end
