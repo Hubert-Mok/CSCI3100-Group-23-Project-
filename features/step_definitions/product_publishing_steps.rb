@@ -20,6 +20,11 @@ Given('there is a registered user with email {string} and password {string}') do
     college_affiliation: User::COLLEGES.first,
     email_verified_at: Time.current
   )
+  if email.include?('seller')
+    @seller = @user
+  elsif email.include?('buyer')
+    @buyer = @user
+  end
 end
 
 Given('the user\'s email is verified') do
