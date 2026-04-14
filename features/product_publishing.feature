@@ -108,6 +108,41 @@ Feature: Publishing a product
     When I am on the edit listing page for "Photo Ready Lamp"
     Then I should see "Current photo"
 
+  Scenario: Seller replaces an existing photo while editing a listing
+    Given I am logged in as "seller@link.cuhk.edu.hk"
+    And I already have a published product listing titled "Photo Replace Lamp" with status "available"
+    And the listing has existing product photo file "test-image.png"
+    And I am on the edit listing page for "Photo Replace Lamp"
+    When I fill in the product form with:
+      | Field       | Value                    |
+      | Title       | Photo Replace Lamp       |
+      | Description | Updated listing and replacing old photo with a new one. |
+      | Price       | 140                      |
+      | Category    | Electronics              |
+      | Listing Type| Sale                     |
+      | Status      | Available                |
+    And I attach product photo file "test-image-2.png"
+    And I submit the product form
+    Then I should see "Listing updated successfully!"
+    And the product photo should be replaced
+
+  Scenario: Seller keeps existing photo when updating without uploading a new one
+    Given I am logged in as "seller@link.cuhk.edu.hk"
+    And I already have a published product listing titled "Photo Keep Lamp" with status "available"
+    And the listing has existing product photo file "test-image.png"
+    And I am on the edit listing page for "Photo Keep Lamp"
+    When I fill in the product form with:
+      | Field       | Value                    |
+      | Title       | Photo Keep Lamp          |
+      | Description | Updated listing while keeping the currently attached photo. |
+      | Price       | 160                      |
+      | Category    | Electronics              |
+      | Listing Type| Sale                     |
+      | Status      | Available                |
+    And I submit the product form
+    Then I should see "Listing updated successfully!"
+    And the product photo should remain unchanged
+
   Scenario: Successfully publish a product as a gift
     Given I am logged in as "seller@link.cuhk.edu.hk"
     And I am on the new product page

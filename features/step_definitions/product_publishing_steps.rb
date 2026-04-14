@@ -68,6 +68,19 @@ Given('I am on the edit listing page for {string}') do |title|
   visit "/products/#{@product.id}/edit"
 end
 
+Given('the listing has existing product photo file {string}') do |filename|
+  file_path = Rails.root.join('test', 'fixtures', 'files', filename)
+  raise "Missing fixture file: #{file_path}" unless File.exist?(file_path)
+
+  @product.thumbnail.attach(
+    io: File.open(file_path),
+    filename: filename,
+    content_type: 'image/png'
+  )
+  @product.reload
+  @original_photo_blob_id = @product.thumbnail.blob_id
+end
+
 Given('I try to visit the new product page') do
   visit '/products/new'
 end
@@ -144,6 +157,18 @@ end
 Then('the product should have an attached photo') do
   @product.reload
   raise 'Expected product to have an attached photo' unless @product.thumbnail.attached?
+end
+
+Then('the product photo should be replaced') do
+  @product.reload
+  raise 'Expected product to have an attached photo' unless @product.thumbnail.attached?
+  raise 'Expected product photo blob to be replaced' if @product.thumbnail.blob_id == @original_photo_blob_id
+end
+
+Then('the product photo should remain unchanged') do
+  @product.reload
+  raise 'Expected product to keep an attached photo' unless @product.thumbnail.attached?
+  raise 'Expected product photo blob to stay unchanged' unless @product.thumbnail.blob_id == @original_photo_blob_id
 end
 
 # Failure assertions

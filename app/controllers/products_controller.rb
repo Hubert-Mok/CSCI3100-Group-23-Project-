@@ -32,7 +32,7 @@ class ProductsController < ApplicationController
       else
         flash[:notice] = "Listing published successfully!"
       end
-      if @product.sale? && @product.available? && current_user.stripe_account_id.blank?
+      if @product.sale? && @product.available? && current_user == @product.user && @product.user.stripe_account_id.blank?
         flash[:alert] = "Connect your Stripe account so buyers can use Buy Now and you can receive payments."
       end
       redirect_to @product
@@ -70,7 +70,7 @@ class ProductsController < ApplicationController
           broadcast_notification_badge_to(recipient)
         end
       end
-      if @product.sale? && @product.available? && current_user.stripe_account_id.blank?
+      if @product.sale? && @product.available? && current_user == @product.user && @product.user.stripe_account_id.blank?
         flash[:alert] = "Connect your Stripe account so buyers can use Buy Now and you can receive payments."
       end
       redirect_to @product, notice: "Listing updated successfully!"

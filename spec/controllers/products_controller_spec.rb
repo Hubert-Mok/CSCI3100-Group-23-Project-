@@ -450,6 +450,110 @@ RSpec.describe ProductsController, type: :controller do
       expect(response).to redirect_to(product)
       expect(product.thumbnail).to be_attached
     end
+
+    it 'keeps existing thumbnail when updating without a new upload' do
+      initial_upload = Rack::Test::UploadedFile.new(
+        Rails.root.join('test/fixtures/files/test-image.png'),
+        'image/png'
+      )
+      product.thumbnail.attach(initial_upload)
+      product.reload
+      original_blob_id = product.thumbnail.blob_id
+
+      patch :update, params: {
+        id: product.id,
+        product: {
+          title: 'Study Table',
+          description: 'A sturdy table suitable for study and work',
+          price: 220,
+          category: Product::CATEGORIES.first,
+          listing_type: 'sale',
+          status: 'available'
+        }
+      }
+
+      product.reload
+
+      expect(response).to redirect_to(product)
+      expect(product.thumbnail).to be_attached
+      expect(product.thumbnail.blob_id).to eq(original_blob_id)
+    end
+
+    it 'replaces existing thumbnail when a new upload is provided' do
+      initial_upload = Rack::Test::UploadedFile.new(
+        Rails.root.join('test/fixtures/files/test-image.png'),
+        'image/png'
+      )
+      replacement_upload = Rack::Test::UploadedFile.new(
+        Rails.root.join('test/fixtures/files/test-image-2.png'),
+        'image/png'
+      )
+
+      product.thumbnail.attach(initial_upload)
+      product.reload
+      original_blob_id = product.thumbnail.blob_id
+
+      patch :update, params: {
+        id: product.id,
+        product: {
+          title: 'Study Table',
+          description: 'A sturdy table suitable for study and work',
+          price: 220,
+          category: Product::CATEGORIES.first,
+          listing_type: 'sale',
+          status: 'available',
+          thumbnail: replacement_upload
+        }
+      }
+
+      product.reload
+
+      expect(response).to redirect_to(product)
+      expect(product.thumbnail).to be_attached
+      expect(product.thumbnail.blob_id).not_to eq(original_blob_id)
+    end
+
+    it 'does not show seller Stripe prompt when an admin updates someone else listing' do
+      seller_without_stripe = User.create!(
+        email: "seller_no_stripe_#{SecureRandom.hex(4)}@link.cuhk.edu.hk",
+        password: 'Password123',
+        password_confirmation: 'Password123',
+        cuhk_id: SecureRandom.hex(4),
+        username: 'Seller No Stripe',
+        college_affiliation: User::COLLEGES.first,
+        email_verified_at: Time.current,
+        stripe_account_id: nil
+      )
+      admin_managed_product = Product.create!(
+        title: 'Admin Managed Listing',
+        description: 'Listing owned by seller but edited by admin for moderation workflow.',
+        price: 220,
+        category: Product::CATEGORIES.first,
+        listing_type: 'sale',
+        status: :available,
+        user: seller_without_stripe
+      )
+
+      session[:user_id] = admin_user.id
+
+      patch :update, params: {
+        id: admin_managed_product.id,
+        product: {
+          title: 'Admin Managed Listing Updated',
+          description: 'Listing owned by seller but edited by admin for moderation workflow.',
+          price: 220,
+          category: Product::CATEGORIES.first,
+          listing_type: 'sale',
+          status: 'available'
+        }
+      }
+
+      admin_managed_product.reload
+
+      expect(response).to redirect_to(admin_managed_product)
+      expect(flash[:notice]).to eq('Listing updated successfully!')
+      expect(flash[:alert]).to be_nil
+    end
   end
 
   describe 'POST #create' do
