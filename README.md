@@ -103,7 +103,7 @@ docker compose exec web bundle exec cucumber
 | Data initialization | Alice, Ng Hei Yi Melody | - | Database seeds with 8 users, 19 products across all categories, and likes |
 | Delay use testing | Hubert, Ng Hei Yi Meldoy | Alice | Daily normal usage test |
 | Website deployment | Hubert | - | deploy the website to heroku |
-| handle http error code | - | Alice, Ng Hei Yi Melody | Fixed lint errors, added 404 error handling |
+| handle http error code | - | Alice, Ng Hei Yi Melody, Hubert | Fixed lint errors, added 404 error handling |
 | Fraud Detection | Hubert | - | Find suspicious products and messages |
 | Admin Moderation | Hubert | Ng Hei Yi Melody | Added Admin access and Admin Dashboard to check suspicious products and messages |
 | PWA Support | Alice | - | Manifest, service worker, basic offline behaviour |
