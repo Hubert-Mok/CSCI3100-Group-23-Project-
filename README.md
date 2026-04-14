@@ -93,13 +93,14 @@ There's another production link(with azure config and cloudflare dns) : https://
 | User Authentication | Ben | Kwok Chi Him Jacco | Sign up, sign in, sign out flows |
 | Email Verification | Ben | Jacco | School-email verification (CUHK domains) |
 | User Profiles | Ben | Jacco | View and edit user profiles |
-| Products Publising | - | Jacco | Create, edit, delete, and publish product listings |
+| Products Publising | - | Jacco Alice| Create, edit, delete, and publish product listings |
 | Searching | Jacco  | - | Fuzzy search, category/status filtering, sorting |
-| Product Likes | - | Jacco | Like/unlike products and view liked products |
+| Product Likes |Alice| Jacco| Like/unlike products and view liked products |
 | Notifications | Ben  | Jacco | Real-time notifications via Turbo Streams & Action Cable |
 | Messaging | Ben | Jacco | Buyer-seller conversations with message management |
 | Orders & Checkout | Ben | Jacco | Stripe-based escrow payment flow |
-| Data initialization | - | - | give virtual and initialal data setup|
+| Data initialization | Alice | - | give virtual and initialal data setup|
 | Delay use testing | - | - | Daily normal usage test |
 | Website deployment | - | - | deploy the website to heroku |
-| Bug Analyise | - | - | Find error and bugs |  
+| Bug Analyise | - | Alice | Find error and bugs |  
+|PWA support|Alice|-|manifest and service worker views|
