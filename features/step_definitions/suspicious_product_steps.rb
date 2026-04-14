@@ -13,6 +13,17 @@ Given('a verified seller exists with email {string} and password {string}') do |
 end
 
 When('the seller creates a suspicious product listing') do
+  create_suspicious_listing(
+    title: 'Cheap iPhone',
+    description: 'Contact me on WhatsApp +85212345678 for fast deal'
+  )
+end
+
+When('the seller creates a suspicious product listing with title {string} and description {string}') do |title, description|
+  create_suspicious_listing(title: title, description: description)
+end
+
+def create_suspicious_listing(title:, description:)
   Product.class_eval do
     def get_ai_fraud_score
       { score: 0.0, is_fraud: false }
@@ -20,8 +31,8 @@ When('the seller creates a suspicious product listing') do
   end
 
   @suspicious_product = Product.create!(
-    title: 'Cheap iPhone',
-    description: 'Contact me on WhatsApp +85212345678 for fast deal',
+    title: title,
+    description: description,
     price: 300,
     category: Product::CATEGORIES.first,
     listing_type: 'sale',

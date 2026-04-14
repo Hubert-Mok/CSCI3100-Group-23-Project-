@@ -116,6 +116,15 @@ RSpec.describe Product, type: :model do
       expect(product.reload.flagged).to be(false)
       expect(product.status).to eq('available')
     end
+
+    it 'falls back safely when the AI service is unavailable' do
+      product = Product.new(valid_attributes)
+      stub_const('HTTParty', Class.new)
+      allow(HTTParty).to receive(:post).and_raise(StandardError, 'AI down')
+      allow(Rails.logger).to receive(:error)
+
+      expect(product.get_ai_fraud_score).to eq({ score: 0.0, is_fraud: false })
+    end
   end
 
   describe '.search' do
