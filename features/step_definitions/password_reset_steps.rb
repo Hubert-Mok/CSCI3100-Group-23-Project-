@@ -108,6 +108,14 @@ When('I submit new password {string} and confirmation {string}') do |password, c
   click_button 'Reset password'
 end
 
+When('I submit password reset update with token {string} password {string} and confirmation {string}') do |token, password, confirmation|
+  page.driver.submit :patch, '/password/reset', {
+    token: token,
+    password: password,
+    password_confirmation: confirmation
+  }
+end
+
 Then('I should be redirected to sign in page from password reset') do
   expect(page).to have_current_path('/sign_in')
 end

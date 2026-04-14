@@ -35,6 +35,11 @@ Feature: Password Reset
     Then I should be on forgot password page
     And I should see password reset alert "Password reset link is invalid or has expired. Please request a new one."
 
+  Scenario: Invalid reset token on update redirects to forgot password page
+    When I submit password reset update with token "bad-token" password "newpassword123" and confirmation "newpassword123"
+    Then I should be on forgot password page
+    And I should see password reset alert "Password reset link is invalid or has expired. Please request a new one."
+
   Scenario: Expired reset token redirects to forgot password page
     Given a password-reset verified user exists with email "token_expired@link.cuhk.edu.hk" and password "password123"
     And password reset token exists for "token_expired@link.cuhk.edu.hk"
