@@ -1,0 +1,92 @@
+[
+  {
+    "title": "Muji Gel Pen Set",
+    "description": "Set of smooth black gel pens, lightly used and still writing well.",
+    "price": 20,
+    "category": "Stationery & Supplies",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/Muji_pen.jpg"
+  },
+  {
+    "title": "Yonex Badminton Racket",
+    "description": "Good condition racket with fresh grip, suitable for casual and intermediate play.",
+    "price": 120,
+    "category": "Sports & Fitness",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/badminton_racket.jpg"
+  },
+  {
+    "title": "Strategy Board Game",
+    "description": "Complete board game set with all pieces included, ideal for dorm game night.",
+    "price": 80,
+    "category": "Others",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/boardgame.jpg"
+  },
+  {
+    "title": "Casio Scientific Calculator",
+    "description": "Reliable calculator for engineering and science courses, battery included.",
+    "price": 60,
+    "category": "Electronics",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/calculator.jpg"
+  },
+  {
+    "title": "Supermarket Gift Card",
+    "description": "Gift card with remaining balance, useful for groceries near campus.",
+    "price": 90,
+    "category": "Tickets & Vouchers",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/gift_card.jpg"
+  },
+  {
+    "title": "Lecture Notes Bundle",
+    "description": "Neatly handwritten notes for core courses, clear summaries and examples.",
+    "price": 45,
+    "category": "Books & Notes",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/handwritten_lecture_notes.jpg"
+  },
+  {
+    "title": "Sony Headphones",
+    "description": "Over-ear headphones with good sound quality, minor wear on ear pads.",
+    "price": 180,
+    "category": "Electronics",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/headphones.jpg"
+  },
+  {
+    "title": "IKEA Study Desk",
+    "description": "Compact desk suitable for small rooms, stable and easy to assemble.",
+    "price": 300,
+    "category": "Furniture & Home",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/ikea_alex_desk.jpg"
+  },
+  {
+    "title": "Instant Noodle Pack",
+    "description": "Unopened assorted instant noodles, expiry date still far away.",
+    "price": 25,
+    "category": "Food & Drinks",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/instant_noodle.jpg"
+  },
+  {
+    "title": "Winter Jacket",
+    "description": "Warm jacket in good condition, fits medium size and great for travel.",
+    "price": 150,
+    "category": "Clothing & Accessories",
+    "status": "available",
+    "listing_type": "sale",
+    "image_path": "../db/seeds/images/jacket.jpg"
+  }
+]

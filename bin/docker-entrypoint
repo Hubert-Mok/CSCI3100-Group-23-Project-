@@ -1,8 +1,21 @@
 #!/bin/bash -e
 
+DEBUG_LOG_PATH="/Users/chankokpan/Documents/second_hand_marketplace/CSCI3100-Group-23-Project-/.cursor/debug-90ad6c.log"
+ts_ms() { python3 -c 'import time; print(int(time.time()*1000))' 2>/dev/null || date +%s000; }
+debug_log() {
+  # region agent log
+  printf '{"sessionId":"90ad6c","runId":"pre-fix","hypothesisId":"%s","location":"bin/docker-entrypoint","message":"%s","data":{"cmd":"%s","port":"%s","http_port":"%s","target_port":"%s","rails_env":"%s"},"timestamp":%s}\n' \
+    "$1" "$2" "$3" "${PORT:-}" "${HTTP_PORT:-}" "${TARGET_PORT:-}" "${RAILS_ENV:-}" "$(ts_ms)" >> "$DEBUG_LOG_PATH" 2>/dev/null || true
+  # endregion
+}
+
+debug_log "H2" "Entrypoint started" "$*"
+
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  debug_log "H3" "About to run db:prepare" "$*"
   ./bin/rails db:prepare
+  debug_log "H3" "db:prepare finished" "$*"
 fi
 
 exec "${@}"
